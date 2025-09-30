@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function Register() {
   const nav = useNavigate();
   const { register } = useAuth();
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role:"user" });
   const [err, setErr] = useState("");
 
   const submit = async (e) => {

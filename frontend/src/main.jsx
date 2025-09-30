@@ -15,13 +15,30 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route
-            path="/dashboard"
+            path="/admin"
             element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
+              <RoleRoute allow={["admin"]}>
+                <AdminPage />
+              </RoleRoute>
             }
           />
+          <Route
+            path="/manager"
+            element={
+              <RoleRoute allow={["manager"]}>
+                <ManagerPage />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <RoleRoute allow={["user", "manager", "admin"]}>
+                <UserDashboard />
+              </RoleRoute>
+            }
+          />
+
           <Route path="*" element={<Login />} />
         </Routes>
       </BrowserRouter>

@@ -42,6 +42,7 @@ export default function AuthProvider({ children }) {
     const { data } = await api.post("/login", payload);
     localStorage.setItem("token", data.token);
     setUser(data.user);
+    return data.user.role;
   };
 
   const logout = async () => {

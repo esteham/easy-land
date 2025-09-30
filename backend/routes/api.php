@@ -7,9 +7,18 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('/me',    [AuthController::class, 'me']);
-    Route::post('/logout',[AuthController::class, 'logout']);
+    Route::get('/me', fn(\Illuminate\Http\Request $r) => $r->user());
 
-    // Example protected route:
-    Route::get('/dashboard', fn() => response()->json(['stats' => [1,2,3]]));
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/stats', fn() => response()->json(['ok' => 'admin only']));
+    });
+
+    Route::middleware('role:manager')->group(function () {
+        Route::get('/manager/overview', fn() => response()->json(['ok' => 'manager only']));
+    });
+
+    Route::middleware('role:user')->group(function () {
+        Route::get('/user/dashboard', fn() => response()->json(['ok' => 'user only']));
+    });
 });
+

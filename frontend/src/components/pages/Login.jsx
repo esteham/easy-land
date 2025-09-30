@@ -13,10 +13,22 @@ export default function Login() {
     setErr("");
     try {
       await login(form);
-      nav("/dashboard");
+      const u =JSON.parse(localStorage.getItem("user-cache") || "null");
     } catch (e) {
       setErr(e?.response?.data?.message || "Invalid credentials");
     }
+
+    const next = (role) => {
+      const map = {
+        admin: "/admin",
+        acland: "/acland",
+        user: "/user",
+      };
+
+      return map[role] || "/dashboard";
+    };
+
+    const { user } = useAuth();
   };
 
   return (
