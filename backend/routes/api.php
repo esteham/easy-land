@@ -15,8 +15,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/admin/stats', fn() => response()->json(['ok' => 'admin only']));
     });
 
-    Route::middleware('role:manager')->group(function () {
-        Route::get('/manager/overview', fn() => response()->json(['ok' => 'manager only']));
+    Route::middleware('role:acland')->group(function () {
+        Route::get('/acland/overview', fn() => response()->json(['ok' => 'acland only']));
     });
 
     Route::middleware('role:user')->group(function () {

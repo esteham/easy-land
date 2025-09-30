@@ -8,7 +8,7 @@ import Register from "./components/pages/Register";
 import Login from "./components/pages/Login";
 import Dashboard from "./components/dashboard/admin/Dashboard";
 import UserDashboard from "./components/dashboard/user/Dashboard";
-import ManagerPage from "./components/dashboard/acland/Dashboard";
+import AcLandPage from "./components/dashboard/acland/Dashboard";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -26,10 +26,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             }
           />
           <Route
-            path="/manager"
+            path="/acLand"
             element={
               <RoleRoute allow={["acland"]}>
-                <ManagerPage />
+                <AcLandPage />
               </RoleRoute>
             }
           />

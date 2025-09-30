@@ -16,7 +16,7 @@ export default function Login() {
       const next = (role) => {
         const map = {
           admin: "/admin",
-          acland: "/manager",
+          acland: "/acland",
           user: "/dashboard",
         };
         return map[role] || "/dashboard";
