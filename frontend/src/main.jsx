@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AuthProvider from "./AuthContext";
-import ProtectedRoute from "./ProtectedRoute";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import AuthProvider from "./auth/AuthContext";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import Register from "./components/pages/Register";
+import Login from "./components/pages/Login";
+import Dashboard from "./components/dashboard/admin/Dashboard";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

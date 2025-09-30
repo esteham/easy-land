@@ -1,31 +1,41 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "./api";
+import api from "../api";
 
 const AuthCtx = createContext(null);
 export const useAuth = () => useContext(AuthCtx);
 
 export default function AuthProvider({ children }) {
-  const [user, setUser]   = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Try fetch /me on load if token exists
   useEffect(() => {
     const boot = async () => {
       const token = localStorage.getItem("token");
-      if (!token) { setLoading(false); return; }
+      if (!token) {
+        setLoading(false);
+        return;
+      }
       try {
         const { data } = await api.get("/me");
         setUser(data);
-      } catch { localStorage.removeItem("token"); }
+      } catch {
+        localStorage.removeItem("token");
+      }
       setLoading(false);
     };
     boot();
   }, []);
 
+  // const register = async (payload) => {
+  //   const { data } = await api.post("/register", payload);
+  //   localStorage.setItem("token", data.token);
+  //   setUser(data.user);
+  // };
+
   const register = async (payload) => {
-    const { data } = await api.post("/register", payload);
-    localStorage.setItem("token", data.token);
-    setUser(data.user);
+    await api.post("/register", payload);
   };
 
   const login = async (payload) => {
@@ -35,7 +45,11 @@ export default function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try { await api.post("/logout"); } catch {}
+    try {
+      await api.post("/logout");
+    } catch {
+      /* empty */
+    }
     localStorage.removeItem("token");
     setUser(null);
   };

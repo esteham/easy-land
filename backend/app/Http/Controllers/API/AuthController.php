@@ -25,11 +25,12 @@ class AuthController extends Controller
         ]);
 
         // Issue access token
-        $token = $user->createToken('spa-token')->accessToken;
+        // $token = $user->createToken('spa-token')->accessToken;
 
         return response()->json([
+            'message' => 'Registration successful, Please log in.',
             'user' => $user,
-            'token' => $token,
+            // 'token' => $token,
         ], 201);
     }
 
