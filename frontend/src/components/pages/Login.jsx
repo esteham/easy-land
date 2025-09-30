@@ -12,23 +12,19 @@ export default function Login() {
     e.preventDefault();
     setErr("");
     try {
-      await login(form);
-      const u =JSON.parse(localStorage.getItem("user-cache") || "null");
+      const role = await login(form);
+      const next = (role) => {
+        const map = {
+          admin: "/admin",
+          acland: "/manager",
+          user: "/dashboard",
+        };
+        return map[role] || "/dashboard";
+      };
+      nav(next(role));
     } catch (e) {
       setErr(e?.response?.data?.message || "Invalid credentials");
     }
-
-    const next = (role) => {
-      const map = {
-        admin: "/admin",
-        acland: "/acland",
-        user: "/user",
-      };
-
-      return map[role] || "/dashboard";
-    };
-
-    const { user } = useAuth();
   };
 
   return (
