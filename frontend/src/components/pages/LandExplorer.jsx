@@ -102,18 +102,18 @@ export default function LandExplorer() {
     fetchMouzas();
   }, [upazilaId]);
 
-  //Mouza -> Zils
+  // Mouza -> Zils
   useEffect(() => {
     setZils([]); setZilId("");
-    setDags([]); setDagId(""); setDagDetails(null);
+    setDags([]); setDagId(""); setDagDetail(null);
     if (!mouzaId) return;
 
-    const run = async () = {
+    const run = async () => {
       try {
         setLoading(true);
-        const {data} = await api.get(`/locations/mouzas/${mouzaId}/zils`);
+        const { data } = await api.get(`/locations/mouzas/${mouzaId}/zils`);
         setZils(data);
-      } catch (e){
+      } catch (e) {
         setError("Failed to load zils");
       } finally {
         setLoading(false);
