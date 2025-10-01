@@ -26,13 +26,9 @@ class AuthController extends Controller
             'role' => $data['role'],
         ]);
 
-        // Issue access token
-        // $token = $user->createToken('spa-token')->accessToken;
-
         return response()->json([
             'message' => 'Registration successful, Please log in.',
             'user' => $user,
-            // 'token' => $token,
         ], 201);
     }
 
@@ -48,7 +44,7 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('spa-token')->accessToken;
+        $token = $user->createToken('spa-token')->accessToken; // Passport
 
         return response()->json([
             'user' => $user,
@@ -63,8 +59,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Revoke the current token
-        $request->user()->token()->revoke();
+        $request->user()->token()->revoke(); // Passport
         return response()->json(['message' => 'Logged out']);
     }
 }
