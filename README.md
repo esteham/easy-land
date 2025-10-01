@@ -1,4 +1,3 @@
-Got it! Here’s the **About** and a clean **README.md** draft in English for the **e-land** repo:
 # e-land
 
 **e-land** is a property management web application designed to handle land information, ownership records, and related transactions. It follows a modular architecture with separate frontend and backend implementations.
