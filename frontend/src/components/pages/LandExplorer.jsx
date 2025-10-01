@@ -19,7 +19,7 @@ export default function LandExplorer() {
   const [dagId, setDagId] = useState("");
 
   //Details
-  const [dagDetails, setDagDetails] = useState(null);
+  const [dagDetail, setDagDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 

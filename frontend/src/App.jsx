@@ -11,6 +11,7 @@ import Dashboard from "./components/dashboard/admin/Dashboard";
 import UserDashboard from "./components/dashboard/user/Dashboard";
 import AcLandPage from "./components/dashboard/acland/Dashboard";
 import LandExplorer from "./components/pages/LandExplorer";
+import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 
 function App() {
   return (
@@ -27,6 +28,15 @@ function App() {
             element={
               <RoleRoute allow={["admin"]}>
                 <Dashboard />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/divisions"
+            element={
+              <RoleRoute allow={["admin"]}>
+                <AdminDivisions />
               </RoleRoute>
             }
           />
