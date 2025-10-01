@@ -10,6 +10,7 @@ import Login from "./components/pages/Login";
 import Dashboard from "./components/dashboard/admin/Dashboard";
 import UserDashboard from "./components/dashboard/user/Dashboard";
 import AcLandPage from "./components/dashboard/acland/Dashboard";
+import LandExplorer from "./components/pages/LandExplorer";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/land" element={<LandExplorer />} />
 
           <Route
             path="/admin"

@@ -31,6 +31,12 @@ export default function HomePage() {
           >
             Create New Account
           </Link>
+          <Link
+            to="/land"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
+          >
+            Explore Land Records
+          </Link>
         </div>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -2,9 +2,45 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
+use App\Models\Division;
+use App\Models\District;
+use App\Models\Upazila;
+use App\Models\Mouza;
+use App\Models\Zil;
+use App\Models\Dag;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
+
+// Public cascading location endpoints
+Route::get('/locations/divisions', function () {
+    return Division::select('id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
+});
+
+Route::get('/locations/divisions/{division}/districts', function (Division $division) {
+    return $division->districts()->select('id','division_id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
+});
+
+Route::get('/locations/districts/{district}/upazilas', function (District $district) {
+    return $district->upazilas()->select('id','district_id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
+});
+
+Route::get('/locations/upazilas/{upazila}/mouzas', function (Upazila $upazila) {
+    return $upazila->mouzas()->select('id','upazila_id','name_en','name_bn','jl_no','mouza_code')->orderBy('name_en')->get();
+});
+
+// New: zils and dags
+Route::get('/locations/mouzas/{mouza}/zils', function (Mouza $mouza) {
+    return $mouza->zils()->select('id','mouza_id','zil_no','map_url')->orderBy('zil_no')->get();
+});
+
+Route::get('/locations/zils/{zil}/dags', function (Zil $zil) {
+    return $zil->dags()->select('id','zil_id','dag_no')->orderBy('dag_no')->get();
+});
+
+Route::get('/locations/dags/{dag}', function (Dag $dag) {
+    return $dag->only(['id','zil_id','dag_no','khotiyan','meta']);
+});
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -23,4 +59,3 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/user/dashboard', fn() => response()->json(['ok' => 'user only']));
     });
 });
-

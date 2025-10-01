@@ -19,4 +19,9 @@ class Mouza extends Model
     {
         return $this->belongsTo(Upazila::class);
     }
+
+    public function zils()
+    {
+        return $this->hasMany(Zil::class);
+    }
 }
