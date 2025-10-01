@@ -8,6 +8,12 @@ use App\Models\Upazila;
 use App\Models\Mouza;
 use App\Models\Zil;
 use App\Models\Dag;
+use App\Http\Controllers\API\DivisionController;
+use App\Http\Controllers\API\DistrictController;
+use App\Http\Controllers\API\UpazilaController;
+use App\Http\Controllers\API\MouzaController;
+use App\Http\Controllers\API\ZilController;
+use App\Http\Controllers\API\DagController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
@@ -49,6 +55,13 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/stats', fn() => response()->json(['ok' => 'admin only']));
+        // Admin CRUD resources
+        Route::apiResource('admin/divisions', DivisionController::class);
+        Route::apiResource('admin/districts', DistrictController::class);
+        Route::apiResource('admin/upazilas', UpazilaController::class);
+        Route::apiResource('admin/mouzas', MouzaController::class);
+        Route::apiResource('admin/zils', ZilController::class);
+        Route::apiResource('admin/dags', DagController::class);
     });
 
     Route::middleware('role:acland')->group(function () {
