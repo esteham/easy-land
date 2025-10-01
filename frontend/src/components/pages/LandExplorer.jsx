@@ -49,7 +49,9 @@ export default function LandExplorer() {
     const fetchDistricts = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`/locations/divisions/${divisionId}/districts`);
+        const { data } = await api.get(
+          `/locations/divisions/${divisionId}/districts`
+        );
         setDistricts(data);
       } catch (e) {
         setError("Failed to load districts");
@@ -70,7 +72,9 @@ export default function LandExplorer() {
     const fetchUpazilas = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`/locations/districts/${districtId}/upazilas`);
+        const { data } = await api.get(
+          `/locations/districts/${districtId}/upazilas`
+        );
         setUpazilas(data);
       } catch (e) {
         setError("Failed to load upazilas");
@@ -91,7 +95,9 @@ export default function LandExplorer() {
     const fetchMouzas = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get(`/locations/upazilas/${upazilaId}/mouzas`);
+        const { data } = await api.get(
+          `/locations/upazilas/${upazilaId}/mouzas`
+        );
         setMouzas(data);
       } catch (e) {
         setError("Failed to load mouzas");
@@ -104,8 +110,11 @@ export default function LandExplorer() {
 
   // Mouza -> Zils
   useEffect(() => {
-    setZils([]); setZilId("");
-    setDags([]); setDagId(""); setDagDetail(null);
+    setZils([]);
+    setZilId("");
+    setDags([]);
+    setDagId("");
+    setDagDetail(null);
     if (!mouzaId) return;
 
     const run = async () => {
@@ -124,7 +133,9 @@ export default function LandExplorer() {
 
   // Zil -> Dags
   useEffect(() => {
-    setDags([]); setDagId(""); setDagDetail(null);
+    setDags([]);
+    setDagId("");
+    setDagDetail(null);
     if (!zilId) return;
 
     const run = async () => {
@@ -166,7 +177,9 @@ export default function LandExplorer() {
         <h1 className="text-2xl font-bold mb-6">Land Explorer</h1>
 
         {error && (
-          <div className="bg-red-50 text-red-700 border border-red-200 p-3 rounded mb-4">{error}</div>
+          <div className="bg-red-50 text-red-700 border border-red-200 p-3 rounded mb-4">
+            {error}
+          </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -185,7 +198,7 @@ export default function LandExplorer() {
               <option value="">Select Division</option>
               {divisions.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.name_en}
+                  {d.name_bn}
                 </option>
               ))}
             </select>
@@ -206,7 +219,7 @@ export default function LandExplorer() {
               <option value="">Select District</option>
               {districts.map((d) => (
                 <option key={d.id} value={d.id}>
-                  {d.name_en}
+                  {d.name_bn}
                 </option>
               ))}
             </select>
@@ -226,7 +239,7 @@ export default function LandExplorer() {
               <option value="">Select Upazila</option>
               {upazilas.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.name_en}
+                  {u.name_bn}
                 </option>
               ))}
             </select>
@@ -243,7 +256,7 @@ export default function LandExplorer() {
               <option value="">Select Mouza</option>
               {mouzas.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.name_en} {m.jl_no ? `(JL: ${m.jl_no})` : ""}
+                  {m.name_bn} {m.jl_no ? `(JL: ${m.jl_no})` : ""}
                 </option>
               ))}
             </select>
@@ -262,12 +275,20 @@ export default function LandExplorer() {
               {zils.map((z) => (
                 <div
                   key={z.id}
-                  className={`border rounded p-3 cursor-pointer hover:shadow ${String(zilId)===String(z.id) ? "ring-2 ring-indigo-500" : ""}`}
+                  className={`border rounded p-3 cursor-pointer hover:shadow ${
+                    String(zilId) === String(z.id)
+                      ? "ring-2 ring-indigo-500"
+                      : ""
+                  }`}
                   onClick={() => setZilId(String(z.id))}
                 >
                   <div className="font-semibold">Zil: {z.zil_no}</div>
                   {z.map_url ? (
-                    <img src={z.map_url} alt={`Zil ${z.zil_no} map`} className="mt-2 w-full h-32 object-cover rounded" />
+                    <img
+                      src={z.map_url}
+                      alt={`Zil ${z.zil_no} map`}
+                      className="mt-2 w-full h-32 object-cover rounded"
+                    />
                   ) : (
                     <div className="mt-2 text-xs text-gray-500">No map</div>
                   )}
@@ -290,7 +311,11 @@ export default function LandExplorer() {
                 <button
                   key={d.id}
                   onClick={() => setDagId(String(d.id))}
-                  className={`px-3 py-1 border rounded text-sm ${String(dagId)===String(d.id) ? "bg-indigo-600 text-white border-indigo-600" : "hover:bg-gray-50"}`}
+                  className={`px-3 py-1 border rounded text-sm ${
+                    String(dagId) === String(d.id)
+                      ? "bg-indigo-600 text-white border-indigo-600"
+                      : "hover:bg-gray-50"
+                  }`}
                 >
                   Dag {d.dag_no}
                 </button>
@@ -307,7 +332,9 @@ export default function LandExplorer() {
           ) : dagDetail ? (
             <div className="bg-white border rounded p-4 text-sm">
               <div className="mb-2 text-gray-600">Dag: {dagDetail.dag_no}</div>
-              <pre className="bg-gray-50 p-3 rounded border overflow-auto">{JSON.stringify(dagDetail.khotiyan, null, 2)}</pre>
+              <pre className="bg-gray-50 p-3 rounded border overflow-auto">
+                {JSON.stringify(dagDetail.khotiyan, null, 2)}
+              </pre>
             </div>
           ) : (
             <div className="text-gray-500">Loading...</div>
@@ -318,13 +345,17 @@ export default function LandExplorer() {
           {!mouzaId ? (
             <p className="text-gray-500">Select a Mouza to view Zils.</p>
           ) : (
-            <div className="text-gray-500">Zils will appear here once backend is added.</div>
+            <div className="text-gray-500">
+              Zils will appear here once backend is added.
+            </div>
           )}
         </div>
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Dags (Plots)</h2>
-          <div className="text-gray-500">Select a Zil to view Dags and khotiyan details.</div>
+          <div className="text-gray-500">
+            Select a Zil to view Dags and khotiyan details.
+          </div>
         </div>
       </div>
     </div>
