@@ -340,23 +340,6 @@ export default function LandExplorer() {
             <div className="text-gray-500">Loading...</div>
           )}
         </div>
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-2">Zils (Map/Zone)</h2>
-          {!mouzaId ? (
-            <p className="text-gray-500">Select a Mouza to view Zils.</p>
-          ) : (
-            <div className="text-gray-500">
-              Zils will appear here once backend is added.
-            </div>
-          )}
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Dags (Plots)</h2>
-          <div className="text-gray-500">
-            Select a Zil to view Dags and khotiyan details.
-          </div>
-        </div>
       </div>
     </div>
   );
