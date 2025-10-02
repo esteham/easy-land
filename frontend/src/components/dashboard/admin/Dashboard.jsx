@@ -43,6 +43,11 @@ export default function Dashboard() {
           Manage Zils
         </Link>
       </div>
+      <div style={{ margin: "1rem 0" }}>
+        <Link to="/admin/dags" className="text-indigo-600 underline">
+          Manage Dags
+        </Link>
+      </div>
     </>
   );
 }
