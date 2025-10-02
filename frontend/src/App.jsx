@@ -8,9 +8,8 @@ import RoleRoute from "./auth/RoleRoute";
 import HomePage from "./components/pages/HomePage";
 import Register from "./components/pages/Register";
 import Login from "./components/pages/Login";
-import Dashboard from "./components/dashboard/admin/Dashboard";
-import UserDashboard from "./components/dashboard/user/Dashboard";
-import AcLandPage from "./components/dashboard/acland/Dashboard";
+
+import AdminLayout, { AdminHome } from "./components/dashboard/admin/Dashboard";
 import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
@@ -18,6 +17,9 @@ import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
 import AdminMouzas from "./components/dashboard/admin/AdminMouzas";
 import AdminZils from "./components/dashboard/admin/AdminZils";
 import AdminDags from "./components/dashboard/admin/AdminDags";
+
+import UserDashboard from "./components/dashboard/user/Dashboard";
+import AcLandPage from "./components/dashboard/acland/Dashboard";
 
 function App() {
   return (
@@ -38,69 +40,26 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/land" element={<LandExplorer />} />
 
+          {/* --- ADMIN: parent layout keeps the sidebar persistent --- */}
           <Route
             path="/admin"
             element={
               <RoleRoute allow={["admin"]}>
-                <Dashboard />
+                <AdminLayout /> {/* <-- has the sidebar + <Outlet/> */}
               </RoleRoute>
             }
-          />
+          >
+            {/* RIGHT SIDE CONTENT renders here */}
+            <Route index element={<AdminHome />} />
+            <Route path="divisions" element={<AdminDivisions />} />
+            <Route path="districts" element={<AdminDistricts />} />
+            <Route path="upazilas" element={<AdminUpazilas />} />
+            <Route path="mouzas" element={<AdminMouzas />} />
+            <Route path="zils" element={<AdminZils />} />
+            <Route path="dags" element={<AdminDags />} />
+          </Route>
 
-          <Route
-            path="/admin/divisions"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminDivisions />
-              </RoleRoute>
-            }
-          />
-
-          <Route
-            path="/admin/districts"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminDistricts />
-              </RoleRoute>
-            }
-          />
-
-          <Route
-            path="/admin/upazilas"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminUpazilas />
-              </RoleRoute>
-            }
-          />
-
-          <Route
-            path="/admin/mouzas"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminMouzas />
-              </RoleRoute>
-            }
-          />
-
-          <Route
-            path="/admin/zils"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminZils />
-              </RoleRoute>
-            }
-          />
-
-          <Route
-            path="/admin/dags"
-            element={
-              <RoleRoute allow={["admin"]}>
-                <AdminDags />
-              </RoleRoute>
-            }
-          />
-
+          {/* ACLand area (unchanged) */}
           <Route
             path="/acLand"
             element={
@@ -110,6 +69,7 @@ function App() {
             }
           />
 
+          {/* User dashboard (unchanged) */}
           <Route
             path="/dashboard"
             element={
