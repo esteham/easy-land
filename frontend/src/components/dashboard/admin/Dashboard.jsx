@@ -38,6 +38,11 @@ export default function Dashboard() {
           Manage Mouzas
         </Link>
       </div>
+      <div style={{ margin: "1rem 0" }}>
+        <Link to="/admin/zils" className="text-indigo-600 underline">
+          Manage Zils
+        </Link>
+      </div>
     </>
   );
 }

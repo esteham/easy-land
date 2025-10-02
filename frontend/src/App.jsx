@@ -16,6 +16,7 @@ import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
 import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
 import AdminMouzas from "./components/dashboard/admin/AdminMouzas";
+import AdminZils from "./components/dashboard/admin/AdminZils";
 
 function App() {
   return (
@@ -77,6 +78,15 @@ function App() {
             element={
               <RoleRoute allow={["admin"]}>
                 <AdminMouzas />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/zils"
+            element={
+              <RoleRoute allow={["admin"]}>
+                <AdminZils />
               </RoleRoute>
             }
           />
