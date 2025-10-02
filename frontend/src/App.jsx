@@ -15,6 +15,7 @@ import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
 import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
+import AdminMouzas from "./components/dashboard/admin/AdminMouzas";
 
 function App() {
   return (
@@ -67,6 +68,15 @@ function App() {
             element={
               <RoleRoute allow={["admin"]}>
                 <AdminUpazilas />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/mouzas"
+            element={
+              <RoleRoute allow={["admin"]}>
+                <AdminMouzas />
               </RoleRoute>
             }
           />

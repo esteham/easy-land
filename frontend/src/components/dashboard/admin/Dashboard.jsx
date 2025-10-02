@@ -29,8 +29,13 @@ export default function Dashboard() {
         </Link>
       </div>
       <div style={{ margin: "1rem 0" }}>
-        <Link to="/admin/districts" className="text-indigo-600 underline">
+        <Link to="/admin/upazilas" className="text-indigo-600 underline">
           Manage Upazilas
+        </Link>
+      </div>
+      <div style={{ margin: "1rem 0" }}>
+        <Link to="/admin/mouzas" className="text-indigo-600 underline">
+          Manage Mouzas
         </Link>
       </div>
     </>
