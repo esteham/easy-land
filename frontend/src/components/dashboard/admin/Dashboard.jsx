@@ -28,6 +28,11 @@ export default function Dashboard() {
           Manage Districts
         </Link>
       </div>
+      <div style={{ margin: "1rem 0" }}>
+        <Link to="/admin/districts" className="text-indigo-600 underline">
+          Manage Upazilas
+        </Link>
+      </div>
     </>
   );
 }

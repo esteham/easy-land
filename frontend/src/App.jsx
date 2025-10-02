@@ -14,6 +14,7 @@ import AcLandPage from "./components/dashboard/acland/Dashboard";
 import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
+import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
 
 function App() {
   return (
@@ -57,6 +58,15 @@ function App() {
             element={
               <RoleRoute allow={["admin"]}>
                 <AdminDistricts />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/upazilas"
+            element={
+              <RoleRoute allow={["admin"]}>
+                <AdminUpazilas />
               </RoleRoute>
             }
           />
