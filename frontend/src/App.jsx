@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./auth/AuthContext";
 import RoleRoute from "./auth/RoleRoute";
@@ -12,11 +13,21 @@ import UserDashboard from "./components/dashboard/user/Dashboard";
 import AcLandPage from "./components/dashboard/acland/Dashboard";
 import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
+import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 5000, // 5 sec auto close
+            style: { fontSize: "14px", borderRadius: "10px" },
+            success: { icon: "✅" },
+            error: { icon: "⚠️" },
+          }}
+        />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register />} />
@@ -37,6 +48,15 @@ function App() {
             element={
               <RoleRoute allow={["admin"]}>
                 <AdminDivisions />
+              </RoleRoute>
+            }
+          />
+
+          <Route
+            path="/admin/districts"
+            element={
+              <RoleRoute allow={["admin"]}>
+                <AdminDistricts />
               </RoleRoute>
             }
           />
