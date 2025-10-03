@@ -106,14 +106,14 @@ export default function AdminLayout() {
           }`}
         >
           <div className="flex items-center justify-between p-6 border-b border-white/20">
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-xl">
                 <Database className="h-5 w-5 text-blue-600" />
               </div>
               <span className="text-sm font-semibold text-gray-600">
                 Navigation Panel
               </span>
-            </div>
+            </div> */}
             <button
               className="md:hidden p-2 rounded-xl hover:bg-white/50 transition-all duration-200"
               onClick={() => setSidebarOpen(false)}

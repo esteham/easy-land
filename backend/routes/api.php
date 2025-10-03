@@ -51,7 +51,18 @@ Route::get('/locations/dags/{dag}', function (Dag $dag) {
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/dashboard', fn() => response()->json(['stats' => ['users' => 100, 'posts' => 50]]));
+    Route::get('/dashboard', function () {
+        return response()->json([
+            'stats' => [
+                'divisions' => Division::count(),
+                'districts' => District::count(),
+                'upazilas' => Upazila::count(),
+                'mouzas' => Mouza::count(),
+                'zils' => Zil::count(),
+                'dags' => Dag::count(),
+            ]
+        ]);
+    });
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/stats', fn() => response()->json(['ok' => 'admin only']));
