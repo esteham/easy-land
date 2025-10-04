@@ -44,7 +44,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <RoleRoute allow={["admin"]}>
+              <RoleRoute allow={["admin", "acland"]}>
                 <AdminLayout /> {/* <-- has the sidebar + <Outlet/> */}
               </RoleRoute>
             }
@@ -60,6 +60,7 @@ function App() {
           </Route>
 
           {/* ACLand area (unchanged) */}
+          {/* Consider removing or redirecting this route if acland users use /admin now */}
           <Route
             path="/acLand"
             element={
