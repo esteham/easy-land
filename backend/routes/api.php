@@ -52,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/me/change-password', [AuthController::class, 'changePassword']);
     Route::get('/dashboard', function () {
         return response()->json([
             'stats' => [
