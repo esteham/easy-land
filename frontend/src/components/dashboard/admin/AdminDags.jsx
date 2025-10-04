@@ -11,14 +11,58 @@ export default function AdminDags() {
     id: null,
     zil_id: "",
     dag_no: "",
-    khotiyan: "",
-    meta: "",
+    khotiyan: "", // will hold JSON string (array of {owner, area})
+    meta: "", // will hold JSON string (object)
+    document: null,
   });
 
+  // ---------- helpers ----------
+  const safeParse = (v, fb) => {
+    if (!v || !String(v).trim()) return fb;
+    try {
+      return JSON.parse(v);
+    } catch {
+      return fb;
+    }
+  };
+
+  const getKhotiyanArray = () => {
+    const arr = safeParse(form.khotiyan, []);
+    return Array.isArray(arr) ? arr : [];
+  };
+  const setKhotiyanArray = (arr) => {
+    setForm((f) => ({ ...f, khotiyan: JSON.stringify(arr) }));
+  };
+
+  // quick-entry small states
+  const [ownerInput, setOwnerInput] = useState("");
+  const [areaInput, setAreaInput] = useState("");
+
+  const addKhotiyanItem = () => {
+    const owner = ownerInput.trim();
+    const area = areaInput.trim();
+    if (!owner || !area) {
+      toast.error("Owner and Area are required");
+      return;
+    }
+    const arr = getKhotiyanArray();
+    arr.push({ owner, area });
+    setKhotiyanArray(arr);
+    setOwnerInput("");
+    setAreaInput("");
+  };
+
+  const removeKhotiyanItem = (idx) => {
+    const arr = getKhotiyanArray();
+    arr.splice(idx, 1);
+    setKhotiyanArray(arr);
+  };
+
+  // ---------- data loaders ----------
   const loadZils = async () => {
     try {
       const { data } = await api.get("/admin/zils");
-      setZils(data);
+      setZils(data || []);
     } catch (e) {
       console.error("Failed to load zils", e);
     }
@@ -28,7 +72,7 @@ export default function AdminDags() {
     try {
       setLoading(true);
       const { data } = await api.get("/admin/dags");
-      setItems(data);
+      setItems(Array.isArray(data) ? data : []);
     } catch (e) {
       toast.error(
         e?.response?.data?.message || e.message || "Failed to load dags"
@@ -43,30 +87,55 @@ export default function AdminDags() {
     load();
   }, []);
 
+  // ---------- submit ----------
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const khotiyan = form.khotiyan ? JSON.parse(form.khotiyan) : null;
-      const meta = form.meta ? JSON.parse(form.meta) : null;
+
+      // normalize khotiyan to array
+      const khArr = getKhotiyanArray(); // array of {owner, area}
+      if (!Array.isArray(khArr)) {
+        toast.error("Khotiyan must be an array");
+        setLoading(false);
+        return;
+      }
+
+      // normalize meta to object
+      const metaObj = safeParse(form.meta, {});
+
+      if (Array.isArray(metaObj)) {
+        toast.error('Meta must be an object (e.g., {"note":"..."})');
+        setLoading(false);
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append("zil_id", form.zil_id);
+      fd.append("dag_no", form.dag_no);
+      fd.append("khotiyan", JSON.stringify(khArr));
+      fd.append("meta", JSON.stringify(metaObj));
+      if (form.document) fd.append("document", form.document);
+
       if (form.id) {
-        await api.put(`/admin/dags/${form.id}`, {
-          zil_id: form.zil_id,
-          dag_no: form.dag_no,
-          khotiyan,
-          meta,
-        });
+        // safer for multipart: POST with _method=PUT
+        await api.post(`/admin/dags/${form.id}?_method=PUT`, fd);
         toast.success("Dag updated successfully");
       } else {
-        await api.post(`/admin/dags`, {
-          zil_id: form.zil_id,
-          dag_no: form.dag_no,
-          khotiyan,
-          meta,
-        });
+        await api.post(`/admin/dags`, fd);
         toast.success("Dag added successfully");
       }
-      setForm({ id: null, zil_id: "", dag_no: "", khotiyan: "", meta: "" });
+
+      setForm({
+        id: null,
+        zil_id: "",
+        dag_no: "",
+        khotiyan: "",
+        meta: "",
+        document: null,
+      });
+      setOwnerInput("");
+      setAreaInput("");
       await load();
     } catch (e) {
       toast.error(e?.response?.data?.message || e.message || "Save failed");
@@ -75,13 +144,15 @@ export default function AdminDags() {
     }
   };
 
+  // ---------- edit/delete ----------
   const onEdit = (it) =>
     setForm({
       id: it.id,
-      zil_id: it.zil_id,
-      dag_no: it.dag_no,
+      zil_id: it.zil_id ?? "",
+      dag_no: it.dag_no ?? "",
       khotiyan: it.khotiyan ? JSON.stringify(it.khotiyan) : "",
       meta: it.meta ? JSON.stringify(it.meta) : "",
+      document: null, // reset; user can re-upload if needed
     });
 
   const onDelete = async (id) => {
@@ -98,6 +169,7 @@ export default function AdminDags() {
     }
   };
 
+  // ---------- UI ----------
   return (
     <div className="max-w-5xl mx-auto p-4">
       <h2 className="text-2xl font-semibold mb-4">Manage Dags</h2>
@@ -106,7 +178,7 @@ export default function AdminDags() {
         onSubmit={onSubmit}
         className="bg-white border rounded p-4 mb-6 space-y-3"
       >
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           <div>
             <label className="text-sm">Zil</label>
             <select
@@ -123,6 +195,7 @@ export default function AdminDags() {
               ))}
             </select>
           </div>
+
           <div>
             <label className="text-sm">Dag No</label>
             <input
@@ -132,25 +205,114 @@ export default function AdminDags() {
               required
             />
           </div>
-          <div>
-            <label className="text-sm">Khotiyan (JSON)</label>
+
+          {/* Quick Khotiyan Builder (Owner + Area -> builds array) */}
+          <div className="md:col-span-3 border rounded p-3">
+            <label className="text-sm font-medium block mb-2">
+              Quick Khotiyan Entry
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <input
+                className="border rounded p-2"
+                placeholder="Owner name (e.g., Abul)"
+                value={ownerInput}
+                onChange={(e) => setOwnerInput(e.target.value)}
+              />
+              <input
+                className="border rounded p-2"
+                placeholder="Area (e.g., 100 sqft)"
+                value={areaInput}
+                onChange={(e) => setAreaInput(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={addKhotiyanItem}
+                className="bg-emerald-600 text-white rounded px-3"
+              >
+                Add
+              </button>
+            </div>
+
+            {/* Preview current khotiyan rows */}
+            <div className="mt-3 overflow-x-auto">
+              <table className="w-full text-sm border">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="text-left p-2 border-r">#</th>
+                    <th className="text-left p-2 border-r">Owner</th>
+                    <th className="text-left p-2 border-r">Area</th>
+                    <th className="text-left p-2">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {getKhotiyanArray().map((row, idx) => (
+                    <tr key={idx} className="border-t">
+                      <td className="p-2 border-r">{idx + 1}</td>
+                      <td className="p-2 border-r">{row.owner}</td>
+                      <td className="p-2 border-r">{row.area}</td>
+                      <td className="p-2">
+                        <button
+                          type="button"
+                          className="text-red-600"
+                          onClick={() => removeKhotiyanItem(idx)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {getKhotiyanArray().length === 0 && (
+                    <tr>
+                      <td className="p-2 text-gray-500 text-center" colSpan={4}>
+                        No khotiyan rows yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* raw JSON textarea for power users / debug */}
+            <label className="text-xs text-gray-500 block mt-2">
+              Khotiyan (JSON) — optional manual edit
+            </label>
             <textarea
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 text-xs"
+              rows={3}
               value={form.khotiyan}
               onChange={(e) => setForm({ ...form, khotiyan: e.target.value })}
-              placeholder="[]"
+              placeholder='[{"owner":"Owner1","area":"100 sqft"}]'
             />
           </div>
+
           <div>
             <label className="text-sm">Meta (JSON)</label>
             <textarea
               className="w-full border rounded p-2"
               value={form.meta}
               onChange={(e) => setForm({ ...form, meta: e.target.value })}
-              placeholder="{}"
+              placeholder='{"note":"optional"}'
             />
           </div>
+
+          <div>
+            <label className="text-sm">Document (Image/PDF)</label>
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              className="w-full border rounded p-2"
+              onChange={(e) =>
+                setForm({ ...form, document: e.target.files?.[0] || null })
+              }
+            />
+            {form.document && (
+              <div className="text-xs text-gray-600 mt-1">
+                Selected: {form.document.name}
+              </div>
+            )}
+          </div>
         </div>
+
         <div className="flex gap-2">
           <button
             disabled={loading}
@@ -169,6 +331,7 @@ export default function AdminDags() {
                   dag_no: "",
                   khotiyan: "",
                   meta: "",
+                  document: null,
                 })
               }
             >
@@ -185,6 +348,7 @@ export default function AdminDags() {
               <th className="text-left p-2">ID</th>
               <th className="text-left p-2">Zil No</th>
               <th className="text-left p-2">Dag No</th>
+              <th className="text-left p-2">Document</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
@@ -194,6 +358,29 @@ export default function AdminDags() {
                 <td className="p-2">{it.id}</td>
                 <td className="p-2">{it.zil?.zil_no || "-"}</td>
                 <td className="p-2">{it.dag_no}</td>
+                <td className="p-2">
+                  {it.document_url ? (
+                    <div className="flex gap-2">
+                      <a
+                        href={it.document_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-600"
+                      >
+                        View
+                      </a>
+                      <a
+                        href={it.document_url}
+                        download
+                        className="text-green-600"
+                      >
+                        Download
+                      </a>
+                    </div>
+                  ) : (
+                    <span className="text-gray-500">-</span>
+                  )}
+                </td>
                 <td className="p-2 text-right">
                   <button
                     className="text-indigo-600 mr-3"
@@ -212,7 +399,7 @@ export default function AdminDags() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td className="p-3 text-center text-gray-500" colSpan={4}>
+                <td className="p-3 text-center text-gray-500" colSpan={5}>
                   {loading ? "Loading..." : "No dags found."}
                 </td>
               </tr>

@@ -9,7 +9,9 @@ class Dag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['zil_id', 'dag_no', 'khotiyan', 'meta'];
+    protected $fillable = [
+                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document'
+            ];
 
     protected $casts = [
         'meta' => 'array',
@@ -19,5 +21,11 @@ class Dag extends Model
     public function zil()
     {
         return $this->belongsTo(Zil::class);
+    }
+    
+    // for frontend convenience
+    public function getDocumentUrlAttribute()
+    {
+        return $this->document ? asset('storage/'.$this->document) : null;
     }
 }

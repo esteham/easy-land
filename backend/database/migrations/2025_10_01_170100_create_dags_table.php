@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('dag_no');
             $table->json('khotiyan')->nullable();
             $table->json('meta')->nullable();
+            $table->string('document')->nullable(); // storage/app/public/dags/...
             $table->timestamps();
 
             $table->index('zil_id');
