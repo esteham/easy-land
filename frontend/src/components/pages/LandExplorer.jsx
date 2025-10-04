@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import api from "../../api";
 
 export default function LandExplorer() {
-  //Collections
+  // Collections
   const [divisions, setDivisions] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [upazilas, setUpazilas] = useState([]);
@@ -10,7 +10,7 @@ export default function LandExplorer() {
   const [zils, setZils] = useState([]);
   const [dags, setDags] = useState([]);
 
-  //Selected IDs
+  // Selected IDs
   const [divisionId, setDivisionId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [upazilaId, setUpazilaId] = useState("");
@@ -18,94 +18,93 @@ export default function LandExplorer() {
   const [zilId, setZilId] = useState("");
   const [dagId, setDagId] = useState("");
 
-  //Details
+  // Details / UI
   const [dagDetail, setDagDetail] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  //Load Divisions
+  // Dag search (scoped to selected Zil)
+  const [dagSearch, setDagSearch] = useState("");
+
+  // Load Divisions
   useEffect(() => {
-    const fetchDivisions = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get("/locations/divisions");
         setDivisions(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load divisions");
       } finally {
         setLoading(false);
       }
-    };
-    fetchDivisions();
+    })();
   }, []);
 
-  //Division -> Districts
+  // Division -> Districts
   useEffect(() => {
     if (!divisionId) {
       setDistricts([]);
       setDistrictId("");
       return;
     }
-    const fetchDistricts = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(
           `/locations/divisions/${divisionId}/districts`
         );
         setDistricts(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load districts");
       } finally {
         setLoading(false);
       }
-    };
-    fetchDistricts();
+    })();
   }, [divisionId]);
 
-  //District -> Upazilas
+  // District -> Upazilas
   useEffect(() => {
     if (!districtId) {
       setUpazilas([]);
       setUpazilaId("");
       return;
     }
-    const fetchUpazilas = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(
           `/locations/districts/${districtId}/upazilas`
         );
         setUpazilas(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load upazilas");
       } finally {
         setLoading(false);
       }
-    };
-    fetchUpazilas();
+    })();
   }, [districtId]);
 
-  //Upazila -> Mouzas
+  // Upazila -> Mouzas
   useEffect(() => {
     if (!upazilaId) {
       setMouzas([]);
       setMouzaId("");
       return;
     }
-    const fetchMouzas = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(
           `/locations/upazilas/${upazilaId}/mouzas`
         );
         setMouzas(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load mouzas");
       } finally {
         setLoading(false);
       }
-    };
-    fetchMouzas();
+    })();
   }, [upazilaId]);
 
   // Mouza -> Zils
@@ -115,20 +114,20 @@ export default function LandExplorer() {
     setDags([]);
     setDagId("");
     setDagDetail(null);
+    setDagSearch("");
     if (!mouzaId) return;
 
-    const run = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(`/locations/mouzas/${mouzaId}/zils`);
         setZils(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load zils");
       } finally {
         setLoading(false);
       }
-    };
-    run();
+    })();
   }, [mouzaId]);
 
   // Zil -> Dags
@@ -136,44 +135,68 @@ export default function LandExplorer() {
     setDags([]);
     setDagId("");
     setDagDetail(null);
+    setDagSearch("");
     if (!zilId) return;
 
-    const run = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(`/locations/zils/${zilId}/dags`);
         setDags(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load dags");
       } finally {
         setLoading(false);
       }
-    };
-    run();
+    })();
   }, [zilId]);
 
-  // Dag -> detail
+  // Dag -> Detail
   useEffect(() => {
     setDagDetail(null);
     if (!dagId) return;
 
-    const run = async () => {
+    (async () => {
       try {
         setLoading(true);
         const { data } = await api.get(`/locations/dags/${dagId}`);
         setDagDetail(data);
-      } catch (e) {
+      } catch {
         setError("Failed to load dag detail");
       } finally {
         setLoading(false);
       }
-    };
-    run();
+    })();
   }, [dagId]);
+
+  // Filter dags by search
+  const filteredDags = useMemo(() => {
+    const q = dagSearch.trim().toLowerCase();
+    if (!q) return dags;
+    return dags.filter((d) => String(d.dag_no).toLowerCase().includes(q));
+  }, [dags, dagSearch]);
+
+  const handleFindDag = () => {
+    if (!zilId || !dagSearch.trim()) return;
+    const q = dagSearch.trim().toLowerCase();
+    const exact = dags.find((d) => String(d.dag_no).toLowerCase() === q);
+    if (exact) {
+      setDagId(String(exact.id));
+      return;
+    }
+    if (filteredDags.length > 0) setDagId(String(filteredDags[0].id));
+  };
+
+  const onDagSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleFindDag();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Land Explorer</h1>
 
         {error && (
@@ -182,163 +205,247 @@ export default function LandExplorer() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Division</label>
-            <select
-              className="w-full border rounded p-2"
-              value={divisionId}
-              onChange={(e) => {
-                setDivisionId(e.target.value);
-                setDistrictId("");
-                setUpazilaId("");
-                setMouzaId("");
-              }}
-            >
-              <option value="">Select Division</option>
-              {divisions.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name_bn}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Two-column layout: Left = Geo selectors, Right = Zils + Dags + Detail */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* LEFT: Geo Sidebar */}
+          <aside className="lg:col-span-1">
+            <div className="bg-white border rounded p-4 lg:sticky lg:top-4 space-y-4">
+              <h2 className="text-lg font-semibold">Geolocation</h2>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">District</label>
-            <select
-              className="w-full border rounded p-2"
-              value={districtId}
-              onChange={(e) => {
-                setDistrictId(e.target.value);
-                setUpazilaId("");
-                setMouzaId("");
-              }}
-              disabled={!divisionId || loading}
-            >
-              <option value="">Select District</option>
-              {districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name_bn}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Upazila</label>
-            <select
-              className="w-full border rounded p-2"
-              value={upazilaId}
-              onChange={(e) => {
-                setUpazilaId(e.target.value);
-                setMouzaId("");
-              }}
-              disabled={!districtId || loading}
-            >
-              <option value="">Select Upazila</option>
-              {upazilas.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name_bn}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Mouza</label>
-            <select
-              className="w-full border rounded p-2"
-              value={mouzaId}
-              onChange={(e) => setMouzaId(e.target.value)}
-              disabled={!upazilaId || loading}
-            >
-              <option value="">Select Mouza</option>
-              {mouzas.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name_bn} {m.jl_no ? `(JL: ${m.jl_no})` : ""}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Zils */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-2">Zils (Map/Zone)</h2>
-          {!mouzaId ? (
-            <p className="text-gray-500">Select a Mouza to view Zils.</p>
-          ) : zils.length === 0 ? (
-            <p className="text-gray-500">No Zils found.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {zils.map((z) => (
-                <div
-                  key={z.id}
-                  className={`border rounded p-3 cursor-pointer hover:shadow ${
-                    String(zilId) === String(z.id)
-                      ? "ring-2 ring-indigo-500"
-                      : ""
-                  }`}
-                  onClick={() => setZilId(String(z.id))}
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Division
+                </label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={divisionId}
+                  onChange={(e) => {
+                    setDivisionId(e.target.value);
+                    setDistrictId("");
+                    setUpazilaId("");
+                    setMouzaId("");
+                  }}
                 >
-                  <div className="font-semibold">Zil: {z.zil_no}</div>
-                  {z.map_url ? (
-                    <img
-                      src={z.map_url}
-                      alt={`Zil ${z.zil_no} map`}
-                      className="mt-2 w-full h-32 object-cover rounded"
+                  <option value="">Select Division</option>
+                  {divisions.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name_bn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  District
+                </label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={districtId}
+                  onChange={(e) => {
+                    setDistrictId(e.target.value);
+                    setUpazilaId("");
+                    setMouzaId("");
+                  }}
+                  disabled={!divisionId || loading}
+                >
+                  <option value="">Select District</option>
+                  {districts.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name_bn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Upazila
+                </label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={upazilaId}
+                  onChange={(e) => {
+                    setUpazilaId(e.target.value);
+                    setMouzaId("");
+                  }}
+                  disabled={!districtId || loading}
+                >
+                  <option value="">Select Upazila</option>
+                  {upazilas.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name_bn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Mouza</label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={mouzaId}
+                  onChange={(e) => setMouzaId(e.target.value)}
+                  disabled={!upazilaId || loading}
+                >
+                  <option value="">Select Mouza</option>
+                  {mouzas.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name_bn} {m.jl_no ? `(JL: ${m.jl_no})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </aside>
+
+          {/* RIGHT: Content */}
+          <main className="lg:col-span-2 space-y-8">
+            {/* Zils */}
+            <section>
+              <h2 className="text-xl font-semibold mb-2">Zils (Map/Zone)</h2>
+              {!mouzaId ? (
+                <p className="text-gray-500">Select a Mouza to view Zils.</p>
+              ) : zils.length === 0 ? (
+                <p className="text-gray-500">No Zils found.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {zils.map((z) => (
+                    <div
+                      key={z.id}
+                      className={`border rounded p-3 cursor-pointer hover:shadow ${
+                        String(zilId) === String(z.id)
+                          ? "ring-2 ring-indigo-500"
+                          : ""
+                      }`}
+                      onClick={() => setZilId(String(z.id))}
+                    >
+                      <div className="font-semibold">Zil: {z.zil_no}</div>
+                      {z.map_url ? (
+                        <img
+                          src={z.map_url}
+                          alt={`Zil ${z.zil_no} map`}
+                          className="mt-2 w-full h-32 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="mt-2 text-xs text-gray-500">No map</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            {/* Dags + Search */}
+            <section>
+              <h2 className="text-xl font-semibold mb-2">Dags (Plots)</h2>
+              {!zilId ? (
+                <p className="text-gray-500">Select a Zil to view Dags.</p>
+              ) : (
+                <>
+                  {/* Search bar */}
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-3">
+                    <input
+                      type="text"
+                      className="border rounded p-2 w-full md:w-64"
+                      placeholder="Search dag no (e.g., 123)"
+                      value={dagSearch}
+                      onChange={(e) => setDagSearch(e.target.value)}
+                      onKeyDown={onDagSearchKeyDown}
+                      disabled={!zilId || loading}
                     />
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        className="px-3 py-2 rounded bg-indigo-600 text-white"
+                        onClick={handleFindDag}
+                        disabled={!zilId || loading || !dagSearch.trim()}
+                      >
+                        Find
+                      </button>
+                      {dagSearch && (
+                        <button
+                          type="button"
+                          className="px-3 py-2 rounded border"
+                          onClick={() => setDagSearch("")}
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 md:ml-2">
+                      Showing {filteredDags.length} of {dags.length}
+                    </div>
+                  </div>
+
+                  {dags.length === 0 ? (
+                    <p className="text-gray-500">No Dags found.</p>
+                  ) : filteredDags.length === 0 ? (
+                    <p className="text-gray-500">
+                      No matches for “{dagSearch}”.
+                    </p>
                   ) : (
-                    <div className="mt-2 text-xs text-gray-500">No map</div>
+                    <div className="flex flex-wrap gap-2">
+                      {filteredDags.map((d) => (
+                        <button
+                          key={d.id}
+                          onClick={() => setDagId(String(d.id))}
+                          className={`px-3 py-1 border rounded text-sm ${
+                            String(dagId) === String(d.id)
+                              ? "bg-indigo-600 text-white border-indigo-600"
+                              : "hover:bg-gray-50"
+                          }`}
+                          title={`Dag ${d.dag_no}`}
+                        >
+                          Dag {d.dag_no}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+
+            {/* Dag Detail */}
+            <section>
+              <h2 className="text-xl font-semibold mb-2">
+                Khotiyan (Land Record)
+              </h2>
+              {!dagId ? (
+                <p className="text-gray-500">Select a Dag to view khotiyan.</p>
+              ) : dagDetail ? (
+                <div className="bg-white border rounded p-4 text-sm">
+                  <div className="mb-2 text-gray-600">
+                    Dag: {dagDetail.dag_no}
+                  </div>
+                  <pre className="bg-gray-50 p-3 rounded border overflow-auto">
+                    {JSON.stringify(dagDetail.khotiyan, null, 2)}
+                  </pre>
+                  {dagDetail.document_url && (
+                    <div className="mt-2 flex gap-3">
+                      <a
+                        className="text-blue-600 underline"
+                        href={dagDetail.document_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        View Document
+                      </a>
+                      <a
+                        className="text-green-600 underline"
+                        href={dagDetail.document_url}
+                        download
+                      >
+                        Download
+                      </a>
+                    </div>
                   )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Dags */}
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Dags (Plots)</h2>
-          {!zilId ? (
-            <p className="text-gray-500">Select a Zil to view Dags.</p>
-          ) : dags.length === 0 ? (
-            <p className="text-gray-500">No Dags found.</p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {dags.map((d) => (
-                <button
-                  key={d.id}
-                  onClick={() => setDagId(String(d.id))}
-                  className={`px-3 py-1 border rounded text-sm ${
-                    String(dagId) === String(d.id)
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "hover:bg-gray-50"
-                  }`}
-                >
-                  Dag {d.dag_no}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Dag detail */}
-        <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Khotiyan (Land Record)</h2>
-          {!dagId ? (
-            <p className="text-gray-500">Select a Dag to view khotiyan.</p>
-          ) : dagDetail ? (
-            <div className="bg-white border rounded p-4 text-sm">
-              <div className="mb-2 text-gray-600">Dag: {dagDetail.dag_no}</div>
-              <pre className="bg-gray-50 p-3 rounded border overflow-auto">
-                {JSON.stringify(dagDetail.khotiyan, null, 2)}
-              </pre>
-            </div>
-          ) : (
-            <div className="text-gray-500">Loading...</div>
-          )}
+              ) : (
+                <div className="text-gray-500">Loading...</div>
+              )}
+            </section>
+          </main>
         </div>
       </div>
     </div>
