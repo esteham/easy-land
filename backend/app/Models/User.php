@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 
 use Laravel\Passport\HasApiTokens;
 
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -51,4 +53,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $frontend = config('app.frontend_url', 'http://localhost:5173');
+        $url = $frontend.'/reset-password?token='.$token.'&email='.urlencode($this->email);
+        $this->notify(new ResetPasswordNotification($url));
+    }
+
 }

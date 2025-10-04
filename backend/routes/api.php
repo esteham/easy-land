@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PasswordController;
+
 use App\Models\Division;
 use App\Models\District;
 use App\Models\Upazila;
@@ -17,6 +20,12 @@ use App\Http\Controllers\API\DagController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
+
+// Forgot/Reset (no auth)
+Route::post('/password/forgot', [PasswordController::class, 'sendResetLink'])
+    ->middleware('throttle:6,1');
+Route::post('/password/reset',  [PasswordController::class, 'resetPassword'])
+    ->middleware('throttle:6,1');
 
 // Public cascading location endpoints
 Route::get('/locations/divisions', function () {

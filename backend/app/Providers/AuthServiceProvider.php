@@ -21,9 +21,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Register Passport routes (needed when issuing tokens from the app)
-        Passport::routes();
-
         // Optional token lifetimes:
         // Passport::tokensExpireIn(now()->addDays(7));
         // Passport::refreshTokensExpireIn(now()->addDays(30));

@@ -9,6 +9,9 @@ import HomePage from "./components/pages/HomePage";
 import Register from "./components/pages/Register";
 import Login from "./components/pages/Login";
 
+import ForgotPassword from "./components/pages/ForgotPassword";
+import ResetPassword from "./components/pages/ResetPassword";
+
 import AdminLayout, { AdminHome } from "./components/dashboard/admin/Dashboard";
 import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
@@ -38,6 +41,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/land" element={<LandExplorer />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* --- ADMIN: parent layout keeps the sidebar persistent --- */}
           <Route
@@ -57,9 +62,6 @@ function App() {
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
           </Route>
-
-
-
           {/* User dashboard (unchanged) */}
           <Route
             path="/dashboard"
@@ -69,7 +71,6 @@ function App() {
               </RoleRoute>
             }
           />
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
