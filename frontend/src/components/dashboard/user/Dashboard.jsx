@@ -59,6 +59,49 @@ export default function UserDashboard() {
     }
   };
 
+  //change password
+  const [showPwdForm, setShowPwdForm] = useState(false);
+
+  // password form state
+  const [pwdForm, setPwdForm] = useState({
+    current_password: "",
+    password: "",
+    password_confirmation: "",
+  });
+  const [pwdLoading, setPwdLoading] = useState(false);
+  const [pwdErrors, setPwdErrors] = useState({});
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPwdLoading(true);
+    setPwdErrors({});
+    try {
+      await api.post("/me/change-password", pwdForm);
+      setPwdForm({
+        current_password: "",
+        password: "",
+        password_confirmation: "",
+      });
+      setShowPwdForm(false);
+      // replace with your toast if you use one
+      alert("Password updated successfully");
+    } catch (err) {
+      setPwdErrors(err?.response?.data?.errors || {});
+    } finally {
+      setPwdLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setShowPwdForm(false);
+    setPwdErrors({});
+    setPwdForm({
+      current_password: "",
+      password: "",
+      password_confirmation: "",
+    });
+  }, [activeTab]);
+
   const renderContent = () => {
     switch (activeTab) {
       case "Personal Information":
@@ -296,13 +339,111 @@ export default function UserDashboard() {
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               Security Settings
             </h2>
-            <p className="text-gray-600 mb-4">
-              Manage password and two-factor authentication.
-            </p>
-            <div className="space-y-4">
-              <button className="px-4 py-2 rounded-md border">
+
+            {!showPwdForm ? (
+              // Show only the button first
+              <button
+                className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                onClick={() => setShowPwdForm(true)}
+              >
                 Change Password
               </button>
+            ) : (
+              // Show the form after button click
+              <form
+                onSubmit={handleChangePassword}
+                className="space-y-4 max-w-md"
+              >
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    className="mt-1 block w-full border rounded-md px-3 py-2"
+                    value={pwdForm.current_password}
+                    onChange={(e) =>
+                      setPwdForm({
+                        ...pwdForm,
+                        current_password: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                  {pwdErrors.current_password && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {pwdErrors.current_password[0]}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    className="mt-1 block w-full border rounded-md px-3 py-2"
+                    value={pwdForm.password}
+                    onChange={(e) =>
+                      setPwdForm({ ...pwdForm, password: e.target.value })
+                    }
+                    required
+                  />
+                  {pwdErrors.password && (
+                    <p className="text-sm text-red-600 mt-1">
+                      {pwdErrors.password[0]}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    className="mt-1 block w-full border rounded-md px-3 py-2"
+                    value={pwdForm.password_confirmation}
+                    onChange={(e) =>
+                      setPwdForm({
+                        ...pwdForm,
+                        password_confirmation: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={pwdLoading}
+                    className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
+                  >
+                    {pwdLoading ? "Saving..." : "Save Password"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPwdForm(false);
+                      setPwdErrors({});
+                      setPwdForm({
+                        current_password: "",
+                        password: "",
+                        password_confirmation: "",
+                      });
+                    }}
+                    className="px-4 py-2 rounded-md border"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* (Optional) 2FA or other security actions */}
+            <div className="mt-6 space-x-2">
               <button className="px-4 py-2 rounded-md border">
                 Enable 2FA
               </button>
