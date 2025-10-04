@@ -45,7 +45,7 @@ export default function AdminLayout() {
             <Menu className="h-5 w-5" />
           </button>
           <Link
-            to="/"
+            to="/admin"
             className="flex items-center gap-3 font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
           >
             <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white">
@@ -365,7 +365,7 @@ export function AdminHome() {
             activities, manage data, and track system performance.
           </p>
         </div>
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <Link
             to="/admin/khatian"
             className="flex items-center gap-2 text-sm px-4 py-3 rounded-2xl border border-gray-300 bg-white hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-200"
@@ -380,7 +380,7 @@ export function AdminHome() {
             <Database className="h-4 w-4" />
             Manage Data
           </Link>
-        </div>
+        </div> */}
       </div>
 
       {/* Error State */}
