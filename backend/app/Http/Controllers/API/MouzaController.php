@@ -17,6 +17,9 @@ class MouzaController extends Controller
 
     public function store(Request $request)
     {
+        // if ($request->user()->role !== 'admin') {
+        //     return response()->json(['message' => 'Forbidden'], 403);
+        // }
         $data = $request->validate([
             'upazila_id' => 'required|exists:upazilas,id',
             'name_en' => 'required|string',
@@ -36,6 +39,9 @@ class MouzaController extends Controller
 
     public function update(Request $request, Mouza $mouza)
     {
+        // if ($request->user()->role !== 'admin') {
+        //     return response()->json(['message' => 'Forbidden'], 403);
+        // }
         $data = $request->validate([
             'upazila_id' => 'sometimes|exists:upazilas,id',
             'name_en' => 'sometimes|required|string',
@@ -50,6 +56,9 @@ class MouzaController extends Controller
 
     public function destroy(Mouza $mouza)
     {
+        if (request()->user()->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
         $mouza->delete();
         return response()->json(['deleted' => true]);
     }

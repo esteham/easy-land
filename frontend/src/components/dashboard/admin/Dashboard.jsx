@@ -83,7 +83,11 @@ export default function AdminLayout() {
               </span>
               <span className="text-xs text-gray-500 flex items-center gap-1">
                 <Shield className="h-3 w-3" />
-                {user?.role === 'admin' ? 'Administrator' : user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User'}
+                {user?.role === "admin"
+                  ? "Administrator"
+                  : user?.role
+                  ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                  : "User"}
               </span>
             </div>
           </div>
@@ -131,14 +135,20 @@ export default function AdminLayout() {
             <SectionTitle icon={<Globe className="h-4 w-4" />}>
               Geographic Data
             </SectionTitle>
-            {user?.role === 'admin' && (
-              <SideLink to="divisions" icon={<Layers3 className="h-4 w-4" />}>
-                Divisions
-              </SideLink>
+            {user?.role === "admin" && (
+              <>
+                <SideLink to="divisions" icon={<Layers3 className="h-4 w-4" />}>
+                  Divisions
+                </SideLink>
+                <SideLink
+                  to="districts"
+                  icon={<Building2 className="h-4 w-4" />}
+                >
+                  Districts
+                </SideLink>
+              </>
             )}
-            <SideLink to="districts" icon={<Building2 className="h-4 w-4" />}>
-              Districts
-            </SideLink>
+
             <SideLink to="upazilas" icon={<Landmark className="h-4 w-4" />}>
               Upazilas / Thana
             </SideLink>
@@ -146,19 +156,15 @@ export default function AdminLayout() {
               Mouzas
             </SideLink>
 
-            {user?.role === 'admin' && (
-              <>
-                <SectionTitle icon={<BarChart3 className="h-4 w-4" />}>
-                  Land Records
-                </SectionTitle>
-                <SideLink to="zils" icon={<SquareGanttChart className="h-4 w-4" />}>
-                  Zils (Sheet)
-                </SideLink>
-                <SideLink to="dags" icon={<Map className="h-4 w-4" />}>
-                  Dags
-                </SideLink>
-              </>
-            )}
+            <SectionTitle icon={<BarChart3 className="h-4 w-4" />}>
+              Land Records
+            </SectionTitle>
+            <SideLink to="zils" icon={<SquareGanttChart className="h-4 w-4" />}>
+              Zils (Sheet)
+            </SideLink>
+            <SideLink to="dags" icon={<Map className="h-4 w-4" />}>
+              Dags
+            </SideLink>
 
             <SectionTitle icon={<FileText className="h-4 w-4" />}>
               Documents

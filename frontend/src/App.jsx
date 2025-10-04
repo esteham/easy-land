@@ -19,7 +19,6 @@ import AdminZils from "./components/dashboard/admin/AdminZils";
 import AdminDags from "./components/dashboard/admin/AdminDags";
 
 import UserDashboard from "./components/dashboard/user/Dashboard";
-import AcLandPage from "./components/dashboard/acland/Dashboard";
 
 function App() {
   return (
@@ -59,16 +58,7 @@ function App() {
             <Route path="dags" element={<AdminDags />} />
           </Route>
 
-          {/* ACLand area (unchanged) */}
-          {/* Consider removing or redirecting this route if acland users use /admin now */}
-          <Route
-            path="/acLand"
-            element={
-              <RoleRoute allow={["acland"]}>
-                <AcLandPage />
-              </RoleRoute>
-            }
-          />
+
 
           {/* User dashboard (unchanged) */}
           <Route
