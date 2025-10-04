@@ -67,4 +67,21 @@ class AuthController extends Controller
         $request->user()->token()->revoke(); // Passport
         return response()->json(['message' => 'Logged out']);
     }
+
+    public function update(Request $request)
+    {
+        $user = $request->user();
+        $data = $request->validate([
+            'name' => ['required','string','max:255'],
+            'email' => ['required','email','unique:users,email,'.$user->id],
+            'phone' => ['nullable','string','max:20'],
+        ]);
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+        ]);
+    }
 }

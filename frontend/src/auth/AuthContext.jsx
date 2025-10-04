@@ -55,8 +55,14 @@ export default function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+  };
+
   return (
-    <AuthCtx.Provider value={{ user, loading, register, login, logout }}>
+    <AuthCtx.Provider
+      value={{ user, loading, register, login, logout, updateUser }}
+    >
       {children}
     </AuthCtx.Provider>
   );

@@ -50,6 +50,7 @@ Route::get('/locations/dags/{dag}', function (Dag $dag) {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
+    Route::put('/me', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/dashboard', function () {
         return response()->json([
