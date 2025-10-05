@@ -39,6 +39,11 @@ export default function AuthProvider({ children }) {
     return data;
   };
 
+  const checkEmail = async (email) => {
+    const { data } = await api.post("/check-email", { email });
+    return data;
+  };
+
   const login = async (payload) => {
     const { data } = await api.post("/login", payload);
     localStorage.setItem("token", data.token);
@@ -62,7 +67,7 @@ export default function AuthProvider({ children }) {
 
   return (
     <AuthCtx.Provider
-      value={{ user, loading, register, login, logout, updateUser }}
+      value={{ user, loading, register, login, logout, updateUser, checkEmail }}
     >
       {children}
     </AuthCtx.Provider>

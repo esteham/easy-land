@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import AuthShell from "./AuthShell";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -11,11 +11,26 @@ import {
   Lock,
   UserPlus,
   Loader2,
+  Check,
+  X,
 } from "lucide-react";
+
+// Debounce utility function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 export default function Register() {
   const nav = useNavigate();
-  const { register } = useAuth();
+  const { register, checkEmail } = useAuth();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +43,31 @@ export default function Register() {
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [emailAvailable, setEmailAvailable] = useState(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+
+  const debouncedCheckEmail = useCallback(
+    debounce(async (email) => {
+      if (!email || !email.includes("@")) {
+        setEmailAvailable(null);
+        return;
+      }
+      setCheckingEmail(true);
+      try {
+        const result = await checkEmail(email);
+        setEmailAvailable(result.available);
+      } catch {
+        setEmailAvailable(null);
+      } finally {
+        setCheckingEmail(false);
+      }
+    }, 500),
+    [checkEmail]
+  );
+
+  useEffect(() => {
+    debouncedCheckEmail(form.email);
+  }, [form.email, debouncedCheckEmail]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -120,14 +160,35 @@ export default function Register() {
               size={20}
             />
             <input
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
+              className="w-full pl-10 pr-10 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
               placeholder="Enter your email"
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
             />
+            {checkingEmail && (
+              <Loader2
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 animate-spin"
+                size={20}
+              />
+            )}
+            {!checkingEmail && emailAvailable === true && (
+              <Check
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500"
+                size={20}
+              />
+            )}
+            {!checkingEmail && emailAvailable === false && (
+              <X
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500"
+                size={20}
+              />
+            )}
           </div>
+          {emailAvailable === false && (
+            <p className="text-xs text-red-500 mt-1">Email is already taken</p>
+          )}
         </div>
 
         <div className="space-y-1">

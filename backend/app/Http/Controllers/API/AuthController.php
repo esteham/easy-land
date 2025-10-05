@@ -157,6 +157,20 @@ class AuthController extends Controller
         
     }
 
+    // Check if email is already registered
+    public function checkEmail(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required','email'],
+        ]);
+
+        $exists = User::where('email', $data['email'])->exists();
+
+        return response()->json([
+            'available' => !$exists,
+        ]);
+    }
+
     // Resend verification email (works with either auth user or by email input)
     public function resendVerification(Request $request)
     {

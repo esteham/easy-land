@@ -1,0 +1,119 @@
+দারুণ! তাহলে সরাসরি “next steps” প্যাকটা দিয়ে দিচ্ছি—এগুলো বসালেই আপনার POC কাজ করবে এবং ধীরে ধীরে প্রোডাকশনে নিতে পারবেন।
+
+# 1) Backend quick setup (Laravel)
+
+**Packages**
+
+```bash
+composer require thiagoalessio/tesseract_ocr
+# (ঐচ্ছিক) প্রি-প্রসেসিংয়ের জন্য
+composer require intervention/image
+```
+
+**Storage link**
+
+```bash
+php artisan storage:link
+```
+
+**CORS (api ব্যবহার করলে)**
+`config/cors.php` এ `paths` এ `api/*` রাখুন।
+
+**Preprocess helper (ঐচ্ছিক)**
+
+```php
+// app/Support/ImagePrep.php
+namespace App\Support;
+use Intervention\Image\ImageManager;
+
+class ImagePrep {
+  public static function clean(string $path): string {
+    $manager = new ImageManager(['driver' => 'gd']);
+    $img = $manager->make($path)
+      ->resize(1800, null, function($c){ $c->aspectRatio(); })
+      ->greyscale()
+      ->contrast(10)
+      ->brightness(5)
+      ->sharpen(8);
+    $tmp = storage_path('app/tmp/'.uniqid('ocr_').'.png');
+    if (!is_dir(dirname($tmp))) mkdir(dirname($tmp), 0777, true);
+    $img->save($tmp, 92, 'png');
+    return $tmp;
+  }
+}
+```
+
+**Controller (preprocess + OCR কল)**
+
+```php
+// app/Http/Controllers/OcrController.php
+use App\Support\ImagePrep;
+use TesseractOCR;
+
+$stored = $request->file('image')->store('uploads/ocr', 'public');
+$full   = storage_path('app/public/'.$stored);
+
+// প্রি-প্রসেস
+$clean = ImagePrep::clean($full);
+
+// OCR
+$lang = $request->input('lang','eng'); // 'eng', 'eng+ben'
+$raw  = (new TesseractOCR($clean))->lang($lang)->psm(6)->oem(1)->run();
+
+// ...regex দিয়ে পার্স (আগের মতই)
+```
+
+**Bangla→Latin digit map (PHP)**
+
+```php
+function bn2en_digits($s){
+  $bn=['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+  $en=['0','1','2','3','4','5','6','7','8','9'];
+  return str_replace($bn,$en,$s);
+}
+```
+
+# 2) Frontend quick setup (React)
+
+**Axios**
+
+```bash
+npm i axios
+```
+
+**Simple form usage**
+
+* আগের `ChassisOcrForm.jsx` কম্পোনেন্টটা যোগ করুন।
+* যদি Bangla ডিজিট আসে, UI-তে কনভার্টার রাখুন:
+
+```jsx
+const bn2en = s => s?.replace(/[০-৯]/g, d => "০১২৩৪৫৬৭৮৯".indexOf(d));
+```
+
+**Low-confidence UX**
+
+* লাল/হলুদ/সবুজ বর্ডার আগের মত, সাথে একটা “Copy from OCR lines” modal রাখুন যাতে ইউজার দ্রুত কপি-পেস্ট করে ঠিক করতে পারে।
+
+# 3) Regex টিউনিং (চ্যাসিস/ইঞ্জিন/ইয়ার)
+
+শুরুতে:
+
+* VIN: `/\b[A-HJ-NPR-Z0-9]{17}\b/`
+* Year: `/\b(19|20)\d{2}\b/`
+* Engine: `/\b[A-Z0-9\-]{6,}\b/` + “Engine|ENG|E/No” লেবেল-অ্যাঙ্কর
+
+রিয়াল স্যাম্পল দেখে এগুলো একটু ঢিলা/কড়া করবেন (dash/space/colon ইত্যাদি-সহ)।
+
+# 4) Quality boost tips
+
+* ইউজারকে ছবি তুলতে গাইড: সমতল, পর্যাপ্ত আলো, ছায়া/ঝলক যেন না থাকে।
+* 1500–2200px চওড়া রিসাইজ ভালো ফল দেয়।
+* বাঁকা হলে (deskew) দরকার হলে OpenCV ব্যবহার করতে পারেন (পরের ধাপে যোগ করা যাবে)।
+
+# 5) Cloud fallback (যদি টেসারেক্টে ঠিকমতো না হয়)
+
+* AWS Textract / Google Vision যুক্ত করুন—শুধু OCR অংশটা রিপ্লেস হবে, বাকি ফ্লো অপরিবর্তিত।
+
+---
+
+আপনি চাইলে আমি আপনার প্রকৃত ডকুমেন্টের ১টা স্যাম্পল দেখে regex/ম্যাপিং একদম ফাইন-টিউন করে দিই—তাহলে “Extract & Autofill” বোতামে ক্লিক করলেই ফর্ম ৮০–৯৫% অটো-ফিল হয়ে যাবে।

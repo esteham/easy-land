@@ -20,6 +20,7 @@ use App\Http\Controllers\API\DagController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/check-email', [AuthController::class, 'checkEmail']);
 
 // Email verification
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
