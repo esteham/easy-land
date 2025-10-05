@@ -155,6 +155,9 @@ export default function AdminLayout() {
             <SideLink to="mouzas" icon={<MapPin className="h-4 w-4" />}>
               Mouzas
             </SideLink>
+            <SideLink to="survey-types" icon={<Layers3 className="h-4 w-4" />}>
+              Survey Types
+            </SideLink>
 
             <SectionTitle icon={<BarChart3 className="h-4 w-4" />}>
               Land Records

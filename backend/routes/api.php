@@ -11,12 +11,14 @@ use App\Models\Upazila;
 use App\Models\Mouza;
 use App\Models\Zil;
 use App\Models\Dag;
+use App\Models\SurveyType;
 use App\Http\Controllers\API\DivisionController;
 use App\Http\Controllers\API\DistrictController;
 use App\Http\Controllers\API\UpazilaController;
 use App\Http\Controllers\API\MouzaController;
 use App\Http\Controllers\API\ZilController;
 use App\Http\Controllers\API\DagController;
+use App\Http\Controllers\API\SurveyTypeController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
@@ -66,6 +68,10 @@ Route::get('/locations/dags/{dag}', function (Dag $dag) {
     return $dag->only(['id','zil_id','dag_no','khotiyan','meta']);
 });
 
+Route::get('/locations/survey-types', function () {
+    return SurveyType::select('id','code','name_en','name_bn')->orderBy('name_en')->get();
+});
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me', [AuthController::class, 'update']);
@@ -96,7 +102,8 @@ Route::middleware('auth:api')->group(function () {
         // Admin CRUD resources
         Route::apiResource('admin/divisions', DivisionController::class);
         Route::apiResource('admin/districts', DistrictController::class);
-        
+        Route::apiResource('admin/survey-types', SurveyTypeController::class);
+
     });
 
     Route::middleware('role:acland')->group(function () {

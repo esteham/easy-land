@@ -21,6 +21,7 @@ import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
 import AdminMouzas from "./components/dashboard/admin/AdminMouzas";
 import AdminZils from "./components/dashboard/admin/AdminZils";
 import AdminDags from "./components/dashboard/admin/AdminDags";
+import AdminSurveyTypes from "./components/dashboard/admin/AdminSurveyTypes";
 
 import UserDashboard from "./components/dashboard/user/Dashboard";
 
@@ -107,6 +108,7 @@ function App() {
             <Route path="districts" element={<AdminDistricts />} />
             <Route path="upazilas" element={<AdminUpazilas />} />
             <Route path="mouzas" element={<AdminMouzas />} />
+            <Route path="survey-types" element={<AdminSurveyTypes />} />
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
           </Route>
