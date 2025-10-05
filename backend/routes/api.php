@@ -21,6 +21,14 @@ use App\Http\Controllers\API\DagController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 
+// Email verification
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+Route::post('/email/verification-notification', [AuthController::class, 'resendVerification'])
+    ->middleware(['throttle:6,1'])
+    ->name('verification.send');
+
 // Forgot/Reset (no auth)
 Route::post('/password/forgot', [PasswordController::class, 'sendResetLink'])
     ->middleware('throttle:6,1');

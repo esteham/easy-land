@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Auth\Events\Verified;
 
 class AuthController extends Controller
 {
@@ -30,8 +32,15 @@ class AuthController extends Controller
             'role'       => $data['role'],
         ]);
 
+        // Send email verification notification
+        try {
+            $user->notify(new VerifyEmail);
+        } catch (\Throwable $e) {
+            // Do not expose internal error details to client
+        }
+
         return response()->json([
-            'message' => 'Registration successful, Please log in.',
+            'message' => 'Registration successful. Please check your email to verify your account before logging in.',
             'user'    => $user,
         ], 201);
     }
@@ -47,6 +56,13 @@ class AuthController extends Controller
         $user = User::where('email', $cred['email'])->first();
         if (!$user || !Hash::check($cred['password'], $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 422);
+        }
+
+        // Enforce email verification
+        if (is_null($user->email_verified_at)) {
+            return response()->json([
+                'message' => 'Email address is not verified. Please check your inbox.',
+            ], 403);
         }
 
         // Passport personal access token
@@ -112,5 +128,59 @@ class AuthController extends Controller
         // }
 
         return response()->json(['message' => 'Password updated successfully.']);
+    }
+
+    // Verify email via signed URL
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        $user = User::findOrFail($id);
+
+        if (! hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link.'], 400);
+        }
+
+        if (! is_null($user->email_verified_at)) {
+            return response()->json(['message' => 'Email already verified.']);
+        }
+
+        $user->forceFill(['email_verified_at' => now()])->save();
+        event(new Verified($user));
+
+        // If accessed via browser, redirect to frontend success page
+        $frontend = config('app.frontend_url', 'http://localhost:5173');
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Email verified successfully. You can now log in.']);
+        }
+        return redirect()->away(rtrim($frontend, '/').'/email-verified');
+    }
+
+    // Resend verification email (works with either auth user or by email input)
+    public function resendVerification(Request $request)
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            // Allow unauthenticated resend using email to avoid blocking users from verifying
+            $data = $request->validate([
+                'email' => ['required','email'],
+            ]);
+            $user = User::where('email', $data['email'])->first();
+            // Intentionally do not reveal whether user exists
+            if (! $user) {
+                return response()->json(['message' => 'If your email exists, a verification link has been sent.']);
+            }
+        }
+
+        if (! is_null($user->email_verified_at)) {
+            return response()->json(['message' => 'Email already verified.']);
+        }
+
+        try {
+            $user->notify(new VerifyEmail);
+        } catch (\Throwable $e) {
+            // ignore errors, return generic message
+        }
+
+        return response()->json(['message' => 'If your email exists, a verification link has been sent.']);
     }
 }
