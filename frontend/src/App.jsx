@@ -5,15 +5,16 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./auth/AuthContext";
 import RoleRoute from "./auth/RoleRoute";
 
-import HomePage from "./components/pages/HomePage";
-import Register from "./components/pages/Register";
-import Login from "./components/pages/Login";
+import MainLayout from "./components/layout/MainLayout";
+import LandExplorer from "./components/pages/LandExplorer";
 
-import ForgotPassword from "./components/pages/ForgotPassword";
+import Login from "./components/pages/Login";
+import Register from "./components/pages/Register";
+import HomePage from "./components/pages/HomePage";
 import ResetPassword from "./components/pages/ResetPassword";
+import ForgotPassword from "./components/pages/ForgotPassword";
 
 import AdminLayout, { AdminHome } from "./components/dashboard/admin/Dashboard";
-import LandExplorer from "./components/pages/LandExplorer";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
 import AdminDistricts from "./components/dashboard/admin/AdminDistricts";
 import AdminUpazilas from "./components/dashboard/admin/AdminUpazilas";
@@ -30,31 +31,77 @@ function App() {
         <Toaster
           position="top-right"
           toastOptions={{
-            duration: 5000, // 5 sec auto close
+            duration: 5000,
             style: { fontSize: "14px", borderRadius: "10px" },
             success: { icon: "✅" },
             error: { icon: "⚠️" },
           }}
         />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* Public routes with header & footer */}
+          <Route
+            path="/"
+            element={
+              <MainLayout>
+                <HomePage />
+              </MainLayout>
+            }
+          />
 
-          <Route path="/land" element={<LandExplorer />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/login"
+            element={
+              <MainLayout>
+                <Login />
+              </MainLayout>
+            }
+          />
 
-          {/* --- ADMIN: parent layout keeps the sidebar persistent --- */}
+          <Route
+            path="/register"
+            element={
+              <MainLayout>
+                <Register />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/land"
+            element={
+              <MainLayout>
+                <LandExplorer />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/forgot-password"
+            element={
+              <MainLayout>
+                <ForgotPassword />
+              </MainLayout>
+            }
+          />
+
+          <Route
+            path="/reset-password"
+            element={
+              <MainLayout>
+                <ResetPassword />
+              </MainLayout>
+            }
+          />
+
+          {/* --- ADMIN: No header/footer (uses sidebar layout) --- */}
           <Route
             path="/admin"
             element={
               <RoleRoute allow={["admin", "acland"]}>
-                <AdminLayout /> {/* <-- has the sidebar + <Outlet/> */}
+                <AdminLayout />
               </RoleRoute>
             }
           >
-            {/* RIGHT SIDE CONTENT renders here */}
             <Route index element={<AdminHome />} />
             <Route path="divisions" element={<AdminDivisions />} />
             <Route path="districts" element={<AdminDistricts />} />
@@ -63,15 +110,19 @@ function App() {
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
           </Route>
-          {/* User dashboard (unchanged) */}
+
+          {/* User dashboard - NOW WITH header/footer */}
           <Route
             path="/dashboard"
             element={
               <RoleRoute allow={["user", "acland", "admin"]}>
-                <UserDashboard />
+                <MainLayout>
+                  <UserDashboard />
+                </MainLayout>
               </RoleRoute>
             }
           />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

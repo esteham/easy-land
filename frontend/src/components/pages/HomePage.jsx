@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
   return (
@@ -13,12 +13,13 @@ export default function HomePage() {
             Comprehensive Land Record Management System
           </p>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-12">
-            Streamline land record management with our digital platform. Access, manage, and track land records
-            efficiently across divisions, districts, upazilas, and mouzas.
+            Streamline land record management with our digital platform. Access,
+            manage, and track land records efficiently across divisions,
+            districts, upazilas, and mouzas.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             to="/login"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
@@ -37,23 +38,31 @@ export default function HomePage() {
           >
             Explore Land Records
           </Link>
-        </div>
+        </div> */}
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="text-3xl mb-4">🏛️</div>
-            <h3 className="text-xl font-semibold mb-2">Administrative Divisions</h3>
-            <p className="text-gray-600">Manage records across all administrative levels</p>
+            <h3 className="text-xl font-semibold mb-2">
+              Administrative Divisions
+            </h3>
+            <p className="text-gray-600">
+              Manage records across all administrative levels
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="text-3xl mb-4">📊</div>
             <h3 className="text-xl font-semibold mb-2">Digital Records</h3>
-            <p className="text-gray-600">Secure and efficient digital land record management</p>
+            <p className="text-gray-600">
+              Secure and efficient digital land record management
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <div className="text-3xl mb-4">🔒</div>
             <h3 className="text-xl font-semibold mb-2">Secure Access</h3>
-            <p className="text-gray-600">Role-based access control for different user types</p>
+            <p className="text-gray-600">
+              Role-based access control for different user types
+            </p>
           </div>
         </div>
       </div>

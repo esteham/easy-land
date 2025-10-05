@@ -3,7 +3,7 @@ import { useAuth } from "../../../auth/AuthContext";
 import api from "../../../api";
 
 export default function UserDashboard() {
-  const { user, logout, updateUser } = useAuth();
+  const { user, updateUser } = useAuth(); //Hide logout
 
   // Keep EXACTLY the items you provided
   const navItems = [
@@ -522,14 +522,14 @@ export default function UserDashboard() {
                 </button>
               ))}
             </nav>
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            {/* <div className="mt-8 pt-6 border-t border-gray-200">
               <button
                 onClick={logout}
                 className="w-full px-4 py-2 rounded-md text-white bg-red-600 hover:bg-red-700 transition"
               >
                 Logout
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Main Content (8 columns) */}
