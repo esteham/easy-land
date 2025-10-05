@@ -35,7 +35,8 @@ export default function AuthProvider({ children }) {
   // };
 
   const register = async (payload) => {
-    await api.post("/register", payload);
+    const { data } = await api.post("/register", payload);
+    return data;
   };
 
   const login = async (payload) => {

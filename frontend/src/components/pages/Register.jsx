@@ -45,7 +45,8 @@ export default function Register() {
 
     setIsLoading(true);
     try {
-      await register(form);
+      const response = await register(form);
+      alert(response.message);
       nav("/login");
     } catch (e) {
       setErr(e?.response?.data?.message || "Failed to create account");
