@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../auth/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthShell from "./AuthShell";
 
 export default function Login() {
@@ -10,10 +10,13 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
     setErr("");
+    setIsLoading(true);
+
     try {
       const role = await login(form);
       const next = (r) => {
@@ -23,59 +26,112 @@ export default function Login() {
       nav(next(role));
     } catch (e) {
       setErr(e?.response?.data?.message || "Invalid credentials");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <AuthShell title="Login to your account" formSide="left">
-      {err && <p className="text-red-500 text-center mb-4">{err}</p>}
-
-      <form onSubmit={submit}>
-        <div className="mb-4">
-          <input
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-          />
+    <AuthShell
+      title="Welcome back"
+      subtitle="Sign in to your account to continue"
+      formSide="left"
+    >
+      {err && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg mb-6 flex items-center gap-2 animate-fade-in">
+          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+          {err}
         </div>
-        <div className="relative mb-6">
-          <input
-            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Password"
-            type={showPassword ? "text" : "password"}
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+      )}
+
+      <form onSubmit={submit} className="space-y-5">
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Email</label>
+          <div className="relative">
+            <Mail
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+            <input
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
+              placeholder="Enter your email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              type="email"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium text-gray-700">Password</label>
+          <div className="relative">
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+            <input
+              className="w-full pl-10 pr-12 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white hover:border-gray-300"
+              placeholder="Enter your password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200 p-1"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-600">Remember me</span>
+          </label>
+          <Link
+            to="/forgot-password"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
+            Forgot password?
+          </Link>
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 px-4 rounded-xl hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium shadow-lg shadow-blue-500/25"
         >
-          Login
+          {isLoading ? (
+            <>
+              <Loader2 className="animate-spin" size={20} />
+              Signing in...
+            </>
+          ) : (
+            <>
+              <LogIn size={20} />
+              Sign in
+            </>
+          )}
         </button>
 
-        <div className="flex items-center justify-between mt-4">
+        <div className="text-center pt-4 border-t border-gray-100">
           <span className="text-gray-600 text-sm">
-            No account?{" "}
-            <Link to="/register" className="text-blue-600 hover:underline">
-              Register
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+            >
+              Create account
             </Link>
           </span>
-          <Link
-            to="/forgot-password"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Forgot password?
-          </Link>
         </div>
       </form>
     </AuthShell>

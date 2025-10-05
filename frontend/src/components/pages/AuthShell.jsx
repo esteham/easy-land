@@ -2,36 +2,34 @@ export default function AuthShell({
   title,
   children,
   formSide = "left",
-  accent = "from-blue-600 via-indigo-600 to-purple-600",
+  accent = "from-blue-600 to-purple-600",
 }) {
   const isLeft = formSide === "left";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
-      {/* Animated background elements */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 relative overflow-hidden">
+      {/* Static gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-purple-100/20"></div>
+
+      {/* Floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-500"></div>
+        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+        <div className="absolute bottom-1/4 -right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-20"></div>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+      <div className="relative mx-auto max-w-6xl px-4 py-8 lg:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
           {/* FORM PANEL */}
           <div className={isLeft ? "order-1" : "order-2"}>
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-12 h-full flex transition-all duration-300 hover:shadow-3xl">
-              <div className="m-auto w-full max-w-md">
-                <div className="mb-8">
-                  <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full mb-4">
-                    <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      Welcome Back
-                    </span>
-                  </div>
-                  <h2 className="text-4xl font-bold text-gray-900 mb-2">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-white/40 p-8 lg:p-10">
+              <div className="max-w-md mx-auto">
+                <div className="mb-8 text-center">
+                  <h1 className="text-3xl font-bold text-gray-900 mb-3">
                     {title}
-                  </h2>
-                  <p className="text-gray-600">
-                    Secure access to Bangladesh's digital land registry
+                  </h1>
+                  <p className="text-gray-600 text-lg">
+                    Secure access to digital land registry
                   </p>
                 </div>
                 {children}
@@ -39,124 +37,85 @@ export default function AuthShell({
             </div>
           </div>
 
-          {/* SHOWCASE PANEL */}
+          {/* FEATURE PANEL */}
           <div className={isLeft ? "order-2" : "order-1"}>
             <div
-              className={`rounded-3xl h-full p-8 lg:p-10 bg-gradient-to-br ${accent} text-white shadow-2xl relative overflow-hidden group`}
+              className={`rounded-2xl p-8 lg:p-10 bg-gradient-to-br ${accent} text-white shadow-lg relative overflow-hidden`}
             >
-              {/* Animated overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
               <div className="relative z-10">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center justify-between mb-8">
                   <div>
-                    <div className="text-2xl font-bold mb-1">
-                      e-Land Registry
-                    </div>
-                    <div className="text-sm text-white/80">
-                      Powered by Blockchain Technology
-                    </div>
+                    <h2 className="text-2xl font-bold">e-Land Registry</h2>
+                    <p className="text-white/80 text-sm">
+                      Bangladesh • Blockchain Powered
+                    </p>
                   </div>
-                  <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-150"></div>
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-300"></div>
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white/60 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white/60 rounded-full"></div>
                   </div>
                 </div>
 
-                {/* Feature Pills */}
-                <div className="flex flex-wrap gap-2 mb-8">
-                  <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full text-sm font-medium border border-white/30">
-                    🔒 Secure
-                  </span>
-                  <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full text-sm font-medium border border-white/30">
-                    ⚡ Fast
-                  </span>
-                  <span className="px-4 py-2 bg-white/20 backdrop-blur rounded-full text-sm font-medium border border-white/30">
-                    ✓ Verified
-                  </span>
-                </div>
-
-                {/* Feature Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-                    <div className="text-3xl mb-3">🔍</div>
-                    <div className="font-semibold mb-2">Quick Search</div>
-                    <ul className="space-y-1.5 text-sm text-white/90">
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 bg-white rounded-full"></span>
-                        Search Khatiyan
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 bg-white rounded-full"></span>
-                        Verify Dag/Plot
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span className="w-1 h-1 bg-white rounded-full"></span>
-                        Mouza Map Viewer
-                      </li>
-                    </ul>
+                {/* Features Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  <div className="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20">
+                    <div className="text-2xl mb-2">🔒</div>
+                    <div className="font-semibold text-sm">Secure</div>
                   </div>
-
-                  <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-                    <div className="text-3xl mb-3">📍</div>
-                    <div className="font-semibold mb-2">Location Hierarchy</div>
-                    <div className="text-sm text-white/90">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span>Division</span>
-                        <span className="opacity-50">→</span>
-                        <span>District</span>
-                        <span className="opacity-50">→</span>
-                        <span>Upazila</span>
-                        <span className="opacity-50">→</span>
-                        <span>Mouza</span>
-                      </div>
-                    </div>
+                  <div className="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20">
+                    <div className="text-2xl mb-2">⚡</div>
+                    <div className="font-semibold text-sm">Fast</div>
                   </div>
-
-                  <div className="bg-white/15 backdrop-blur-md rounded-2xl p-6 md:col-span-2 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div className="text-3xl mb-3">📋</div>
-                    <div className="font-semibold mb-3">
-                      Supported Survey Types
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {["CS", "SA", "RS", "BS", "BRS", "TS"].map((survey) => (
-                        <span
-                          key={survey}
-                          className="px-3 py-1.5 bg-white/25 backdrop-blur rounded-lg text-sm font-semibold border border-white/30 hover:bg-white/35 transition-colors"
-                        >
-                          {survey}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20">
+                    <div className="text-2xl mb-2">✓</div>
+                    <div className="font-semibold text-sm">Verified</div>
+                  </div>
+                  <div className="bg-white/15 backdrop-blur rounded-xl p-4 border border-white/20">
+                    <div className="text-2xl mb-2">🌐</div>
+                    <div className="font-semibold text-sm">Digital</div>
                   </div>
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-8">
+                <div className="flex justify-around mb-8 py-4 bg-white/10 rounded-xl backdrop-blur">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">10K+</div>
-                    <div className="text-xs text-white/80">Records</div>
+                    <div className="text-xl font-bold">10K+</div>
+                    <div className="text-xs text-white/70">Records</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">500+</div>
-                    <div className="text-xs text-white/80">Mouzas</div>
+                    <div className="text-xl font-bold">500+</div>
+                    <div className="text-xs text-white/70">Mouzas</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">99.9%</div>
-                    <div className="text-xs text-white/80">Uptime</div>
+                    <div className="text-xl font-bold">64</div>
+                    <div className="text-xs text-white/70">Districts</div>
                   </div>
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="text-center py-4 px-6 bg-white/10 backdrop-blur rounded-2xl border border-white/20">
-                  <span className="text-sm">New to e-Land Registry? </span>
-                  <a
-                    href="/register"
-                    className="font-bold underline decoration-2 underline-offset-4 hover:text-white/90 transition-colors"
-                  >
-                    Create Account →
+                {/* Survey Types */}
+                <div className="mb-6">
+                  <div className="text-sm font-semibold mb-3 text-white/90">
+                    Survey Types
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {["CS", "SA", "RS", "BS", "BRS", "TS"].map((survey) => (
+                      <span
+                        key={survey}
+                        className="px-3 py-1 bg-white/20 backdrop-blur rounded-lg text-sm font-medium border border-white/30"
+                      >
+                        {survey}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="text-center pt-4 border-t border-white/20">
+                  <span className="text-sm text-white/80">New user? </span>
+                  <a href="/register" className="font-semibold text-white">
+                    Sign up →
                   </a>
                 </div>
               </div>
