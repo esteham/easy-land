@@ -151,7 +151,10 @@ class AuthController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['message' => 'Email verified successfully. You can now log in.']);
         }
-        return redirect()->away(rtrim($frontend, '/').'/email-verified');
+
+        $msg = urlencode('Email verified successfully. You can now log in.');
+        return redirect()->away(rtrim($frontend, '/')."/login?verified=1&msg={$msg}");
+        
     }
 
     // Resend verification email (works with either auth user or by email input)

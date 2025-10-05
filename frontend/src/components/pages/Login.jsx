@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Eye, EyeOff, LogIn, Mail, Lock, Loader2 } from "lucide-react";
 import AuthShell from "./AuthShell";
 
@@ -31,6 +31,37 @@ export default function Login() {
     }
   };
 
+  const sanitizeMsg = (s) => {
+    const raw = String(s || "");
+
+    const noTags = raw.replace(/<\/?[^>]*>/g, "");
+    return noTags.slice(0, 200);
+  };
+
+  const location = useLocation();
+  const verifiedInfo = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const msgParam = params.get("msg");
+    return {
+      verified: params.get("verified") === "1",
+      msg: sanitizeMsg(
+        decodeURIComponent(msgParam || "") ||
+          "Email verified successfully. You can now log in."
+      ),
+    };
+  }, [location.search]);
+
+  const [showVerified, setShowVerified] = useState(false);
+
+  useEffect(() => {
+    if (verifiedInfo.verified) {
+      setShowVerified(true);
+
+      const cleanUrl = location.pathname; // "/login"
+      window.history.replaceState({}, "", cleanUrl);
+    }
+  }, [verifiedInfo.verified, location.pathname]);
+
   return (
     <AuthShell
       title="Welcome back"
@@ -41,6 +72,20 @@ export default function Login() {
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg mb-6 flex items-center gap-2 animate-fade-in">
           <div className="w-2 h-2 bg-red-500 rounded-full"></div>
           {err}
+        </div>
+      )}
+
+      {showVerified && (
+        <div className="mb-4 rounded-lg bg-green-50 border border-green-200 text-green-700 px-4 py-3 relative">
+          <button
+            type="button"
+            onClick={() => setShowVerified(false)}
+            aria-label="Dismiss"
+            className="absolute right-3 top-3 text-green-700/70 hover:text-green-800"
+          >
+            ×
+          </button>
+          {verifiedInfo.msg}
         </div>
       )}
 
