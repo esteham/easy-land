@@ -90,6 +90,8 @@ Route::middleware('auth:api')->group(function () {
         ]);
     });
 
+    Route::post('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'store']);
+
     Route::middleware('role:admin,acland')->group(function () {
         Route::apiResource('admin/upazilas', UpazilaController::class);
         Route::apiResource('admin/mouzas', MouzaController::class);

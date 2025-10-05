@@ -1,0 +1,6 @@
+- [x] Create migration to add fee_amount and payment_status to applications table
+- [x] Update Application model fillable
+- [x] Modify ApplicationController store method
+- [x] Update frontend LandExplorer.jsx to send fee and payment status
+- [x] Run migration
+- [x] Test the flow

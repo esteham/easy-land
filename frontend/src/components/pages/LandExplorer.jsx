@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import { useAuth } from "../../auth/AuthContext";
 
 export default function LandExplorer() {
+  const nav = useNavigate();
+  const { user } = useAuth();
+
   // Collections
   const [divisions, setDivisions] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -382,7 +387,7 @@ export default function LandExplorer() {
                     <p className="text-gray-500">No Dags found.</p>
                   ) : filteredDags.length === 0 ? (
                     <p className="text-gray-500">
-                      No matches for “{dagSearch}”.
+                      No matches for "{dagSearch}".
                     </p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
@@ -440,6 +445,56 @@ export default function LandExplorer() {
                       </a>
                     </div>
                   )}
+                  {/* Khatian Application Submission */}
+                  <div className="mt-4">
+                    <button
+                      className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                      onClick={async () => {
+                        if (!user) {
+                          // Redirect to login page
+                          alert("Please login first and then apply");
+                          nav("/login");
+                          return;
+                        }
+                        try {
+                          setLoading(true);
+                          setError("");
+
+                          // Fixed fee for Khatian application
+                          const feeAmount = 200;
+
+                          // Simulate payment process (replace with real payment integration)
+                          const paymentConfirmed = window.confirm(
+                            `The application fee is BDT ${feeAmount}. Proceed to payment?`
+                          );
+                          if (!paymentConfirmed) {
+                            setLoading(false);
+                            return;
+                          }
+
+                          // Submit application API call
+                          await api.post("/applications", {
+                            dag_id: dagDetail.id,
+                            type: "khatian_request",
+                            description: "User submitted a Khatian application",
+                            fee_amount: feeAmount,
+                            payment_status: "paid",
+                          });
+                          alert("Khatian application submitted successfully.");
+                        } catch (err) {
+                          setError(
+                            err?.response?.data?.message ||
+                              "Failed to submit application"
+                          );
+                        } finally {
+                          setLoading(false);
+                        }
+                      }}
+                      disabled={loading}
+                    >
+                      Submit Khatian Application
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="text-gray-500">Loading...</div>
