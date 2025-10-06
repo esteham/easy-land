@@ -132,6 +132,13 @@ export default function AdminLayout() {
               Dashboard Overview
             </SideLink>
 
+            <SectionTitle icon={<Users className="h-4 w-4" />}>
+              User Management
+            </SectionTitle>
+            <SideLink to="kyc-approvals" icon={<Shield className="h-4 w-4" />}>
+              KYC Approvals
+            </SideLink>
+
             <SectionTitle icon={<Globe className="h-4 w-4" />}>
               Geographic Data
             </SectionTitle>
@@ -174,13 +181,6 @@ export default function AdminLayout() {
             </SectionTitle>
             <SideLink to="khatian" icon={<FileText className="h-4 w-4" />}>
               Khatian Lookup
-            </SideLink>
-
-            <SectionTitle icon={<Users className="h-4 w-4" />}>
-              User Management
-            </SectionTitle>
-            <SideLink to="kyc-approvals" icon={<Shield className="h-4 w-4" />}>
-              KYC Approvals
             </SideLink>
           </nav>
         </aside>
