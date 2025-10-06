@@ -68,6 +68,7 @@ export default function UserDashboard() {
   const [idBack, setIdBack] = useState(null);
   const [uploadingKyc, setUploadingKyc] = useState(false);
   const [kycErrors, setKycErrors] = useState({});
+  const [showKycForm, setShowKycForm] = useState(false);
 
   // Password form state
   const [pwdForm, setPwdForm] = useState({
@@ -118,6 +119,7 @@ export default function UserDashboard() {
     setIdFront(null);
     setIdBack(null);
     setKycErrors({});
+    setShowKycForm(false);
   }, [activeTab]);
 
   // Fetch KYC data when Profile & KYC tab is active
@@ -345,92 +347,134 @@ export default function UserDashboard() {
                 <button className="px-3 py-1 rounded border">Send OTP</button>
               </div>
               {/* KYC Upload Section */}
-              <div className="border rounded p-3">
+              <div className="flex items-center justify-between border rounded p-4">
                 <div className="font-medium mb-2">National ID (NID)</div>
-                <div className="text-xs text-gray-500 mb-4">
-                  Upload front and back images of your National ID for
-                  verification
+                <div className="text-xs text-gray-500">
+                  {kycData?.status === "success" ? (
+                    <div className="flex items-center gap-2 text-green-600 font-semibold">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      KYC Updated (Status: {kycData.status})
+                    </div>
+                  ) : kycData?.status === "pending" ? (
+                    <div className="flex items-center gap-2 text-yellow-600 font-semibold">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      KYC Pending (Status: {kycData.status})
+                    </div>
+                  ) : (
+                    <>
+                      {!showKycForm ? (
+                        <button
+                          onClick={() => setShowKycForm(true)}
+                          className="px-4 py-2 rounded-md text-black font-bold bg-red-500 hover:bg-blue-700"
+                        >
+                          KYC Update
+                        </button>
+                      ) : (
+                        <form
+                          onSubmit={async (e) => {
+                            e.preventDefault();
+                            setUploadingKyc(true);
+                            setKycErrors({});
+                            const formData = new FormData();
+                            if (idFront) formData.append("id_front", idFront);
+                            if (idBack) formData.append("id_back", idBack);
+                            try {
+                              const { data } = await api.post(
+                                "/user/kyc/upload",
+                                formData,
+                                {
+                                  headers: {
+                                    "Content-Type": "multipart/form-data",
+                                  },
+                                }
+                              );
+                              setKycData(data.kyc);
+                              alert("KYC documents uploaded successfully");
+                              setIdFront(null);
+                              setIdBack(null);
+                              setShowKycForm(false);
+                            } catch (err) {
+                              setKycErrors(err?.response?.data?.errors || {});
+                            } finally {
+                              setUploadingKyc(false);
+                            }
+                          }}
+                        >
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium text-gray-700">
+                              ID Front
+                            </label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setIdFront(e.target.files[0])}
+                              className="mt-1 block w-full"
+                              required
+                              disabled={kycData?.status === "success"}
+                            />
+                            {kycErrors.id_front && (
+                              <p className="text-sm text-red-600 mt-1">
+                                {kycErrors.id_front[0]}
+                              </p>
+                            )}
+                          </div>
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium text-gray-700">
+                              ID Back
+                            </label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setIdBack(e.target.files[0])}
+                              className="mt-1 block w-full"
+                              required
+                              disabled={kycData?.status === "success"}
+                            />
+                            {kycErrors.id_back && (
+                              <p className="text-sm text-red-600 mt-1">
+                                {kycErrors.id_back[0]}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="submit"
+                            disabled={
+                              uploadingKyc || kycData?.status === "success"
+                            }
+                            className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
+                          >
+                            {uploadingKyc ? "Uploading..." : "Upload"}
+                          </button>
+                        </form>
+                      )}
+                    </>
+                  )}
                 </div>
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    setUploadingKyc(true);
-                    setKycErrors({});
-                    const formData = new FormData();
-                    if (idFront) formData.append("id_front", idFront);
-                    if (idBack) formData.append("id_back", idBack);
-                    try {
-                      const { data } = await api.post(
-                        "/user/kyc/upload",
-                        formData,
-                        {
-                          headers: { "Content-Type": "multipart/form-data" },
-                        }
-                      );
-                      setKycData(data.kyc);
-                      alert("KYC documents uploaded successfully");
-                      setIdFront(null);
-                      setIdBack(null);
-                    } catch (err) {
-                      setKycErrors(err?.response?.data?.errors || {});
-                    } finally {
-                      setUploadingKyc(false);
-                    }
-                  }}
-                >
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700">
-                      ID Front
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setIdFront(e.target.files[0])}
-                      className="mt-1 block w-full"
-                      required
-                      disabled={kycData?.status === "success"}
-                    />
-                    {kycErrors.id_front && (
-                      <p className="text-sm text-red-600 mt-1">
-                        {kycErrors.id_front[0]}
-                      </p>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium text-gray-700">
-                      ID Back
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => setIdBack(e.target.files[0])}
-                      className="mt-1 block w-full"
-                      required
-                      disabled={kycData?.status === "success"}
-                    />
-                    {kycErrors.id_back && (
-                      <p className="text-sm text-red-600 mt-1">
-                        {kycErrors.id_back[0]}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={uploadingKyc || kycData?.status === "success"}
-                    className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
-                  >
-                    {uploadingKyc ? "Uploading..." : "Upload"}
-                  </button>
-                </form>
-
-                {kycData && (
-                  <div className="mt-4 text-sm">
-                    <div>Status: {kycData.status}</div>
-                    {kycData.status === "rejected" && (
-                      <div className="text-red-600">
-                        Reason: {kycData.rejection_reason}
-                      </div>
-                    )}
+                {kycData && kycData.status === "rejected" && (
+                  <div className="mt-4 text-sm text-red-600">
+                    Reason: {kycData.rejection_reason}
                   </div>
                 )}
               </div>
