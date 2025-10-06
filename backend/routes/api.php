@@ -106,6 +106,11 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('admin/districts', DistrictController::class);
         Route::apiResource('admin/survey-types', SurveyTypeController::class);
 
+        // KYC admin routes
+        Route::get('/admin/kyc/pending', [\App\Http\Controllers\KycController::class, 'listPendingKyc']);
+        Route::post('/admin/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'approveKyc']);
+        Route::post('/admin/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'rejectKyc']);
+
     });
 
     Route::middleware('role:acland')->group(function () {
@@ -114,5 +119,9 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('role:user')->group(function () {
         Route::get('/user/dashboard', fn() => response()->json(['ok' => 'user only']));
+
+        // KYC upload and get
+        Route::post('/user/kyc/upload', [\App\Http\Controllers\KycController::class, 'upload']);
+        Route::get('/user/kyc', [\App\Http\Controllers\KycController::class, 'getKyc']);
     });
 });

@@ -22,6 +22,7 @@ import AdminMouzas from "./components/dashboard/admin/AdminMouzas";
 import AdminZils from "./components/dashboard/admin/AdminZils";
 import AdminDags from "./components/dashboard/admin/AdminDags";
 import AdminSurveyTypes from "./components/dashboard/admin/AdminSurveyTypes";
+import KycApproval from "./components/dashboard/admin/KycApproval";
 
 import UserDashboard from "./components/dashboard/user/Dashboard";
 
@@ -111,6 +112,7 @@ function App() {
             <Route path="survey-types" element={<AdminSurveyTypes />} />
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
+            <Route path="kyc-approvals" element={<KycApproval />} />
           </Route>
 
           {/* User dashboard - NOW WITH header/footer */}

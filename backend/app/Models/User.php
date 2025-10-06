@@ -54,6 +54,11 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function kyc()
+    {
+        return $this->hasOne(Kyc::class);
+    }
+
     public function sendPasswordResetNotification($token)
     {
         $frontend = config('app.frontend_url', 'http://localhost:5173');
