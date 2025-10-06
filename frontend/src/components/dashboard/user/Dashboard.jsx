@@ -124,6 +124,7 @@ export default function UserDashboard() {
 
   // Fetch KYC data when Profile & KYC tab is active
   useEffect(() => {
+    let intervalId;
     if (activeTab === "Profile & KYC") {
       const fetchKyc = async () => {
         try {
@@ -137,7 +138,12 @@ export default function UserDashboard() {
         }
       };
       fetchKyc();
+      // Poll every 10 seconds for KYC status updates
+      intervalId = setInterval(fetchKyc, 10000);
     }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [activeTab]);
 
   const renderContent = () => {
