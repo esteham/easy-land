@@ -339,9 +339,27 @@ export default function UserDashboard() {
                   <div className="font-medium">Email</div>
                   <div className="text-xs text-gray-500">{user?.email}</div>
                 </div>
-                <button className="px-3 py-1 rounded border">
-                  Send Verification
-                </button>
+                {user?.email_verified_at ? (
+                  <div className="flex items-center gap-2 text-green-600 font-semibold">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 00-1.414 0L9 11.586 6.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l7-7a1 1 0 000-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Email Verified
+                  </div>
+                ) : (
+                  <button className="px-3 py-1 rounded border">
+                    Send Verification
+                  </button>
+                )}
               </div>
               <div className="flex items-center justify-between border rounded p-3">
                 <div>
