@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('id_front')->nullable(); // Path to front ID image
             $table->string('id_back')->nullable(); // Path to back ID image
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'success', 'rejected'])->default('pending')->change();
             $table->text('rejection_reason')->nullable();
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('approved_at')->nullable();
