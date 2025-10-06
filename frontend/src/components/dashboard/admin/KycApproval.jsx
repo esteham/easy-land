@@ -31,7 +31,7 @@ export default function KycApproval() {
     try {
       await api.post(`/admin/kyc/${id}/approve`);
       // Remove from list or refetch
-      setPendingKycs(pendingKycs.filter(kyc => kyc.id !== id));
+      setPendingKycs(pendingKycs.filter((kyc) => kyc.id !== id));
       alert("KYC approved successfully");
     } catch (err) {
       alert(err?.response?.data?.message || "Failed to approve KYC");
@@ -47,8 +47,10 @@ export default function KycApproval() {
     }
     setProcessing(id);
     try {
-      await api.post(`/admin/kyc/${id}/reject`, { rejection_reason: rejectReason });
-      setPendingKycs(pendingKycs.filter(kyc => kyc.id !== id));
+      await api.post(`/admin/kyc/${id}/reject`, {
+        rejection_reason: rejectReason,
+      });
+      setPendingKycs(pendingKycs.filter((kyc) => kyc.id !== id));
       setRejectReason("");
       setRejectingId(null);
       alert("KYC rejected");
@@ -108,7 +110,9 @@ export default function KycApproval() {
                     {kyc.user?.name?.charAt(0) || "U"}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">{kyc.user?.name}</h3>
+                    <h3 className="font-semibold text-gray-800">
+                      {kyc.user?.name}
+                    </h3>
                     <p className="text-sm text-gray-600">{kyc.user?.email}</p>
                   </div>
                 </div>
@@ -122,11 +126,16 @@ export default function KycApproval() {
 
               <div className="grid md:grid-cols-2 gap-4 mb-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">ID Front</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    ID Front
+                  </label>
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-gray-400" />
                     <a
-                      href={`${api.defaults.baseURL.replace('/api', '')}/storage/${kyc.id_front}`}
+                      href={`${api.defaults.baseURL.replace(
+                        "/api",
+                        ""
+                      )}/storage/${kyc.id_front}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm"
@@ -136,11 +145,16 @@ export default function KycApproval() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">ID Back</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    ID Back
+                  </label>
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-gray-400" />
                     <a
-                      href={`${api.defaults.baseURL.replace('/api', '')}/storage/${kyc.id_back}`}
+                      href={`${api.defaults.baseURL.replace(
+                        "/api",
+                        ""
+                      )}/storage/${kyc.id_back}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline text-sm"
@@ -166,7 +180,9 @@ export default function KycApproval() {
                       disabled={processing === kyc.id}
                       className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50"
                     >
-                      {processing === kyc.id ? "Rejecting..." : "Confirm Reject"}
+                      {processing === kyc.id
+                        ? "Rejecting..."
+                        : "Confirm Reject"}
                     </button>
                     <button
                       onClick={() => {
