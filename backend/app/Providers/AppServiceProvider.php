@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->alias('PDF', \Barryvdh\DomPDF\Facade\Pdf::class);
     }
 
     /**
@@ -25,5 +25,13 @@ class AppServiceProvider extends ServiceProvider
         $publicKeyPath = str_replace('\\', '/', storage_path('oauth-public.key'));
         $this->app['config']['passport.private_key'] = $privateKeyPath;
         $this->app['config']['passport.public_key'] = $publicKeyPath;
+    }
+
+    /**
+     * Get the services provided by the provider.
+     */
+    public function provides(): array
+    {
+        return [];
     }
 }

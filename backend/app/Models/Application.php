@@ -8,6 +8,11 @@ class Application extends Model
 {
     protected $fillable = ['user_id', 'dag_id', 'type', 'description', 'status', 'submitted_at', 'fee_amount', 'payment_status'];
 
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'fee_amount' => 'decimal:2',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -19,7 +19,9 @@ export default function UserDashboard() {
     "Security",
   ];
 
-  const [activeTab, setActiveTab] = useState(location.state?.activeTab || navItems[0]);
+  const [activeTab, setActiveTab] = useState(
+    location.state?.activeTab || navItems[0]
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
@@ -127,6 +129,25 @@ export default function UserDashboard() {
       setPwdErrors(err?.response?.data?.errors || {});
     } finally {
       setPwdLoading(false);
+    }
+  };
+
+  const handleDownloadInvoice = async (appId) => {
+    try {
+      const response = await api.get(`/applications/${appId}/invoice`, {
+        responseType: 'blob', // Important for file downloads
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice_application_${appId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert("Failed to download invoice. Please try again.");
     }
   };
 
@@ -479,16 +500,16 @@ export default function UserDashboard() {
                   </div>
                   <div>
                     {app.payment_status === "paid" ? (
-                      <a
-                        href={`/applications/${app.id}/invoice`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleDownloadInvoice(app.id)}
                         className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                       >
                         Download Invoice
-                      </a>
+                      </button>
                     ) : (
-                      <p className="text-red-600 font-semibold">Payment Pending</p>
+                      <p className="text-red-600 font-semibold">
+                        Payment Pending
+                      </p>
                     )}
                   </div>
                 </div>
