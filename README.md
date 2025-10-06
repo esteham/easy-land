@@ -1,6 +1,6 @@
-# e-land
+# easy-land
 
-**e-land** is a property management web application designed to handle land information, ownership records, and related transactions. It follows a modular architecture with separate frontend and backend implementations.
+**easy-land** is a property management web application designed to handle land information, ownership records, and related transactions. It follows a modular architecture with separate frontend and backend implementations.
 
 ## Features
 
