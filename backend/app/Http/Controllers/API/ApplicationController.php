@@ -9,6 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $applications = Application::with('dag')->where('user_id', $user->id)->get();
+
+        return response()->json($applications);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

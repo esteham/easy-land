@@ -21,6 +21,10 @@ export default function UserDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
+  const [applications, setApplications] = useState([]);
+  const [showDrafts, setShowDrafts] = useState(false);
+  const [loadingApplications, setLoadingApplications] = useState(false);
+
   useEffect(() => {
     if (user) {
       setFormData({
@@ -34,6 +38,7 @@ export default function UserDashboard() {
   // Exit edit mode whenever tab changes
   useEffect(() => {
     setIsEditing(false);
+    setShowDrafts(false);
   }, [activeTab]);
 
   // Avatar initials
@@ -276,6 +281,85 @@ export default function UserDashboard() {
         );
 
       case "Apply Khatian":
+        if (showDrafts) {
+          return (
+            <div>
+              <button className="text-xl font-semibold text-gray-900 mb-6">
+                Your Submitted Applications
+              </button>
+              {loadingApplications ? (
+                <p>Loading applications...</p>
+              ) : applications.length === 0 ? (
+                <p>No applications found.</p>
+              ) : (
+                <div className="space-y-4">
+                  {applications.map((app) => (
+                    <div
+                      key={app.id}
+                      className="border rounded p-4 flex justify-between items-center"
+                    >
+                      <div>
+                        <p>
+                          <strong>Type:</strong> {app.type}
+                        </p>
+                        <p>
+                          <strong>Description:</strong>{" "}
+                          {app.description || "N/A"}
+                        </p>
+
+                        <p class="flex">
+                          <strong>Payment Status:</strong> &nbsp;{" "}
+                          <p class="uppercase font-semibold text-green-600">
+                            {app.payment_status}
+                          </p>
+                        </p>
+
+                        <br />
+
+                        <p class="text-red-500 text-sm">
+                          <strong>[N.B.</strong>:If you can pay,then payment
+                          status{" "}
+                          <strong class="text-green-400">
+                            {app.payment_status}
+                          </strong>
+                          , <br /> and the khatiyan download button is anable]
+                        </p>
+                      </div>
+                      <div>
+                        {app.payment_status === "paid" ? (
+                          app.dag && app.dag.document ? (
+                            <a
+                              href={app.dag.document}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
+                            >
+                              Download Khatian
+                            </a>
+                          ) : (
+                            <p>No document available</p>
+                          )
+                        ) : (
+                          <p className="text-red-600 font-semibold">
+                            Pay first
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6">
+                <button
+                  onClick={() => setShowDrafts(false)}
+                  className="px-4 py-2 rounded-md border"
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          );
+        }
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
@@ -286,10 +370,29 @@ export default function UserDashboard() {
                 Start a new application or view your drafts.
               </p>
               <div className="flex gap-3">
-                <button className="px-4 py-2 rounded-md border">
+                <a
+                  href="/land"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-md border"
+                >
                   Start New Application
-                </button>
-                <button className="px-4 py-2 rounded-md border">
+                </a>
+                <button
+                  className="px-4 py-2 rounded-md border"
+                  onClick={async () => {
+                    setLoadingApplications(true);
+                    try {
+                      const { data } = await api.get("/applications");
+                      setApplications(data);
+                      setShowDrafts(true);
+                    } catch (error) {
+                      console.error("Error fetching applications:", error);
+                    } finally {
+                      setLoadingApplications(false);
+                    }
+                  }}
+                >
                   View Drafts
                 </button>
               </div>

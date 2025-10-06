@@ -90,6 +90,7 @@ Route::middleware('auth:api')->group(function () {
         ]);
     });
 
+    Route::get('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'index']);
     Route::post('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'store']);
 
     Route::middleware('role:admin,acland')->group(function () {
