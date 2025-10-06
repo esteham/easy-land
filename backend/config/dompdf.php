@@ -297,5 +297,14 @@ return [
          */
         'enable_html5_parser' => true,
     ],
+     // কাস্টম ফন্ট ম্যাপিং
+    'font_family' => [
+        'noto-sans-bengali' => [
+            'R' => storage_path('fonts/NotoSansBengali-Regular.ttf'),
+            'B' => storage_path('fonts/NotoSansBengali-Bold.ttf'),
+        ],
+    ],
+
+    'default_font' => 'noto-sans-bengali',
 
 ];
