@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Application;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
+use PDF; // Assuming a PDF package like barryvdh/laravel-dompdf is installed
+
 class ApplicationController extends Controller
 {
     public function index(Request $request)
@@ -41,5 +45,23 @@ class ApplicationController extends Controller
         ]);
 
         return response()->json(['message' => 'Application submitted successfully', 'application' => $application], 201);
+    }
+
+    public function invoice($id)
+    {
+        $user = Auth::user();
+        $application = Application::with('dag')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+
+        // Generate PDF invoice content (simple example)
+        $data = [
+            'application' => $application,
+            'user' => $user,
+        ];
+
+        $pdf = PDF::loadView('invoices.application', $data);
+
+        $filename = 'invoice_application_' . $application->id . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

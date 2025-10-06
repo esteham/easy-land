@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import api from "../../../api";
 
 export default function UserDashboard() {
   const { user, updateUser } = useAuth(); //Hide logout
+  const location = useLocation();
 
   // Keep EXACTLY the items you provided
   const navItems = [
@@ -17,13 +19,16 @@ export default function UserDashboard() {
     "Security",
   ];
 
-  const [activeTab, setActiveTab] = useState(navItems[0]);
+  const [activeTab, setActiveTab] = useState(location.state?.activeTab || navItems[0]);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
   const [applications, setApplications] = useState([]);
   const [showDrafts, setShowDrafts] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
+
+  const [paymentsApplications, setPaymentsApplications] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -39,6 +44,21 @@ export default function UserDashboard() {
   useEffect(() => {
     setIsEditing(false);
     setShowDrafts(false);
+    if (activeTab === "Payments & Receipts") {
+      const fetchPayments = async () => {
+        setLoadingPayments(true);
+        try {
+          const { data } = await api.get("/applications");
+          setPaymentsApplications(data);
+        } catch (error) {
+          console.error("Error fetching payments:", error);
+          setPaymentsApplications([]);
+        } finally {
+          setLoadingPayments(false);
+        }
+      };
+      fetchPayments();
+    }
   }, [activeTab]);
 
   // Avatar initials
@@ -419,14 +439,61 @@ export default function UserDashboard() {
         );
 
       case "Payments & Receipts":
+        if (loadingPayments) {
+          return <p>Loading payments...</p>;
+        }
+        if (paymentsApplications.length === 0) {
+          return (
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Payments & Receipts
+              </h2>
+              <p className="text-gray-600">No payments found.</p>
+            </div>
+          );
+        }
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               Payments & Receipts
             </h2>
-            <p className="text-gray-600">
-              Your payments and downloadable receipts will show here.
-            </p>
+            <div className="space-y-4">
+              {paymentsApplications.map((app) => (
+                <div
+                  key={app.id}
+                  className="border rounded p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p>
+                      <strong>Type:</strong> {app.type}
+                    </p>
+                    <p>
+                      <strong>Fee Amount:</strong> {app.fee_amount}
+                    </p>
+                    <p>
+                      <strong>Payment Status:</strong>{" "}
+                      <span className="uppercase font-semibold text-green-600">
+                        {app.payment_status}
+                      </span>
+                    </p>
+                  </div>
+                  <div>
+                    {app.payment_status === "paid" ? (
+                      <a
+                        href={`/applications/${app.id}/invoice`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                      >
+                        Download Invoice
+                      </a>
+                    ) : (
+                      <p className="text-red-600 font-semibold">Payment Pending</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         );
 
