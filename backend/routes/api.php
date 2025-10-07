@@ -72,6 +72,17 @@ Route::get('/locations/survey-types', function () {
     return SurveyType::select('id','code','name_en','name_bn')->orderBy('name_en')->get();
 });
 
+Route::get('/dag/{dag}/download', function (Dag $dag) {
+    if (!$dag->document) {
+        return response()->json(['error' => 'Document not found'], 404);
+    }
+    $path = storage_path('app/public/' . $dag->document);
+    if (!file_exists($path)) {
+        return response()->json(['error' => 'File not found'], 404);
+    }
+    return response()->file($path);
+})->name('dag.download');
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me', [AuthController::class, 'update']);

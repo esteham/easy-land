@@ -151,6 +151,25 @@ export default function UserDashboard() {
     }
   };
 
+  const handleDownloadKhatian = async (documentUrl, appId) => {
+    try {
+      const response = await api.get(documentUrl, {
+        responseType: 'blob', // Important for file downloads
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `khatian_application_${appId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading khatian:", error);
+      alert("Failed to download khatian. Please try again.");
+    }
+  };
+
   useEffect(() => {
     setShowPwdForm(false);
     setPwdErrors({});
@@ -348,19 +367,19 @@ export default function UserDashboard() {
                           {app.description || "N/A"}
                         </p>
 
-                        <p class="flex">
+                        <div className="flex">
                           <strong>Payment Status:</strong> &nbsp;{" "}
-                          <p class="uppercase font-semibold text-green-600">
+                          <span className="uppercase font-semibold text-green-600">
                             {app.payment_status}
-                          </p>
-                        </p>
+                          </span>
+                        </div>
 
                         <br />
 
-                        <p class="text-red-500 text-sm">
+                        <p className="text-red-500 text-sm">
                           <strong>[N.B.</strong>:If you can pay,then payment
                           status{" "}
-                          <strong class="text-green-400">
+                          <strong className="text-green-400">
                             {app.payment_status}
                           </strong>
                           , <br /> and the khatiyan download button is anable]
@@ -368,15 +387,13 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         {app.payment_status === "paid" ? (
-                          app.dag && app.dag.document ? (
-                            <a
-                              href={app.dag.document}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                          app.dag && app.dag.document_url ? (
+                            <button
+                              onClick={() => handleDownloadKhatian(app.dag.document_url, app.id)}
                               className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
                             >
                               Download Khatian
-                            </a>
+                            </button>
                           ) : (
                             <p>No document available</p>
                           )

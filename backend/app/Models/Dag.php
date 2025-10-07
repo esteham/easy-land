@@ -13,6 +13,8 @@ class Dag extends Model
                 'zil_id', 'dag_no', 'khotiyan', 'meta', 'document'
             ];
 
+    protected $appends = ['document_url'];
+
     protected $casts = [
         'meta' => 'array',
         'khotiyan' => 'array',
@@ -26,6 +28,6 @@ class Dag extends Model
     // for frontend convenience
     public function getDocumentUrlAttribute()
     {
-        return $this->document ? asset('storage/'.$this->document) : null;
+        return $this->document ? route('dag.download', $this->id) : null;
     }
 }
