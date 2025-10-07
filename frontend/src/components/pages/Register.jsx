@@ -30,7 +30,7 @@ function debounce(func, wait) {
 
 export default function Register() {
   const nav = useNavigate();
-  const { register, checkEmail } = useAuth();
+  const { register, checkEmail, user, loading } = useAuth();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -68,6 +68,16 @@ export default function Register() {
   useEffect(() => {
     debouncedCheckEmail(form.email);
   }, [form.email, debouncedCheckEmail]);
+
+  useEffect(() => {
+    if (!loading && user) {
+      const next = (r) => {
+        const map = { admin: "/admin", acland: "/admin", user: "/dashboard" };
+        return map[r] || "/dashboard";
+      };
+      nav(next(user.role));
+    }
+  }, [user, loading, nav]);
 
   const submit = async (e) => {
     e.preventDefault();

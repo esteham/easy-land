@@ -6,7 +6,7 @@ import AuthShell from "./AuthShell";
 
 export default function Login() {
   const nav = useNavigate();
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +61,16 @@ export default function Login() {
       window.history.replaceState({}, "", cleanUrl);
     }
   }, [verifiedInfo.verified, location.pathname]);
+
+  useEffect(() => {
+    if (!loading && user) {
+      const next = (r) => {
+        const map = { admin: "/admin", acland: "/admin", user: "/dashboard" };
+        return map[r] || "/dashboard";
+      };
+      nav(next(user.role));
+    }
+  }, [user, loading, nav]);
 
   return (
     <AuthShell
