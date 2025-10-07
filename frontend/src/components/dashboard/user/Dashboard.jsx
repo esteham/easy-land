@@ -1,22 +1,23 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
+import TXT, { dual } from "../../../fonts/texts";
 import api from "../../../api";
 
 export default function UserDashboard() {
   const { user, updateUser } = useAuth(); //Hide logout
   const location = useLocation();
 
-  // Keep EXACTLY the items you provided
+  // Keep EXACTLY the items you provided (now dual)
   const navItems = [
-    "Personal Information",
-    "Address",
-    "Apply Khatian",
-    "Land Development Tax (LDT)",
-    "Payments & Receipts",
-    "Profile & KYC",
-    "Messages",
-    "Security",
+    TXT.personalInfo,
+    TXT.address,
+    TXT.applyKhatian,
+    TXT.ldt,
+    TXT.payments,
+    TXT.profileKyc,
+    TXT.messages,
+    TXT.security,
   ];
 
   const [activeTab, setActiveTab] = useState(
@@ -72,7 +73,7 @@ export default function UserDashboard() {
           address_line_2: "",
           city: "",
           postal_code: "",
-          country: "Bangladesh",
+          country: dual("Bangladesh", "বাংলাদেশ"),
         }
       );
     }
@@ -82,7 +83,7 @@ export default function UserDashboard() {
   useEffect(() => {
     setIsEditing(false);
     setShowDrafts(false);
-    if (activeTab === "Payments & Receipts") {
+    if (activeTab === TXT.payments) {
       const fetchPayments = async () => {
         setLoadingPayments(true);
         try {
@@ -185,8 +186,7 @@ export default function UserDashboard() {
         password_confirmation: "",
       });
       setShowPwdForm(false);
-      // replace with your toast if you use one
-      alert("Password updated successfully");
+      alert("Password updated successfully / পাসওয়ার্ড সফলভাবে আপডেট হয়েছে");
     } catch (err) {
       setPwdErrors(err?.response?.data?.errors || {});
     } finally {
@@ -197,7 +197,7 @@ export default function UserDashboard() {
   const handleDownloadInvoice = async (appId) => {
     try {
       const response = await api.get(`/applications/${appId}/invoice`, {
-        responseType: "blob", // Important for file downloads
+        responseType: "blob",
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -209,14 +209,16 @@ export default function UserDashboard() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading invoice:", error);
-      alert("Failed to download invoice. Please try again.");
+      alert(
+        "Failed to download invoice. Please try again. / ইনভয়েস ডাউনলোড ব্যর্থ। আবার চেষ্টা করুন।"
+      );
     }
   };
 
   const handleDownloadKhatian = async (documentUrl, appId) => {
     try {
       const response = await api.get(documentUrl, {
-        responseType: "blob", // Important for file downloads
+        responseType: "blob",
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
@@ -228,7 +230,9 @@ export default function UserDashboard() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading khatian:", error);
-      alert("Failed to download khatian. Please try again.");
+      alert(
+        "Failed to download khatian. Please try again. / খতিয়ান ডাউনলোড ব্যর্থ। আবার চেষ্টা করুন।"
+      );
     }
   };
 
@@ -252,7 +256,7 @@ export default function UserDashboard() {
   // Fetch KYC data when Profile & KYC tab is active
   useEffect(() => {
     let intervalId;
-    if (activeTab === "Profile & KYC") {
+    if (activeTab === TXT.profileKyc) {
       const fetchKyc = async () => {
         try {
           const { data } = await api.get("/user/kyc");
@@ -275,16 +279,16 @@ export default function UserDashboard() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "Personal Information":
+      case TXT.personalInfo:
         return isEditing ? (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Edit Profile Information
+              {TXT.editProfileInformation}
             </h2>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Full Name
+                  {TXT.fullName}
                 </label>
                 <input
                   type="text"
@@ -298,7 +302,7 @@ export default function UserDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Email Address
+                  {TXT.emailAddress}
                 </label>
                 <input
                   type="email"
@@ -312,7 +316,7 @@ export default function UserDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Phone Number
+                  {TXT.phoneNumber}
                 </label>
                 <input
                   type="text"
@@ -328,14 +332,14 @@ export default function UserDashboard() {
                   type="submit"
                   className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  Save Changes
+                  {TXT.saveChanges}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
                   className="px-4 py-2 rounded-md border"
                 >
-                  Cancel
+                  {TXT.cancel}
                 </button>
               </div>
             </form>
@@ -343,19 +347,19 @@ export default function UserDashboard() {
         ) : (
           <div>
             <h1 className="text-xl font-bold text-gray-1000 mb-6">
-              Profile Information
+              {TXT.profileInformation}
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
                   <label className="block text-l font-medium text-gray-700">
-                    Full Name
+                    {TXT.fullName}
                   </label>
                   <p className="mt-1 text-sm text-gray-900">{user?.name}</p>
                 </div>
                 <div>
                   <label className="block text-l font-medium text-gray-700">
-                    Email Address
+                    {TXT.emailAddress}
                   </label>
                   <p className="mt-1 text-sm text-gray-900">{user?.email}</p>
                 </div>
@@ -363,15 +367,15 @@ export default function UserDashboard() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-l font-medium text-gray-700">
-                    Phone Number
+                    {TXT.phoneNumber}
                   </label>
                   <p className="mt-1 text-sm text-gray-900">
-                    {user?.phone || "Not provided"}
+                    {user?.phone || TXT.notProvided}
                   </p>
                 </div>
                 <div>
                   <label className="block text-l font-medium text-gray-700">
-                    Role
+                    {TXT.role}
                   </label>
                   <p className="mt-1 text-sm text-gray-900 capitalize">
                     {user?.role}
@@ -384,30 +388,30 @@ export default function UserDashboard() {
                 onClick={() => setIsEditing(true)}
                 className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Edit
+                {TXT.edit}
               </button>
             </div>
           </div>
         );
 
-      case "Address":
+      case TXT.address:
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Address Information
+              {TXT.addressInformation}
             </h2>
 
             <div className="space-y-6">
               {/* Permanent Address */}
               <div className="border rounded-lg p-4">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Permanent Address
+                  {TXT.permanentAddress}
                 </h3>
                 {isEditingPermanent ? (
                   <form onSubmit={handleSavePermanent} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Address Line 1
+                        {TXT.addressLine1}
                       </label>
                       <input
                         type="text"
@@ -424,7 +428,7 @@ export default function UserDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Address Line 2
+                        {TXT.addressLine2}
                       </label>
                       <input
                         type="text"
@@ -441,7 +445,7 @@ export default function UserDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          City
+                          {TXT.city}
                         </label>
                         <input
                           type="text"
@@ -458,7 +462,7 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          Postal Code
+                          {TXT.postalCode}
                         </label>
                         <input
                           type="text"
@@ -475,7 +479,7 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          Country
+                          {TXT.country}
                         </label>
                         <input
                           type="text"
@@ -496,14 +500,14 @@ export default function UserDashboard() {
                         type="submit"
                         className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        Save Changes
+                        {TXT.saveChanges}
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingPermanent(false)}
                         className="px-4 py-2 rounded-md border"
                       >
-                        Cancel
+                        {TXT.cancel}
                       </button>
                     </div>
                   </form>
@@ -530,7 +534,7 @@ export default function UserDashboard() {
                         onClick={() => setIsEditingPermanent(true)}
                         className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        Edit
+                        {TXT.edit}
                       </button>
                     </div>
                   </div>
@@ -540,13 +544,13 @@ export default function UserDashboard() {
               {/* Mailing Address */}
               <div className="border rounded-lg p-4">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
-                  Mailing Address
+                  {TXT.mailingAddress}
                 </h3>
                 {isEditingMailing ? (
                   <form onSubmit={handleSaveMailing} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Address Line 1
+                        {TXT.addressLine1}
                       </label>
                       <input
                         type="text"
@@ -563,7 +567,7 @@ export default function UserDashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Address Line 2
+                        {TXT.addressLine2}
                       </label>
                       <input
                         type="text"
@@ -580,7 +584,7 @@ export default function UserDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          City
+                          {TXT.city}
                         </label>
                         <input
                           type="text"
@@ -597,7 +601,7 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          Postal Code
+                          {TXT.postalCode}
                         </label>
                         <input
                           type="text"
@@ -614,7 +618,7 @@ export default function UserDashboard() {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
-                          Country
+                          {TXT.country}
                         </label>
                         <input
                           type="text"
@@ -635,14 +639,14 @@ export default function UserDashboard() {
                         type="submit"
                         className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        Save Changes
+                        {TXT.saveChanges}
                       </button>
                       <button
                         type="button"
                         onClick={() => setIsEditingMailing(false)}
                         className="px-4 py-2 rounded-md border"
                       >
-                        Cancel
+                        {TXT.cancel}
                       </button>
                     </div>
                   </form>
@@ -669,7 +673,7 @@ export default function UserDashboard() {
                         onClick={() => setIsEditingMailing(true)}
                         className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
-                        Edit
+                        {TXT.edit}
                       </button>
                     </div>
                   </div>
@@ -679,17 +683,20 @@ export default function UserDashboard() {
           </div>
         );
 
-      case "Apply Khatian":
+      case TXT.applyKhatian:
         if (showDrafts) {
           return (
             <div>
               <button className="text-xl font-semibold text-gray-900 mb-6">
-                Your Submitted Applications
+                {dual(
+                  "Your Submitted Applications",
+                  "আপনার সাবমিট করা আবেদনসমূহ"
+                )}
               </button>
               {loadingApplications ? (
-                <p>Loading applications...</p>
+                <p>{TXT.loadingApplications}</p>
               ) : applications.length === 0 ? (
-                <p>No applications found.</p>
+                <p>{TXT.noApplications}</p>
               ) : (
                 <div className="space-y-4">
                   {applications.map((app) => (
@@ -699,15 +706,15 @@ export default function UserDashboard() {
                     >
                       <div>
                         <p>
-                          <strong>Type:</strong> {app.type}
+                          <strong>{TXT.typeLabel}:</strong> {app.type}
                         </p>
                         <p>
-                          <strong>Description:</strong>{" "}
+                          <strong>{TXT.descriptionLabel}:</strong>{" "}
                           {app.description || "N/A"}
                         </p>
 
                         <div className="flex">
-                          <strong>Payment Status:</strong> &nbsp;{" "}
+                          <strong>{TXT.paymentStatus}:</strong>&nbsp;
                           <span className="uppercase font-semibold text-green-600">
                             {app.payment_status}
                           </span>
@@ -716,12 +723,7 @@ export default function UserDashboard() {
                         <br />
 
                         <p className="text-red-500 text-sm">
-                          <strong>[N.B.</strong>:If you can pay,then payment
-                          status{" "}
-                          <strong className="text-green-400">
-                            {app.payment_status}
-                          </strong>
-                          , <br /> and the khatiyan download button is anable]
+                          <strong>N.B.</strong>: {TXT.nbNote}
                         </p>
                       </div>
                       <div>
@@ -736,14 +738,14 @@ export default function UserDashboard() {
                               }
                               className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
                             >
-                              Download Khatian
+                              {TXT.downloadKhatian}
                             </button>
                           ) : (
-                            <p>No document available</p>
+                            <p>{TXT.noDocument}</p>
                           )
                         ) : (
                           <p className="text-red-600 font-semibold">
-                            Pay first
+                            {TXT.payFirst}
                           </p>
                         )}
                       </div>
@@ -756,7 +758,7 @@ export default function UserDashboard() {
                   onClick={() => setShowDrafts(false)}
                   className="px-4 py-2 rounded-md border"
                 >
-                  Back
+                  {TXT.back}
                 </button>
               </div>
             </div>
@@ -765,12 +767,10 @@ export default function UserDashboard() {
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Apply for Khatian
+              {TXT.applyForKhatian}
             </h2>
             <div className="space-y-3">
-              <p className="text-gray-600">
-                Start a new application or view your drafts.
-              </p>
+              <p className="text-gray-600">{TXT.startNewNote}</p>
               <div className="flex gap-3">
                 <a
                   href="/land"
@@ -778,9 +778,9 @@ export default function UserDashboard() {
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-md border"
                 >
-                  Start New Application
+                  {TXT.startNewApplication}
                   <br />
-                  &nbsp; &nbsp; &nbsp;(নতুুন আবেদন)
+                  &nbsp; &nbsp; &nbsp;(নতুন আবেদন)
                 </a>
                 <button
                   className="px-4 py-2 rounded-md border"
@@ -797,7 +797,7 @@ export default function UserDashboard() {
                     }
                   }}
                 >
-                  Applies Khatiyan
+                  {TXT.viewDrafts}
                   <br />
                   (আবেদন করা খতিয়ান)
                 </button>
@@ -806,42 +806,42 @@ export default function UserDashboard() {
           </div>
         );
 
-      case "Land Development Tax (LDT)":
+      case TXT.ldt:
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Land Development Tax (LDT)
+              {TXT.ldtHeader}
             </h2>
-            <p className="text-gray-600 mb-4">
-              View/pay LDT and download receipts.
-            </p>
+            <p className="text-gray-600 mb-4">{TXT.ldtDesc}</p>
             <div className="flex gap-3">
-              <button className="px-4 py-2 rounded-md border">Pay LDT</button>
               <button className="px-4 py-2 rounded-md border">
-                View Payment History
+                {TXT.payLdt}
+              </button>
+              <button className="px-4 py-2 rounded-md border">
+                {TXT.viewHistory}
               </button>
             </div>
           </div>
         );
 
-      case "Payments & Receipts":
+      case TXT.payments:
         if (loadingPayments) {
-          return <p>Loading payments...</p>;
+          return <p>{TXT.loading}</p>;
         }
         if (paymentsApplications.length === 0) {
           return (
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                Payments & Receipts
+                {TXT.paymentsHeader}
               </h2>
-              <p className="text-gray-600">No payments found.</p>
+              <p className="text-gray-600">{TXT.noPayments}</p>
             </div>
           );
         }
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Payments & Receipts
+              {TXT.paymentsHeader}
             </h2>
             <div className="space-y-4">
               {paymentsApplications.map((app) => (
@@ -851,13 +851,13 @@ export default function UserDashboard() {
                 >
                   <div>
                     <p>
-                      <strong>Type:</strong> {app.type}
+                      <strong>{TXT.typeLabel}:</strong> {app.type}
                     </p>
                     <p>
-                      <strong>Fee Amount:</strong> {app.fee_amount}
+                      <strong>{TXT.feeAmount}:</strong> {app.fee_amount}
                     </p>
                     <p>
-                      <strong>Payment Status:</strong>{" "}
+                      <strong>{TXT.paymentStatus}:</strong>{" "}
                       <span className="uppercase font-semibold text-green-600">
                         {app.payment_status}
                       </span>
@@ -869,11 +869,11 @@ export default function UserDashboard() {
                         onClick={() => handleDownloadInvoice(app.id)}
                         className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                       >
-                        Download Invoice
+                        {TXT.downloadInvoice}
                       </button>
                     ) : (
                       <p className="text-red-600 font-semibold">
-                        Payment Pending
+                        {TXT.paymentPending}
                       </p>
                     )}
                   </div>
@@ -883,16 +883,16 @@ export default function UserDashboard() {
           </div>
         );
 
-      case "Profile & KYC":
+      case TXT.profileKyc:
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Profile & KYC
+              {TXT.profileKycHeader}
             </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between border rounded p-3">
                 <div>
-                  <div className="font-medium">Email</div>
+                  <div className="font-medium">{TXT.email}</div>
                   <div className="text-xs text-gray-500">{user?.email}</div>
                 </div>
                 {user?.email_verified_at ? (
@@ -909,26 +909,28 @@ export default function UserDashboard() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    Email Verified
+                    {TXT.emailVerified}
                   </div>
                 ) : (
                   <button className="px-3 py-1 rounded border">
-                    Send Verification
+                    {TXT.sendVerification}
                   </button>
                 )}
               </div>
               <div className="flex items-center justify-between border rounded p-3">
                 <div>
-                  <div className="font-medium">Phone</div>
+                  <div className="font-medium">{TXT.phone}</div>
                   <div className="text-xs text-gray-500">
-                    {user?.phone || "Not provided"}
+                    {user?.phone || TXT.notProvided}
                   </div>
                 </div>
-                <button className="px-3 py-1 rounded border">Send OTP</button>
+                <button className="px-3 py-1 rounded border">
+                  {TXT.sendOtp}
+                </button>
               </div>
               {/* KYC Upload Section */}
               <div className="flex items-center justify-between border rounded p-4">
-                <div className="font-medium mb-2">National ID (NID)</div>
+                <div className="font-medium mb-2">{TXT.nid}</div>
                 <div className="text-xs text-gray-500">
                   {kycData?.status === "success" ? (
                     <div className="flex items-center gap-2 text-green-600 font-semibold">
@@ -944,7 +946,7 @@ export default function UserDashboard() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      KYC Updated (Status: {kycData.status})
+                      {TXT.kycUpdated} (Status: {kycData.status})
                     </div>
                   ) : kycData?.status === "pending" ? (
                     <div className="flex items-center gap-2 text-yellow-600 font-semibold">
@@ -960,7 +962,7 @@ export default function UserDashboard() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      KYC Pending (Status: {kycData.status})
+                      {TXT.kycPending} (Status: {kycData.status})
                     </div>
                   ) : (
                     <>
@@ -969,7 +971,7 @@ export default function UserDashboard() {
                           onClick={() => setShowKycForm(true)}
                           className="px-4 py-2 rounded-md text-black font-bold bg-red-500 hover:bg-blue-700"
                         >
-                          KYC Update
+                          {TXT.kycUpdate}
                         </button>
                       ) : (
                         <form
@@ -991,7 +993,9 @@ export default function UserDashboard() {
                                 }
                               );
                               setKycData(data.kyc);
-                              alert("KYC documents uploaded successfully");
+                              alert(
+                                "KYC documents uploaded successfully / কেওয়াইসি ডকুমেন্ট সফলভাবে আপলোড হয়েছে"
+                              );
                               setIdFront(null);
                               setIdBack(null);
                               setShowKycForm(false);
@@ -1004,7 +1008,7 @@ export default function UserDashboard() {
                         >
                           <div className="mb-3">
                             <label className="block text-sm font-medium text-gray-700">
-                              ID Front
+                              {TXT.idFront}
                             </label>
                             <input
                               type="file"
@@ -1022,7 +1026,7 @@ export default function UserDashboard() {
                           </div>
                           <div className="mb-3">
                             <label className="block text-sm font-medium text-gray-700">
-                              ID Back
+                              {TXT.idBack}
                             </label>
                             <input
                               type="file"
@@ -1045,7 +1049,7 @@ export default function UserDashboard() {
                             }
                             className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
                           >
-                            {uploadingKyc ? "Uploading..." : "Upload"}
+                            {uploadingKyc ? TXT.uploading : TXT.upload}
                           </button>
                         </form>
                       )}
@@ -1054,7 +1058,7 @@ export default function UserDashboard() {
                 </div>
                 {kycData && kycData.status === "rejected" && (
                   <div className="mt-4 text-sm text-red-600">
-                    Reason: {kycData.rejection_reason}
+                    {TXT.reason}: {kycData.rejection_reason}
                   </div>
                 )}
               </div>
@@ -1062,42 +1066,43 @@ export default function UserDashboard() {
           </div>
         );
 
-      case "Messages":
+      case TXT.messages:
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Messages
+              {TXT.messages}
             </h2>
             <p className="text-gray-600">
-              Notifications and messages appear here.
+              {dual(
+                "Notifications and messages appear here.",
+                "নোটিফিকেশন ও বার্তাগুলো এখানে দেখা যাবে।"
+              )}
             </p>
           </div>
         );
 
-      case "Security":
+      case TXT.security:
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
-              Security Settings
+              {TXT.securitySettings}
             </h2>
 
             {!showPwdForm ? (
-              // Show only the button first
               <button
                 className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
                 onClick={() => setShowPwdForm(true)}
               >
-                Change Password
+                {TXT.changePassword}
               </button>
             ) : (
-              // Show the form after button click
               <form
                 onSubmit={handleChangePassword}
                 className="space-y-4 max-w-md"
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Current Password
+                    {TXT.currentPassword}
                   </label>
                   <div className="relative">
                     <input
@@ -1117,7 +1122,7 @@ export default function UserDashboard() {
                       onClick={() => setShowCurrentPwd(!showCurrentPwd)}
                       className="absolute inset-y-0 right-0 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
                     >
-                      {showCurrentPwd ? "Hide" : "Show"}
+                      {showCurrentPwd ? TXT.hide : TXT.show}
                     </button>
                   </div>
                   {pwdErrors.current_password && (
@@ -1129,7 +1134,7 @@ export default function UserDashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    New Password
+                    {TXT.newPassword}
                   </label>
                   <div className="relative">
                     <input
@@ -1146,7 +1151,7 @@ export default function UserDashboard() {
                       onClick={() => setShowNewPwd(!showNewPwd)}
                       className="absolute inset-y-0 right-0 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
                     >
-                      {showNewPwd ? "Hide" : "Show"}
+                      {showNewPwd ? TXT.hide : TXT.show}
                     </button>
                   </div>
                   {pwdErrors.password && (
@@ -1158,7 +1163,7 @@ export default function UserDashboard() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    Confirm New Password
+                    {TXT.confirmNewPassword}
                   </label>
                   <div className="relative">
                     <input
@@ -1178,7 +1183,7 @@ export default function UserDashboard() {
                       onClick={() => setShowConfirmPwd(!showConfirmPwd)}
                       className="absolute inset-y-0 right-0 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
                     >
-                      {showConfirmPwd ? "Hide" : "Show"}
+                      {showConfirmPwd ? TXT.hide : TXT.show}
                     </button>
                   </div>
                 </div>
@@ -1189,7 +1194,7 @@ export default function UserDashboard() {
                     disabled={pwdLoading}
                     className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-60"
                   >
-                    {pwdLoading ? "Saving..." : "Save Password"}
+                    {pwdLoading ? TXT.saving : TXT.savePassword}
                   </button>
                   <button
                     type="button"
@@ -1207,7 +1212,7 @@ export default function UserDashboard() {
                     }}
                     className="px-4 py-2 rounded-md border"
                   >
-                    Cancel
+                    {TXT.cancel}
                   </button>
                 </div>
               </form>
@@ -1216,7 +1221,7 @@ export default function UserDashboard() {
             {/* (Optional) 2FA or other security actions */}
             <div className="mt-6 space-x-2">
               <button className="px-4 py-2 rounded-md border">
-                Enable 2FA
+                {TXT.enable2FA}
               </button>
             </div>
           </div>
