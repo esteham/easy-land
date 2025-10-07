@@ -55,6 +55,8 @@ export default function UserDashboard() {
   const [showDrafts, setShowDrafts] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
 
+  const [districts, setDistricts] = useState([]);
+
   const [paymentsApplications, setPaymentsApplications] = useState([]);
   const [loadingPayments, setLoadingPayments] = useState(false);
 
@@ -92,6 +94,19 @@ export default function UserDashboard() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, lang]);
+
+  // Fetch districts
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      try {
+        const { data } = await api.get('/locations/districts');
+        setDistricts(data);
+      } catch (error) {
+        console.error('Error fetching districts:', error);
+      }
+    };
+    fetchDistricts();
+  }, []);
 
   // Exit edit mode whenever tab changes; fetch payments on payments tab
   useEffect(() => {
@@ -460,8 +475,7 @@ export default function UserDashboard() {
                         <label className="block text-sm font-medium text-gray-700">
                           {t("city")}
                         </label>
-                        <input
-                          type="text"
+                        <select
                           value={permanentAddress.city}
                           onChange={(e) =>
                             setPermanentAddress({
@@ -471,7 +485,14 @@ export default function UserDashboard() {
                           }
                           className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                           required
-                        />
+                        >
+                          <option value="">{t("selectDistrict")}</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={lang === LANGS.BN ? district.name_bn : district.name_en}>
+                              {lang === LANGS.BN ? district.name_bn : district.name_en}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
@@ -599,8 +620,7 @@ export default function UserDashboard() {
                         <label className="block text-sm font-medium text-gray-700">
                           {t("city")}
                         </label>
-                        <input
-                          type="text"
+                        <select
                           value={mailingAddress.city}
                           onChange={(e) =>
                             setMailingAddress({
@@ -610,7 +630,14 @@ export default function UserDashboard() {
                           }
                           className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                           required
-                        />
+                        >
+                          <option value="">{t("selectDistrict")}</option>
+                          {districts.map((district) => (
+                            <option key={district.id} value={lang === LANGS.BN ? district.name_bn : district.name_en}>
+                              {lang === LANGS.BN ? district.name_bn : district.name_en}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700">

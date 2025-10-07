@@ -43,6 +43,10 @@ Route::get('/locations/divisions', function () {
     return Division::select('id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
 });
 
+Route::get('/locations/districts', function () {
+    return District::select('id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
+});
+
 Route::get('/locations/divisions/{division}/districts', function (Division $division) {
     return $division->districts()->select('id','division_id','name_en','name_bn','bbs_code')->orderBy('name_en')->get();
 });

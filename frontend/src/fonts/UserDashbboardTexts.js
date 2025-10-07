@@ -37,6 +37,7 @@ const TEXTS = {
     city: "City",
     postalCode: "Postal Code",
     country: "Country",
+    selectDistrict: "Select City",
 
     // Apply Khatian
     applyForKhatian: "Apply for Khatian",
@@ -139,9 +140,10 @@ const TEXTS = {
     mailingAddress: "মেইলিং/পত্র প্রেরণের ঠিকানা",
     addressLine1: "ঠিকানা লাইন ১",
     addressLine2: "ঠিকানা লাইন ২",
-    city: "শহর/উপজেলা",
+    city: "শহর/জেলা",
     postalCode: "পোস্ট কোড",
     country: "দেশ",
+    selectDistrict: "শহর নির্বাচন করুন",
 
     // Apply Khatian
     applyForKhatian: "খতিয়ান আবেদন",
