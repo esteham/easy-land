@@ -13,11 +13,11 @@ class SurveyTypeSeeder extends Seeder
     public function run(): void
     {
         $surveyTypes = [
-            ['code' => 'CS', 'name_en' => 'Cadastral Survey', 'name_bn' => 'ক্যাডাস্ট্রাল সার্ভে', 'description' => 'Cadastral Survey type'],
-            ['code' => 'SA', 'name_en' => 'Settlement Survey A', 'name_bn' => 'সেটেলমেন্ট সার্ভে এ', 'description' => 'Settlement Survey A type'],
-            ['code' => 'RS', 'name_en' => 'Resurvey', 'name_bn' => 'রিসার্ভে', 'description' => 'Resurvey type'],
-            ['code' => 'BS', 'name_en' => 'Boundary Survey', 'name_bn' => 'বাউন্ডারি সার্ভে', 'description' => 'Boundary Survey type'],
-            ['code' => 'BRS', 'name_en' => 'Boundary Resurvey', 'name_bn' => 'বাউন্ডারি রিসার্ভে', 'description' => 'Boundary Resurvey type'],
+            ['code' => 'CS', 'name_en' => 'Cadastral Survey (CS)', 'name_bn' => 'ক্যাডাস্ট্রাল সার্ভে', 'description' => 'Cadastral Survey type'],
+            ['code' => 'SA', 'name_en' => 'Settlement Survey (SA)', 'name_bn' => 'সেটেলমেন্ট সার্ভে এ', 'description' => 'Settlement Survey A type'],
+            ['code' => 'RS', 'name_en' => 'Resurvey (RS)', 'name_bn' => 'রিসার্ভে', 'description' => 'Resurvey type'],
+            ['code' => 'BS', 'name_en' => 'Boundary Survey (BS)', 'name_bn' => 'বাউন্ডারি সার্ভে', 'description' => 'Boundary Survey type'],
+            ['code' => 'BRS', 'name_en' => 'Boundary Resurvey (BRS)', 'name_bn' => 'বাউন্ডারি রিসার্ভে', 'description' => 'Boundary Resurvey type'],
             // Add more survey types as needed
         ];
 
