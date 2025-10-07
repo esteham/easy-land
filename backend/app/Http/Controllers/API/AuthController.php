@@ -95,9 +95,21 @@ class AuthController extends Controller
         $user = $request->user();
 
         $data = $request->validate([
-            'name'  => ['required','string','max:255'],
-            'email' => ['required','email','unique:users,email,'.$user->id],
-            'phone' => ['nullable','string','max:20'],
+            'name'  => ['sometimes','required','string','max:255'],
+            'email' => ['sometimes','required','email','unique:users,email,'.$user->id],
+            'phone' => ['sometimes','nullable','string','max:20'],
+            'permanent_address' => ['sometimes','nullable','array'],
+            'permanent_address.address_line_1' => ['sometimes','nullable','string','max:255'],
+            'permanent_address.address_line_2' => ['sometimes','nullable','string','max:255'],
+            'permanent_address.city' => ['sometimes','nullable','string','max:255'],
+            'permanent_address.postal_code' => ['sometimes','nullable','string','max:20'],
+            'permanent_address.country' => ['sometimes','nullable','string','max:255'],
+            'mailing_address' => ['sometimes','nullable','array'],
+            'mailing_address.address_line_1' => ['sometimes','nullable','string','max:255'],
+            'mailing_address.address_line_2' => ['sometimes','nullable','string','max:255'],
+            'mailing_address.city' => ['sometimes','nullable','string','max:255'],
+            'mailing_address.postal_code' => ['sometimes','nullable','string','max:20'],
+            'mailing_address.country' => ['sometimes','nullable','string','max:255'],
         ]);
 
         $user->update($data);

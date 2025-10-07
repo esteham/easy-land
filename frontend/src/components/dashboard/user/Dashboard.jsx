@@ -25,6 +25,24 @@ export default function UserDashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
 
+  // Address states
+  const [permanentAddress, setPermanentAddress] = useState({
+    address_line_1: "",
+    address_line_2: "",
+    city: "",
+    postal_code: "",
+    country: "",
+  });
+  const [mailingAddress, setMailingAddress] = useState({
+    address_line_1: "",
+    address_line_2: "",
+    city: "",
+    postal_code: "",
+    country: "",
+  });
+  const [isEditingPermanent, setIsEditingPermanent] = useState(false);
+  const [isEditingMailing, setIsEditingMailing] = useState(false);
+
   const [applications, setApplications] = useState([]);
   const [showDrafts, setShowDrafts] = useState(false);
   const [loadingApplications, setLoadingApplications] = useState(false);
@@ -39,6 +57,24 @@ export default function UserDashboard() {
         email: user.email || "",
         phone: user.phone || "",
       });
+      setPermanentAddress(
+        user.permanent_address || {
+          address_line_1: "",
+          address_line_2: "",
+          city: "",
+          postal_code: "",
+          country: "",
+        }
+      );
+      setMailingAddress(
+        user.mailing_address || {
+          address_line_1: "",
+          address_line_2: "",
+          city: "",
+          postal_code: "",
+          country: "Bangladesh",
+        }
+      );
     }
   }, [user]);
 
@@ -83,6 +119,32 @@ export default function UserDashboard() {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating profile:", error);
+    }
+  };
+
+  const handleSavePermanent = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await api.put("/me", {
+        permanent_address: permanentAddress,
+      });
+      updateUser(data.user);
+      setIsEditingPermanent(false);
+    } catch (error) {
+      console.error("Error updating permanent address:", error);
+    }
+  };
+
+  const handleSaveMailing = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await api.put("/me", {
+        mailing_address: mailingAddress,
+      });
+      updateUser(data.user);
+      setIsEditingMailing(false);
+    } catch (error) {
+      console.error("Error updating mailing address:", error);
     }
   };
 
@@ -135,12 +197,12 @@ export default function UserDashboard() {
   const handleDownloadInvoice = async (appId) => {
     try {
       const response = await api.get(`/applications/${appId}/invoice`, {
-        responseType: 'blob', // Important for file downloads
+        responseType: "blob", // Important for file downloads
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `invoice_application_${appId}.pdf`);
+      link.setAttribute("download", `invoice_application_${appId}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -154,12 +216,12 @@ export default function UserDashboard() {
   const handleDownloadKhatian = async (documentUrl, appId) => {
     try {
       const response = await api.get(documentUrl, {
-        responseType: 'blob', // Important for file downloads
+        responseType: "blob", // Important for file downloads
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.setAttribute('download', `khatian_application_${appId}.pdf`);
+      link.setAttribute("download", `khatian_application_${appId}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -334,9 +396,286 @@ export default function UserDashboard() {
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               Address Information
             </h2>
-            <p className="text-gray-600">
-              Address details will be displayed here.
-            </p>
+
+            <div className="space-y-6">
+              {/* Permanent Address */}
+              <div className="border rounded-lg p-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Permanent Address
+                </h3>
+                {isEditingPermanent ? (
+                  <form onSubmit={handleSavePermanent} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address Line 1
+                      </label>
+                      <input
+                        type="text"
+                        value={permanentAddress.address_line_1}
+                        onChange={(e) =>
+                          setPermanentAddress({
+                            ...permanentAddress,
+                            address_line_1: e.target.value,
+                          })
+                        }
+                        className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address Line 2
+                      </label>
+                      <input
+                        type="text"
+                        value={permanentAddress.address_line_2}
+                        onChange={(e) =>
+                          setPermanentAddress({
+                            ...permanentAddress,
+                            address_line_2: e.target.value,
+                          })
+                        }
+                        className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          City
+                        </label>
+                        <input
+                          type="text"
+                          value={permanentAddress.city}
+                          onChange={(e) =>
+                            setPermanentAddress({
+                              ...permanentAddress,
+                              city: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Postal Code
+                        </label>
+                        <input
+                          type="text"
+                          value={permanentAddress.postal_code}
+                          onChange={(e) =>
+                            setPermanentAddress({
+                              ...permanentAddress,
+                              postal_code: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Country
+                        </label>
+                        <input
+                          type="text"
+                          value={permanentAddress.country}
+                          onChange={(e) =>
+                            setPermanentAddress({
+                              ...permanentAddress,
+                              country: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingPermanent(false)}
+                        className="px-4 py-2 rounded-md border"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-900">
+                        {permanentAddress.address_line_1}
+                      </p>
+                      {permanentAddress.address_line_2 && (
+                        <p className="text-sm text-gray-900">
+                          {permanentAddress.address_line_2}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-900">
+                        {permanentAddress.city}, {permanentAddress.postal_code}
+                      </p>
+                      <p className="text-sm text-gray-900">
+                        {permanentAddress.country}
+                      </p>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={() => setIsEditingPermanent(true)}
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Mailing Address */}
+              <div className="border rounded-lg p-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Mailing Address
+                </h3>
+                {isEditingMailing ? (
+                  <form onSubmit={handleSaveMailing} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address Line 1
+                      </label>
+                      <input
+                        type="text"
+                        value={mailingAddress.address_line_1}
+                        onChange={(e) =>
+                          setMailingAddress({
+                            ...mailingAddress,
+                            address_line_1: e.target.value,
+                          })
+                        }
+                        className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Address Line 2
+                      </label>
+                      <input
+                        type="text"
+                        value={mailingAddress.address_line_2}
+                        onChange={(e) =>
+                          setMailingAddress({
+                            ...mailingAddress,
+                            address_line_2: e.target.value,
+                          })
+                        }
+                        className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          City
+                        </label>
+                        <input
+                          type="text"
+                          value={mailingAddress.city}
+                          onChange={(e) =>
+                            setMailingAddress({
+                              ...mailingAddress,
+                              city: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Postal Code
+                        </label>
+                        <input
+                          type="text"
+                          value={mailingAddress.postal_code}
+                          onChange={(e) =>
+                            setMailingAddress({
+                              ...mailingAddress,
+                              postal_code: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Country
+                        </label>
+                        <input
+                          type="text"
+                          value={mailingAddress.country}
+                          onChange={(e) =>
+                            setMailingAddress({
+                              ...mailingAddress,
+                              country: e.target.value,
+                            })
+                          }
+                          className="mt-1 block w-full border rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Save Changes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingMailing(false)}
+                        className="px-4 py-2 rounded-md border"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-900">
+                        {mailingAddress.address_line_1}
+                      </p>
+                      {mailingAddress.address_line_2 && (
+                        <p className="text-sm text-gray-900">
+                          {mailingAddress.address_line_2}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-900">
+                        {mailingAddress.city}, {mailingAddress.postal_code}
+                      </p>
+                      <p className="text-sm text-gray-900">
+                        {mailingAddress.country}
+                      </p>
+                    </div>
+                    <div className="mt-4">
+                      <button
+                        onClick={() => setIsEditingMailing(true)}
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         );
 
@@ -389,7 +728,12 @@ export default function UserDashboard() {
                         {app.payment_status === "paid" ? (
                           app.dag && app.dag.document_url ? (
                             <button
-                              onClick={() => handleDownloadKhatian(app.dag.document_url, app.id)}
+                              onClick={() =>
+                                handleDownloadKhatian(
+                                  app.dag.document_url,
+                                  app.id
+                                )
+                              }
                               className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700"
                             >
                               Download Khatian
@@ -435,6 +779,8 @@ export default function UserDashboard() {
                   className="px-4 py-2 rounded-md border"
                 >
                   Start New Application
+                  <br />
+                  &nbsp; &nbsp; &nbsp;(নতুুন আবেদন)
                 </a>
                 <button
                   className="px-4 py-2 rounded-md border"
@@ -451,7 +797,9 @@ export default function UserDashboard() {
                     }
                   }}
                 >
-                  View Drafts
+                  Applies Khatiyan
+                  <br />
+                  (আবেদন করা খতিয়ান)
                 </button>
               </div>
             </div>
