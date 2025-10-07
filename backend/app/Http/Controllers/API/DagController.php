@@ -12,7 +12,7 @@ class DagController extends Controller
 {
     public function index()
     {
-        return Dag::with('zil:id,zil_no')
+        return Dag::with('zil:id,zil_no', 'surveyType:id,code,name_en')
             ->orderBy('dag_no')
             ->get()
             ->map(function ($d) {
@@ -24,11 +24,12 @@ class DagController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'zil_id'   => 'required|exists:zils,id',
-            'dag_no'   => 'required|string',
-            'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
-            'khotiyan' => 'nullable',
-            'meta'     => 'nullable',
+            'zil_id'         => 'required|exists:zils,id',
+            'dag_no'         => 'required|string',
+            'survey_type_id' => 'nullable|exists:survey_types,id',
+            'document'       => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
+            'khotiyan'       => 'nullable',
+            'meta'           => 'nullable',
         ]);
 
         $khotiyan = $this->normalizeToArray($request->input('khotiyan'), []);
@@ -40,14 +41,15 @@ class DagController extends Controller
         }
 
         $dag = Dag::create([
-            'zil_id'   => $request->zil_id,
-            'dag_no'   => $request->dag_no,
-            'khotiyan' => $khotiyan,
-            'meta'     => $meta,
-            'document' => $docPath,
+            'zil_id'         => $request->zil_id,
+            'dag_no'         => $request->dag_no,
+            'survey_type_id' => $request->survey_type_id,
+            'khotiyan'       => $khotiyan,
+            'meta'           => $meta,
+            'document'       => $docPath,
         ]);
 
-        $dag->load('zil:id,zil_no');
+        $dag->load('zil:id,zil_no', 'surveyType:id,code,name_en');
         $dag->document_url = $dag->document_url;
 
         return response()->json($dag, 201);
@@ -55,7 +57,7 @@ class DagController extends Controller
 
     public function show(Dag $dag)
     {
-        $dag->load('zil:id,zil_no');
+        $dag->load('zil:id,zil_no', 'surveyType:id,code,name_en');
         $dag->document_url = $dag->document_url;
         return $dag;
     }
@@ -65,6 +67,7 @@ class DagController extends Controller
         $request->validate([
             'zil_id'         => 'sometimes|exists:zils,id',
             'dag_no'         => 'sometimes|required|string',
+            'survey_type_id' => 'nullable|exists:survey_types,id',
             'document'       => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
             'remove_document'=> 'nullable|boolean', // allow removing without new upload
             'khotiyan'       => 'nullable',
@@ -75,6 +78,7 @@ class DagController extends Controller
 
         if ($request->filled('zil_id')) $data['zil_id'] = $request->zil_id;
         if ($request->filled('dag_no')) $data['dag_no'] = $request->dag_no;
+        if ($request->has('survey_type_id')) $data['survey_type_id'] = $request->survey_type_id;
 
         if ($request->has('khotiyan')) {
             $kh = $this->normalizeToArray($request->input('khotiyan'), null);
@@ -108,7 +112,7 @@ class DagController extends Controller
 
         $dag->update($data);
 
-        $dag->load('zil:id,zil_no');
+        $dag->load('zil:id,zil_no', 'surveyType:id,code,name_en');
         $dag->document_url = $dag->document_url;
 
         return $dag;

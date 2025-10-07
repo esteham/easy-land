@@ -5,12 +5,14 @@ import api from "../../../api";
 export default function AdminDags() {
   const [items, setItems] = useState([]);
   const [zils, setZils] = useState([]);
+  const [surveyTypes, setSurveyTypes] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     id: null,
     zil_id: "",
     dag_no: "",
+    survey_type: "",
     khotiyan: "", // will hold JSON string (array of {owner, area})
     meta: "", // will hold JSON string (object)
     document: null,
@@ -68,6 +70,15 @@ export default function AdminDags() {
     }
   };
 
+  const loadSurveyTypes = async () => {
+    try {
+      const { data } = await api.get("/admin/survey-types");
+      setSurveyTypes(data || []);
+    } catch (e) {
+      console.error("Failed to load survey types", e);
+    }
+  };
+
   const load = async () => {
     try {
       setLoading(true);
@@ -84,6 +95,7 @@ export default function AdminDags() {
 
   useEffect(() => {
     loadZils();
+    loadSurveyTypes();
     load();
   }, []);
 
@@ -113,6 +125,7 @@ export default function AdminDags() {
       const fd = new FormData();
       fd.append("zil_id", form.zil_id);
       fd.append("dag_no", form.dag_no);
+      if (form.survey_type) fd.append("survey_type_id", form.survey_type);
       fd.append("khotiyan", JSON.stringify(khArr));
       fd.append("meta", JSON.stringify(metaObj));
       if (form.document) fd.append("document", form.document);
@@ -130,6 +143,7 @@ export default function AdminDags() {
         id: null,
         zil_id: "",
         dag_no: "",
+        survey_type: "",
         khotiyan: "",
         meta: "",
         document: null,
@@ -150,6 +164,7 @@ export default function AdminDags() {
       id: it.id,
       zil_id: it.zil_id ?? "",
       dag_no: it.dag_no ?? "",
+      survey_type: it.survey_type_id ?? "",
       khotiyan: it.khotiyan ? JSON.stringify(it.khotiyan) : "",
       meta: it.meta ? JSON.stringify(it.meta) : "",
       document: null, // reset; user can re-upload if needed
@@ -178,36 +193,56 @@ export default function AdminDags() {
         onSubmit={onSubmit}
         className="bg-white border rounded p-4 mb-6 space-y-3"
       >
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <div>
-            <label className="text-sm">Zil</label>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className=" md:col-span-1 gap-4">
+            <div className="mb-2">
+              <label className="text-sm font-semibold">Zil</label>
+              <select
+                className="w-full border rounded p-2"
+                value={form.zil_id}
+                onChange={(e) => setForm({ ...form, zil_id: e.target.value })}
+                required
+              >
+                <option value="">Select Zil</option>
+                {zils.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.zil_no}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold">Dag No</label>
+              <input
+                className="w-full border rounded p-2"
+                value={form.dag_no}
+                onChange={(e) => setForm({ ...form, dag_no: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="mb-2">
+            <label className="text-sm font-semibold">Survey Type</label>
             <select
               className="w-full border rounded p-2"
-              value={form.zil_id}
-              onChange={(e) => setForm({ ...form, zil_id: e.target.value })}
-              required
+              value={form.survey_type}
+              onChange={(e) =>
+                setForm({ ...form, survey_type: e.target.value })
+              }
             >
-              <option value="">Select Zil</option>
-              {zils.map((z) => (
-                <option key={z.id} value={z.id}>
-                  {z.zil_no}
+              <option value="">Select Survey Type</option>
+              {surveyTypes.map((st) => (
+                <option key={st.id} value={st.id}>
+                  {st.name_en}
                 </option>
               ))}
             </select>
           </div>
 
-          <div>
-            <label className="text-sm">Dag No</label>
-            <input
-              className="w-full border rounded p-2"
-              value={form.dag_no}
-              onChange={(e) => setForm({ ...form, dag_no: e.target.value })}
-              required
-            />
-          </div>
-
           {/* Quick Khotiyan Builder (Owner + Area -> builds array) */}
-          <div className="md:col-span-3 border rounded p-3">
+          <div className="md:col-span-2 border rounded p-3 mb-2">
             <label className="text-sm font-medium block mb-2">
               Quick Khotiyan Entry
             </label>
@@ -286,7 +321,7 @@ export default function AdminDags() {
           </div>
 
           <div>
-            <label className="text-sm">Meta (JSON)</label>
+            <label className="text-sm font-semibold">Meta (JSON)</label>
             <textarea
               className="w-full border rounded p-2"
               value={form.meta}
@@ -296,7 +331,9 @@ export default function AdminDags() {
           </div>
 
           <div>
-            <label className="text-sm">Document (Image/PDF)</label>
+            <label className="text-sm font-semibold">
+              Document (Image/PDF)
+            </label>
             <input
               type="file"
               accept=".jpg,.jpeg,.png,.pdf"
@@ -329,6 +366,7 @@ export default function AdminDags() {
                   id: null,
                   zil_id: "",
                   dag_no: "",
+                  survey_type: "",
                   khotiyan: "",
                   meta: "",
                   document: null,
@@ -348,6 +386,7 @@ export default function AdminDags() {
               <th className="text-left p-2">ID</th>
               <th className="text-left p-2">Zil No</th>
               <th className="text-left p-2">Dag No</th>
+              <th className="text-left p-2">Survey Type</th>
               <th className="text-left p-2">Document</th>
               <th className="p-2">Actions</th>
             </tr>
@@ -358,6 +397,10 @@ export default function AdminDags() {
                 <td className="p-2">{it.id}</td>
                 <td className="p-2">{it.zil?.zil_no || "-"}</td>
                 <td className="p-2">{it.dag_no}</td>
+                <td className="p-2">
+                  {surveyTypes.find((st) => st.id === it.survey_type_id)
+                    ?.name_en || "-"}
+                </td>
                 <td className="p-2">
                   {it.document_url ? (
                     <div className="flex gap-2">
@@ -399,7 +442,7 @@ export default function AdminDags() {
             ))}
             {items.length === 0 && (
               <tr>
-                <td className="p-3 text-center text-gray-500" colSpan={5}>
+                <td className="p-3 text-center text-gray-500" colSpan={6}>
                   {loading ? "Loading..." : "No dags found."}
                 </td>
               </tr>

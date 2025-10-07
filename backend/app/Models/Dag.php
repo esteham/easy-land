@@ -10,7 +10,7 @@ class Dag extends Model
     use HasFactory;
 
     protected $fillable = [
-                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document'
+                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document', 'survey_type_id'
             ];
 
     protected $appends = ['document_url'];
@@ -23,6 +23,11 @@ class Dag extends Model
     public function zil()
     {
         return $this->belongsTo(Zil::class);
+    }
+
+    public function surveyType()
+    {
+        return $this->belongsTo(SurveyType::class);
     }
     
     // for frontend convenience
