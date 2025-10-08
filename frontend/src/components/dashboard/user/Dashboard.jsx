@@ -79,7 +79,7 @@ export default function UserDashboard() {
           address_line_2: "",
           city: "",
           postal_code: "",
-          country: "",
+          country: lang === LANGS.BN ? "বাংলাদেশ" : "Bangladesh",
         }
       );
       setMailingAddress(
@@ -99,10 +99,10 @@ export default function UserDashboard() {
   useEffect(() => {
     const fetchDistricts = async () => {
       try {
-        const { data } = await api.get('/locations/districts');
+        const { data } = await api.get("/locations/districts");
         setDistricts(data);
       } catch (error) {
-        console.error('Error fetching districts:', error);
+        console.error("Error fetching districts:", error);
       }
     };
     fetchDistricts();
@@ -488,8 +488,17 @@ export default function UserDashboard() {
                         >
                           <option value="">{t("selectDistrict")}</option>
                           {districts.map((district) => (
-                            <option key={district.id} value={lang === LANGS.BN ? district.name_bn : district.name_en}>
-                              {lang === LANGS.BN ? district.name_bn : district.name_en}
+                            <option
+                              key={district.id}
+                              value={
+                                lang === LANGS.BN
+                                  ? district.name_bn
+                                  : district.name_en
+                              }
+                            >
+                              {lang === LANGS.BN
+                                ? district.name_bn
+                                : district.name_en}
                             </option>
                           ))}
                         </select>
@@ -633,8 +642,17 @@ export default function UserDashboard() {
                         >
                           <option value="">{t("selectDistrict")}</option>
                           {districts.map((district) => (
-                            <option key={district.id} value={lang === LANGS.BN ? district.name_bn : district.name_en}>
-                              {lang === LANGS.BN ? district.name_bn : district.name_en}
+                            <option
+                              key={district.id}
+                              value={
+                                lang === LANGS.BN
+                                  ? district.name_bn
+                                  : district.name_en
+                              }
+                            >
+                              {lang === LANGS.BN
+                                ? district.name_bn
+                                : district.name_en}
                             </option>
                           ))}
                         </select>
