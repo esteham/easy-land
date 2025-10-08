@@ -28,6 +28,22 @@ class LandTaxRegistrationController extends Controller
     }
 
     /**
+     * Display a listing of the resource for the authenticated user.
+     */
+    public function userIndex()
+    {
+        $registrations = LandTaxRegistration::where('user_id', Auth::id())->with([
+            'division:id,name_en,name_bn',
+            'district:id,name_en,name_bn',
+            'upazila:id,name_en,name_bn',
+            'mouza:id,name_en,name_bn',
+            'surveyType:id,name_en,name_bn'
+        ])->orderBy('submitted_at', 'desc')->get();
+
+        return response()->json($registrations);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

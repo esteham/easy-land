@@ -60,6 +60,14 @@ const TEXTS = {
     ldtDesc: "View/pay LDT and download receipts.",
     payLdt: "Pay LDT",
     viewHistory: "View Payment History",
+    noLdtRegistrations: "No LDT registrations found.",
+    registrationId: "Registration ID",
+    status: "Status",
+    land: "Land",
+    dagNumber: "Dag Number",
+    khatiyanNumber: "Khatiyan Number",
+    registrationDate: "Registration Date",
+    notes: "Notes",
 
     // Payments
     paymentsHeader: "Payments & Receipts",
@@ -166,6 +174,9 @@ const TEXTS = {
     ldtDesc: "এলডিটি দেখুন/পরিশোধ করুন ও রসিদ ডাউনলোড করুন।",
     payLdt: "এলডিটি পরিশোধ",
     viewHistory: "পেমেন্ট ইতিহাস দেখুন",
+    noLdtRegistrations: "কোনো এলডিটি রেজিস্ট্রেশন পাওয়া যায়নি।",
+    registrationId: "রেজিস্ট্রেশন আইডি",
+    status: "স্ট্যাটাস",
 
     // Payments
     paymentsHeader: "পেমেন্ট ও রসিদ",

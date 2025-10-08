@@ -60,6 +60,9 @@ export default function UserDashboard() {
   const [paymentsApplications, setPaymentsApplications] = useState([]);
   const [loadingPayments, setLoadingPayments] = useState(false);
 
+  const [ldtRegistrations, setLdtRegistrations] = useState([]);
+  const [loadingLdt, setLoadingLdt] = useState(false);
+
   // Persist language choice
   useEffect(() => {
     localStorage.setItem("lang", lang);
@@ -302,6 +305,24 @@ export default function UserDashboard() {
       intervalId = setInterval(fetchKyc, 10000);
     }
     return () => intervalId && clearInterval(intervalId);
+  }, [activeKey]);
+
+  useEffect(() => {
+    if (activeKey === "ldt") {
+      const fetchLdt = async () => {
+        setLoadingLdt(true);
+        try {
+          const { data } = await api.get("/user/land-tax-registrations");
+          setLdtRegistrations(data);
+        } catch (error) {
+          console.error("Error fetching LDT registrations:", error);
+          setLdtRegistrations([]);
+        } finally {
+          setLoadingLdt(false);
+        }
+      };
+      fetchLdt();
+    }
   }, [activeKey]);
 
   // ---- Render body per tab (by key) ----
@@ -859,13 +880,59 @@ export default function UserDashboard() {
         );
 
       case "ldt":
+        if (loadingLdt) {
+          return <p>{t("loading")}</p>;
+        }
+        if (ldtRegistrations.length === 0) {
+          return (
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                {t("ldtHeader")}
+              </h2>
+              <p className="text-gray-600 mb-4">{t("ldtDesc")}</p>
+              <p className="text-gray-600">{t("noLdtRegistrations")}</p>
+              <div className="flex gap-3 mt-4">
+                <button className="px-4 py-2 rounded-md border">
+                  {t("payLdt")}
+                </button>
+                <button className="px-4 py-2 rounded-md border">
+                  {t("viewHistory")}
+                </button>
+              </div>
+            </div>
+          );
+        }
         return (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-6">
               {t("ldtHeader")}
             </h2>
             <p className="text-gray-600 mb-4">{t("ldtDesc")}</p>
-            <div className="flex gap-3">
+            <div className="space-y-4">
+              {ldtRegistrations.map((reg) => (
+                <div
+                  key={reg.id}
+                  className="border rounded p-4 flex justify-between items-center"
+                >
+                  <div>
+                    <p>
+                      <strong>{t("registrationId")}:</strong> {reg.id}
+                    </p>
+                    <p>
+                      <strong>{t("status")}:</strong>{" "}
+                      <span className="uppercase font-semibold text-green-600">
+                        {reg.status}
+                      </span>
+                    </p>
+                    {/* Add more fields as needed */}
+                  </div>
+                  <div>
+                    {/* Add actions if needed */}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-3 mt-6">
               <button className="px-4 py-2 rounded-md border">
                 {t("payLdt")}
               </button>

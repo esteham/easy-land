@@ -147,5 +147,8 @@ Route::middleware('auth:api')->group(function () {
         // KYC upload and get
         Route::post('/user/kyc/upload', [\App\Http\Controllers\KycController::class, 'upload']);
         Route::get('/user/kyc', [\App\Http\Controllers\KycController::class, 'getKyc']);
+
+        // Land Tax Registrations for user
+        Route::get('/user/land-tax-registrations', [LandTaxRegistrationController::class, 'userIndex']);
     });
 });
