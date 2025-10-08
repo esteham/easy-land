@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
 
         //Custom user
         User::updateOrCreate(
-            ['email' => 'acland@example.com'],
+            ['email' => 'user@example.com'],
             [
                 'name' => 'Custom User',
                 'password' => Hash::make('user123'),
