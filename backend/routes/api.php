@@ -109,6 +109,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'store']);
     Route::get('/applications/{id}/invoice', [\App\Http\Controllers\API\ApplicationController::class, 'invoice']);
 
+    // Land Tax Registration
+    Route::apiResource('land-tax-registrations', \App\Http\Controllers\API\LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
+
     Route::middleware('role:admin,acland')->group(function () {
         Route::apiResource('admin/upazilas', UpazilaController::class);
         Route::apiResource('admin/mouzas', MouzaController::class);

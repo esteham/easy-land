@@ -13,6 +13,7 @@ import Register from "./components/pages/Register";
 import HomePage from "./components/pages/HomePage";
 import ResetPassword from "./components/pages/ResetPassword";
 import ForgotPassword from "./components/pages/ForgotPassword";
+import LandTaxRegistration from "./components/pages/LandTaxRegistration";
 
 import AdminLayout, { AdminHome } from "./components/dashboard/admin/Dashboard";
 import AdminDivisions from "./components/dashboard/admin/AdminDivisions";
@@ -23,6 +24,7 @@ import AdminZils from "./components/dashboard/admin/AdminZils";
 import AdminDags from "./components/dashboard/admin/AdminDags";
 import AdminSurveyTypes from "./components/dashboard/admin/AdminSurveyTypes";
 import KycApproval from "./components/dashboard/admin/KycApproval";
+import AdminLandTaxRegistrations from "./components/dashboard/admin/AdminLandTaxRegistrations";
 
 import UserDashboard from "./components/dashboard/user/Dashboard";
 
@@ -78,6 +80,15 @@ function App() {
           />
 
           <Route
+            path="/land-tax"
+            element={
+              <MainLayout>
+                <LandTaxRegistration />
+              </MainLayout>
+            }
+          />
+
+          <Route
             path="/forgot-password"
             element={
               <MainLayout>
@@ -113,6 +124,7 @@ function App() {
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
             <Route path="kyc-approvals" element={<KycApproval />} />
+            <Route path="land-tax-registrations" element={<AdminLandTaxRegistrations />} />
           </Route>
 
           {/* User dashboard - NOW WITH header/footer */}

@@ -47,7 +47,7 @@ export default function HomePage() {
             Login to Your Account
           </Link> */}
           <Link
-            to="/"
+            to="/land-tax"
             className="border-2 border-solid hover:bg-purple-500 text-xl font-semibold py-6 px-12 rounded-lg transition duration-300 shadow-lg hover:shadow-xl"
           >
             Land Development Tax (LDT)
