@@ -151,10 +151,7 @@ export default function LandTaxRegistration() {
       setKhatiyanNumber("");
       setDagNumber("");
     } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-          "Failed to submit registration"
-      );
+      setError(err?.response?.data?.message || "Failed to submit registration");
     } finally {
       setLoading(false);
     }
@@ -171,12 +168,13 @@ export default function LandTaxRegistration() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white border rounded p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white border rounded p-6 space-y-4"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Division
-              </label>
+              <label className="block text-sm font-medium mb-1">Division</label>
               <select
                 className="w-full border rounded p-2"
                 value={divisionId}
@@ -198,9 +196,7 @@ export default function LandTaxRegistration() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                District
-              </label>
+              <label className="block text-sm font-medium mb-1">District</label>
               <select
                 className="w-full border rounded p-2"
                 value={districtId}
@@ -222,9 +218,7 @@ export default function LandTaxRegistration() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Upazila
-              </label>
+              <label className="block text-sm font-medium mb-1">Upazila</label>
               <select
                 className="w-full border rounded p-2"
                 value={upazilaId}

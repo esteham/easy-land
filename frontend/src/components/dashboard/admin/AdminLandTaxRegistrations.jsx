@@ -127,30 +127,32 @@ export default function AdminLandTaxRegistrations() {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => updateStatus(reg.id, "approved")}
-                        className="text-green-600 hover:text-green-900"
+                        className="font-bold text-green-600 hover:text-green-900"
                       >
                         Approve
-                      </button>
+                      </button>{" "}
+                      |
                       <button
                         onClick={() => updateStatus(reg.id, "rejected")}
-                        className="text-red-600 hover:text-red-900"
+                        className="font-semibold text-red-600 hover:text-red-900 ml-2"
                       >
                         Reject
-                      </button>
+                      </button>{" "}
+                      |
                       <button
                         onClick={() => {
                           const notes = prompt("Notes for flagging:");
                           if (notes) updateStatus(reg.id, "flagged", notes);
                         }}
-                        className="text-orange-600 hover:text-orange-900"
+                        className="text-orange-600 hover:text-orange-900 ml-2"
                       >
                         Flag
                       </button>
                     </div>
                   )}
                   {reg.notes && (
-                    <div className="text-xs text-gray-500 mt-1">
-                      Notes: {reg.notes}
+                    <div className="text-xs text-red-500 text-gray-500 mt-1">
+                      🚩 &nbsp;Notes: {reg.notes}
                     </div>
                   )}
                 </td>

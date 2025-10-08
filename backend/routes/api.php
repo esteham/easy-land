@@ -20,6 +20,10 @@ use App\Http\Controllers\API\ZilController;
 use App\Http\Controllers\API\DagController;
 use App\Http\Controllers\API\SurveyTypeController;
 
+use \App\Http\Controllers\API\ApplicationController;
+use \App\Http\Controllers\API\LandTaxRegistrationController;
+
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);
 Route::post('/check-email', [AuthController::class, 'checkEmail']);
@@ -105,12 +109,12 @@ Route::middleware('auth:api')->group(function () {
         ]);
     });
 
-    Route::get('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'index']);
-    Route::post('/applications', [\App\Http\Controllers\API\ApplicationController::class, 'store']);
-    Route::get('/applications/{id}/invoice', [\App\Http\Controllers\API\ApplicationController::class, 'invoice']);
+    Route::get('/applications', [ApplicationController::class, 'index']);
+    Route::post('/applications', [ApplicationController::class, 'store']);
+    Route::get('/applications/{id}/invoice', [ApplicationController::class, 'invoice']);
 
     // Land Tax Registration
-    Route::apiResource('land-tax-registrations', \App\Http\Controllers\API\LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
+    Route::apiResource('land-tax-registrations', LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
 
     Route::middleware('role:admin,acland')->group(function () {
         Route::apiResource('admin/upazilas', UpazilaController::class);
