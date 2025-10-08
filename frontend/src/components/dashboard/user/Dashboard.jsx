@@ -919,16 +919,39 @@ export default function UserDashboard() {
                       <strong>{t("registrationId")}:</strong> {reg.id}
                     </p>
                     <p>
-                      <strong>{t("status")}:</strong>{" "}
-                      <span className="uppercase font-semibold text-green-600">
+                      <strong>{t("land")} :</strong> {reg.land_name ?? "N/A"}
+                    </p>
+                    <p>
+                      <strong>{t("dagNumber")} :</strong> {reg.dag_number}
+                    </p>
+                    <p>
+                      <strong>{t("khatiyanNumber")} :</strong>{" "}
+                      {reg.khatiyan_number}
+                    </p>
+                    <p>
+                      <strong>{t("registrationDate")} :</strong>{" "}
+                      {new Date(reg.reviewed_at).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>{t("status")} :</strong>{" "}
+                      <span
+                        className={`uppercase text-sm font-semibold ${
+                          reg.status === "flagged"
+                            ? "text-red-600"
+                            : "text-green-600"
+                        }`}
+                      >
                         {reg.status}
                       </span>
                     </p>
-                    {/* Add more fields as needed */}
+                    {reg.status === "flagged" && (
+                      <p>
+                        <strong>{t("notes")} :</strong>{" "}
+                        <span className="text-red-600">{reg.notes}</span>
+                      </p>
+                    )}
                   </div>
-                  <div>
-                    {/* Add actions if needed */}
-                  </div>
+                  <div>{/* Add actions if needed */}</div>
                 </div>
               ))}
             </div>

@@ -170,13 +170,18 @@ const TEXTS = {
       "[দ্রষ্টব্য: আপনি পেমেন্ট করলে পেমেন্ট স্ট্যাটাস PAID হবে এবং খতিয়ান ডাউনলোড বাটন সক্রিয় হবে।]",
 
     // LDT
-    ldtHeader: "ভূমি উন্নয়ন কর (এলডিটি)",
-    ldtDesc: "এলডিটি দেখুন/পরিশোধ করুন ও রসিদ ডাউনলোড করুন।",
-    payLdt: "এলডিটি পরিশোধ",
+    ldtHeader: "ভূমি উন্নয়ন কর (LDT)",
+    ldtDesc: "LDT দেখুন/দেখুন এবং রসিদ ডাউনলোড করুন।",
+    payLdt: "LDT পরিশোধ করুন",
     viewHistory: "পেমেন্ট ইতিহাস দেখুন",
-    noLdtRegistrations: "কোনো এলডিটি রেজিস্ট্রেশন পাওয়া যায়নি।",
-    registrationId: "রেজিস্ট্রেশন আইডি",
+    noLdtRegistrations: "কোনো LDT নিবন্ধন পাওয়া যায়নি।",
+    registrationId: "নিবন্ধন আইডি",
     status: "স্ট্যাটাস",
+    land: "জমি ধরন",
+    dagNumber: "দাগ নম্বর",
+    khatiyanNumber: "খতিয়ান নম্বর",
+    registrationDate: "নিবন্ধনের তারিখ",
+    notes: "নোটস",
 
     // Payments
     paymentsHeader: "পেমেন্ট ও রসিদ",
