@@ -890,7 +890,12 @@ export default function UserDashboard() {
                 {t("ldtHeader")}
               </h2>
               <p className="text-gray-600 mb-4">{t("ldtDesc")}</p>
-              <p className="text-gray-600">{t("noLdtRegistrations")}</p>
+              <p className="text-gray-600">
+                {t("noLdtRegistrations")}
+                <a className="text-red-400" href="/land-tax">
+                  Register Here
+                </a>
+              </p>
               <div className="flex gap-3 mt-4">
                 <button className="px-4 py-2 rounded-md border">
                   {t("payLdt")}
