@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
                 'name' => 'Super Admin',
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
+                'email_verified_at' => date('Y-m-d H:i:s'),
             ]
         );
 
@@ -31,6 +32,18 @@ class UserSeeder extends Seeder
                 'name' => 'Acland Officer',
                 'password' => Hash::make('acland123'),
                 'role' => 'acland',
+                'email_verified_at' => date('Y-m-d H:i:s'),
+            ]
+        );
+
+        //Custom user
+        User::updateOrCreate(
+            ['email' => 'acland@example.com'],
+            [
+                'name' => 'Custom User',
+                'password' => Hash::make('user123'),
+                'role' => 'user',
+                'email_verified_at' => date('Y-m-d H:i:s'),
             ]
         );
     }
