@@ -170,28 +170,39 @@ const LDTTab = ({ lang, t, user }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">
-        {t("ldtHeader")}
-      </h2>
+      <div className="flex justify-between">
+        <h2 className="text-xl font-semibold text-gray-900">
+          {t("ldtHeader")}
+        </h2>
+        <a
+          className=" text-red-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+          href="/land-tax"
+        >
+          {" "}
+          New Register Here
+        </a>
+      </div>
 
       <div className="space-y-4">
         <div className="flex gap-3 mt-6">
-          <p className="text-gray-600 mb-2">{t("ldtDesc")}</p>
-          <div className="text-end">
-            <a
-              onClick={handlePayLdt}
-              rel="noopener noreferrer"
-              className="text-green-500 rounded-md border px-4 py-1 hover:bg-gray-300"
-            >
-              {t("payLdt")}
-            </a>{" "}
-            <a
-              href="/dashboard?tab=payments"
-              rel="noopener noreferrer"
-              className="text-blue-500 rounded-md border px-4 py-1 hover:bg-gray-300"
-            >
-              {t("paymentStatus")}
-            </a>
+          <div className="flex gap-62">
+            <p className="text-gray-600 mb-2">{t("ldtDesc")}</p>
+            <div className="item-end">
+              <a
+                onClick={handlePayLdt}
+                rel="noopener noreferrer"
+                className="text-green-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+              >
+                {t("payLdt")}
+              </a>{" "}
+              <a
+                href="/dashboard?tab=payments"
+                rel="noopener noreferrer"
+                className="text-blue-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+              >
+                {t("paymentStatus")}
+              </a>
+            </div>
           </div>
 
           {/* <button
@@ -224,45 +235,74 @@ const LDTTab = ({ lang, t, user }) => {
                 }}
                 className="mt-1 mr-3"
               />
-              <div>
-                <p>
-                  <strong>{t("registrationId")}:</strong> {reg.id}
-                </p>
-                <p>
-                  <strong>{t("land")} :</strong> {reg.land_type ?? "N/A"}
-                </p>
-                <p>
-                  <strong>{t("dagNumber")} :</strong> {reg.dag_number}
-                </p>
-                <p>
-                  <strong>{t("khatiyanNumber")} :</strong> {reg.khatiyan_number}
-                </p>
-                <p>
-                  <strong>{t("landArea")} :</strong> {reg.land_area} &nbsp;{" "}
-                  {t("area")}
-                </p>
-                <p>
-                  <strong>{t("registrationDate")} :</strong>{" "}
-                  {new Date(reg.reviewed_at).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>{t("status")} :</strong>{" "}
-                  <span
-                    className={`uppercase text-sm font-semibold ${
-                      reg.status === "flagged"
-                        ? "text-red-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    {reg.status}
-                  </span>
-                </p>
-                {reg.status === "flagged" && (
-                  <p>
-                    <strong>{t("notes")} :</strong>{" "}
-                    <span className="text-red-600">{reg.notes}</span>
-                  </p>
-                )}
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border border-gray-200 rounded-lg overflow-hidden">
+                  <tbody className="[&_tr:nth-child(even)]:bg-gray-50">
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100 w-56">
+                        {t("registrationId")}
+                      </th>
+                      <td className="px-4 py-2">{reg?.id ?? "—"}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("land")}
+                      </th>
+                      <td className="px-4 py-2">{reg?.land_type ?? "N/A"}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("dagNumber")}
+                      </th>
+                      <td className="px-4 py-2">{reg?.dag_number ?? "—"}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("khatiyanNumber")}
+                      </th>
+                      <td className="px-4 py-2">
+                        {reg?.khatiyan_number ?? "—"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("landArea")}
+                      </th>
+                      <td className="px-4 py-2">
+                        {reg?.land_area ?? "—"} &nbsp;({t("area")})
+                      </td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("registrationDate")}
+                      </th>
+                      <td className="px-4 py-2">{reg?.reviewed_at}</td>
+                    </tr>
+                    <tr>
+                      <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                        {t("status")}
+                      </th>
+                      <td className="px-4 py-2">
+                        <span className="uppercase text-xs font-semibold inline-block px-2 py-1 border rounded ">
+                          {reg?.status ?? "—"}
+                        </span>
+                      </td>
+                    </tr>
+
+                    {reg?.status === "flagged" && (
+                      <tr>
+                        <th className="text-left px-4 py-2 font-semibold bg-gray-100">
+                          {t("notes")}
+                        </th>
+                        <td className="px-4 py-2">
+                          <span className="text-red-600">
+                            {reg?.notes ?? "—"}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
             <div>{/* Add actions if needed */}</div>
@@ -277,27 +317,38 @@ const LDTTab = ({ lang, t, user }) => {
             <div className="space-y-2 mb-4">
               {calculations.map((calc, index) => (
                 <div key={index} className="border-b pb-2">
-                  <p>
-                    <strong>State:</strong> {calc.state}
-                  </p>
-                  <p>
-                    <strong>Khatiyan:</strong> {calc.khatiyan_number}
-                  </p>
-                  <p>
-                    <strong>Dag:</strong> {calc.dag_number}
-                  </p>
-                  <p>
-                    <strong>Area:</strong> {calc.area} sq ft
-                  </p>
-                  <p>
-                    <strong>Type:</strong> {calc.type}
-                  </p>
-                  <p>
-                    <strong>Rate:</strong> {calc.rate} BDT
-                  </p>
-                  <p>
-                    <strong>Amount:</strong> {calc.amount} BDT
-                  </p>
+                  <table className="w-full text-sm">
+                    <tbody>
+                      <tr>
+                        <th className="text-left pr-3 py-1">State:</th>
+                        <td className="py-1">{calc.state}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Khatiyan:</th>
+                        <td className="py-1">{calc.khatiyan_number}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Dag:</th>
+                        <td className="py-1">{calc.dag_number}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Area:</th>
+                        <td className="py-1">{calc.area} sq ft</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Type:</th>
+                        <td className="py-1">{calc.type}</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Rate:</th>
+                        <td className="py-1">{calc.rate} BDT</td>
+                      </tr>
+                      <tr>
+                        <th className="text-left pr-3 py-1">Amount:</th>
+                        <td className="py-1">{calc.amount} BDT</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               ))}
             </div>

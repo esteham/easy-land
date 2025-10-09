@@ -61,7 +61,7 @@ const TEXTS = {
     payLdt: "Pay LDT",
     viewHistory: "View Payment History",
     noLdtRegistrations: "No LDT registrations found.",
-    registrationId: "Registration ID",
+    registrationId: "Registration Land",
     status: "Status",
     land: "Land",
     landArea: "Land Area",
@@ -175,11 +175,11 @@ const TEXTS = {
 
     // LDT
     ldtHeader: "ভূমি উন্নয়ন কর (LDT)",
-    ldtDesc: "LDT দেখুন/দেখুন এবং রসিদ ডাউনলোড করুন।",
+    ldtDesc: "LDT দেখুন/রশিদ ডাউনলোদ ",
     payLdt: "LDT পরিশোধ করুন",
     viewHistory: "পেমেন্ট ইতিহাস দেখুন",
     noLdtRegistrations: "কোনো LDT নিবন্ধন পাওয়া যায়নি।",
-    registrationId: "নিবন্ধন আইডি",
+    registrationId: "নিবন্ধিত জমি",
     status: "স্ট্যাটাস",
     land: "জমি ধরন",
     landArea: "জমির পরিমাণ",
