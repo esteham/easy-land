@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../../../api";
 import { LANGS } from "../../../../fonts/UserDashbboardTexts";
 
 const ApplyKhatianTab = ({ lang, t }) => {
   const [applications, setApplications] = useState([]);
-  const [showDrafts, setShowDrafts] = useState(false);
-  const [loadingApplications, setLoadingApplications] = useState(false);
+  const [loadingApplications, setLoadingApplications] = useState(true);
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const { data } = await api.get("/applications");
+        setApplications(data);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      } finally {
+        setLoadingApplications(false);
+      }
+    };
+    fetchApplications();
+  }, []);
 
   const handleDownloadKhatian = async (documentUrl, appId) => {
     try {
@@ -30,18 +43,47 @@ const ApplyKhatianTab = ({ lang, t }) => {
     }
   };
 
-  if (showDrafts) {
-    return (
+  return (
+    <div>
       <div>
-        <button className="text-xl font-semibold text-gray-900 mb-6">
+        <button className="text-xl font-semibold text-gray-900">
           {t("yourSubmittedApps")}
         </button>
         {loadingApplications ? (
           <p>{t("loadingApplications")}</p>
         ) : applications.length === 0 ? (
-          <p>{t("noApplications")}</p>
+          <p className="mt-4">
+            {t("noApplications")}{" "}
+            <span>
+              <a
+                href="/land"
+                rel="noopener noreferrer"
+                className="text-red-500 rounded-md border px-3 py-1 hover:bg-gray-300"
+              >
+                {t("startNewApplication")}
+                <br />
+              </a>
+            </span>
+          </p>
         ) : (
           <div className="space-y-4">
+            <div className="text-end">
+              <a
+                href="/land"
+                rel="noopener noreferrer"
+                className="text-green-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+              >
+                {t("startNewApplication")}
+              </a>{" "}
+              <a
+                href="/dashboard?tab=payments"
+                rel="noopener noreferrer"
+                className="text-blue-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+              >
+                {t("paymentStatus")}
+              </a>
+            </div>
+
             {applications.map((app) => (
               <div
                 key={app.id}
@@ -93,54 +135,26 @@ const ApplyKhatianTab = ({ lang, t }) => {
             ))}
           </div>
         )}
-        <div className="mt-6">
-          <button
-            onClick={() => setShowDrafts(false)}
-            className="px-4 py-2 rounded-md border"
-          >
-            {t("back")}
-          </button>
-        </div>
       </div>
-    );
-  }
-
-  return (
-    <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">
-        {t("applyForKhatian")}
-      </h2>
-      <div className="space-y-3">
-        <p className="text-gray-600">{t("startNewNote")}</p>
-        <div className="flex gap-3">
-          <a
-            href="/land"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-md border"
-          >
-            {t("startNewApplication")}
-            <br />
-          </a>
-          <button
-            className="px-4 py-2 rounded-md border"
-            onClick={async () => {
-              setLoadingApplications(true);
-              try {
-                const { data } = await api.get("/applications");
-                setApplications(data);
-                setShowDrafts(true);
-              } catch (error) {
-                console.error("Error fetching applications:", error);
-              } finally {
-                setLoadingApplications(false);
-              }
-            }}
-          >
-            {t("viewDrafts")}
-          </button>
+      {/* <div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          {t("applyForKhatian")}
+        </h2>
+        <div className="space-y-3">
+          <p className="text-gray-600">{t("startNewNote")}</p>
+          <div className="flex gap-3">
+            <a
+              href="/land"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-md border"
+            >
+              {t("startNewApplication")}
+              <br />
+            </a>
+          </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

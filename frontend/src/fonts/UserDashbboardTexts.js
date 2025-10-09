@@ -41,7 +41,7 @@ const TEXTS = {
 
     // Apply Khatian
     applyForKhatian: "Apply for Khatian",
-    startNewApplication: "Start New Application",
+    startNewApplication: "Search Khatian",
     viewDrafts: "Applies Khatiyan",
     loadingApplications: "Loading applications...",
     noApplications: "No applications found.",
@@ -157,7 +157,7 @@ const TEXTS = {
 
     // Apply Khatian
     applyForKhatian: "খতিয়ান আবেদন",
-    startNewApplication: "নতুন আবেদন",
+    startNewApplication: "খতিয়ান খুজুন",
     viewDrafts: "আবেদন করা খতিয়ান",
     loadingApplications: "আবেদন লোড হচ্ছে...",
     noApplications: "কোনো আবেদন পাওয়া যায়নি।",
