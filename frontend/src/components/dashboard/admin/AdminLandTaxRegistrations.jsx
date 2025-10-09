@@ -104,6 +104,9 @@ export default function AdminLandTaxRegistrations() {
                   <div className="text-sm text-gray-500">
                     Dag: {reg.dag_number}
                   </div>
+                  <div className="text-sm text-gray-500">
+                    Area: {reg.land_area} (sq ft)
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
