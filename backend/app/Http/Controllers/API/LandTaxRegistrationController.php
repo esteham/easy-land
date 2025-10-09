@@ -57,6 +57,7 @@ class LandTaxRegistrationController extends Controller
             'khatiyan_number' => 'required|string|max:255',
             'dag_number' => 'required|string|max:255',
             'land_type' => 'nullable|string|max:255',
+            'land_area' => 'nullable|numeric|min:0',
         ]);
 
         $registration = LandTaxRegistration::create([
@@ -69,6 +70,7 @@ class LandTaxRegistrationController extends Controller
             'khatiyan_number' => $request->khatiyan_number,
             'dag_number' => $request->dag_number,
             'land_type' => $request->land_type,
+            'land_area' => $request->land_area,
         ]);
 
         return response()->json([

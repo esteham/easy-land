@@ -25,6 +25,7 @@ export default function LandTaxRegistration() {
   const [khatiyanNumber, setKhatiyanNumber] = useState("");
   const [dagNumber, setDagNumber] = useState("");
   const [landType, setLandType] = useState("");
+  const [landArea, setLandArea] = useState("");
 
   // UI
   const [loading, setLoading] = useState(false);
@@ -142,6 +143,7 @@ export default function LandTaxRegistration() {
         khatiyan_number: khatiyanNumber,
         dag_number: dagNumber,
         land_type: landType,
+        land_area: landArea,
       });
       alert(data.message);
       // Reset form
@@ -153,6 +155,7 @@ export default function LandTaxRegistration() {
       setKhatiyanNumber("");
       setDagNumber("");
       setLandType("");
+      setLandArea("");
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to submit registration");
     } finally {
@@ -305,23 +308,38 @@ export default function LandTaxRegistration() {
             </div>
 
             {khatiyanNumber && dagNumber && (
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Land Type
-                </label>
-                <select
-                  className="w-full border rounded p-2"
-                  value={landType}
-                  onChange={(e) => setLandType(e.target.value)}
-                  required
-                >
-                  <option value="">Select Land Type</option>
-                  <option value="Agricultural">Agricultural</option>
-                  <option value="Commercial">Commercial</option>
-                  <option value="Residential">Residential</option>
-                  <option value="Others">Others</option>
-                </select>
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Land Type
+                  </label>
+                  <select
+                    className="w-full border rounded p-2"
+                    value={landType}
+                    onChange={(e) => setLandType(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Land Type</option>
+                    <option value="Agricultural">Agricultural</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Residential">Residential</option>
+                    <option value="Others">Others</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Land Area (Square Feet)
+                  </label>
+                  <input
+                    type="number"
+                    className="w-full border rounded p-2"
+                    value={landArea}
+                    onChange={(e) => setLandArea(e.target.value)}
+                    required
+                  />
+                </div>
+              </>
             )}
           </div>
 
