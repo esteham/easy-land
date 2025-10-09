@@ -116,6 +116,11 @@ Route::middleware('auth:api')->group(function () {
     // Land Tax Registration
     Route::apiResource('land-tax-registrations', LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
 
+    // Land Tax Payments
+    Route::get('/land-tax-payments', [App\Http\Controllers\API\LandTaxPaymentController::class, 'index']);
+    Route::post('/land-tax-payments/calculate', [App\Http\Controllers\API\LandTaxPaymentController::class, 'calculate']);
+    Route::post('/land-tax-payments/pay', [App\Http\Controllers\API\LandTaxPaymentController::class, 'pay']);
+
     Route::middleware('role:admin,acland')->group(function () {
         Route::apiResource('admin/upazilas', UpazilaController::class);
         Route::apiResource('admin/mouzas', MouzaController::class);

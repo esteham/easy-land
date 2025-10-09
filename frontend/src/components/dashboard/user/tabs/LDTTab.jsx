@@ -1,9 +1,59 @@
 import { useState, useEffect } from "react";
 import api from "../../../../api";
 
-const LDTTab = ({ lang, t }) => {
+const LDTTab = ({ lang, t, user }) => {
   const [ldtRegistrations, setLdtRegistrations] = useState([]);
   const [loadingLdt, setLoadingLdt] = useState(false);
+  const [selectedRegistrations, setSelectedRegistrations] = useState([]);
+  const [showPayModal, setShowPayModal] = useState(false);
+  const [calculations, setCalculations] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [paying, setPaying] = useState(false);
+  const [kycStatus, setKycStatus] = useState(null);
+
+  const handlePayLdt = async () => {
+    if (selectedRegistrations.length === 0) {
+      alert(
+        lang === "BN"
+          ? "কোনো ল্যান্ড সিলেক্ট করুন।"
+          : "Please select at least one land."
+      );
+      return;
+    }
+
+    if (kycStatus !== "success") {
+      alert(lang === "BN" ? "KYC আপডেট করা হয়নি।" : "KYC not updated.");
+      return;
+    }
+
+    try {
+      const { data } = await api.post("/land-tax-payments/calculate", {
+        registration_ids: selectedRegistrations,
+      });
+      setCalculations(data.calculations);
+      setTotalAmount(data.total_amount);
+      setShowPayModal(true);
+    } catch (error) {
+      alert(error.response?.data?.error || "Error calculating tax.");
+    }
+  };
+
+  const handleConfirmPayment = async () => {
+    setPaying(true);
+    try {
+      await api.post("/land-tax-payments/pay", {
+        registration_ids: selectedRegistrations,
+      });
+      alert(lang === "BN" ? "পেমেন্ট সফল হয়েছে।" : "Payment successful.");
+      setShowPayModal(false);
+      setSelectedRegistrations([]);
+      // Refresh registrations or payments
+    } catch (error) {
+      alert(error.response?.data?.error || "Payment failed.");
+    } finally {
+      setPaying(false);
+    }
+  };
 
   useEffect(() => {
     const fetchLdt = async () => {
@@ -19,6 +69,16 @@ const LDTTab = ({ lang, t }) => {
       }
     };
     fetchLdt();
+
+    const fetchKyc = async () => {
+      try {
+        const { data } = await api.get("/user/kyc");
+        setKycStatus(data.kyc?.status);
+      } catch (error) {
+        setKycStatus(null);
+      }
+    };
+    fetchKyc();
   }, []);
 
   if (loadingLdt) {
@@ -60,50 +120,121 @@ const LDTTab = ({ lang, t }) => {
             key={reg.id}
             className="border rounded p-4 flex justify-between items-center"
           >
-            <div>
-              <p>
-                <strong>{t("registrationId")}:</strong> {reg.id}
-              </p>
-              <p>
-                <strong>{t("land")} :</strong> {reg.land_name ?? "N/A"}
-              </p>
-              <p>
-                <strong>{t("dagNumber")} :</strong> {reg.dag_number}
-              </p>
-              <p>
-                <strong>{t("khatiyanNumber")} :</strong> {reg.khatiyan_number}
-              </p>
-              <p>
-                <strong>{t("registrationDate")} :</strong>{" "}
-                {new Date(reg.reviewed_at).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>{t("status")} :</strong>{" "}
-                <span
-                  className={`uppercase text-sm font-semibold ${
-                    reg.status === "flagged" ? "text-red-600" : "text-green-600"
-                  }`}
-                >
-                  {reg.status}
-                </span>
-              </p>
-              {reg.status === "flagged" && (
+            <div className="flex items-start">
+              <input
+                type="checkbox"
+                checked={selectedRegistrations.includes(reg.id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedRegistrations([
+                      ...selectedRegistrations,
+                      reg.id,
+                    ]);
+                  } else {
+                    setSelectedRegistrations(
+                      selectedRegistrations.filter((id) => id !== reg.id)
+                    );
+                  }
+                }}
+                className="mt-1 mr-3"
+              />
+              <div>
                 <p>
-                  <strong>{t("notes")} :</strong>{" "}
-                  <span className="text-red-600">{reg.notes}</span>
+                  <strong>{t("registrationId")}:</strong> {reg.id}
                 </p>
-              )}
+                <p>
+                  <strong>{t("land")} :</strong> {reg.land_name ?? "N/A"}
+                </p>
+                <p>
+                  <strong>{t("dagNumber")} :</strong> {reg.dag_number}
+                </p>
+                <p>
+                  <strong>{t("khatiyanNumber")} :</strong> {reg.khatiyan_number}
+                </p>
+                <p>
+                  <strong>{t("registrationDate")} :</strong>{" "}
+                  {new Date(reg.reviewed_at).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>{t("status")} :</strong>{" "}
+                  <span
+                    className={`uppercase text-sm font-semibold ${
+                      reg.status === "flagged"
+                        ? "text-red-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    {reg.status}
+                  </span>
+                </p>
+                {reg.status === "flagged" && (
+                  <p>
+                    <strong>{t("notes")} :</strong>{" "}
+                    <span className="text-red-600">{reg.notes}</span>
+                  </p>
+                )}
+              </div>
             </div>
             <div>{/* Add actions if needed */}</div>
           </div>
         ))}
       </div>
       <div className="flex gap-3 mt-6">
-        <button className="px-4 py-2 rounded-md border">{t("payLdt")}</button>
+        <button
+          onClick={handlePayLdt}
+          className="px-4 py-2 rounded-md border bg-blue-600 text-white hover:bg-blue-700"
+        >
+          {t("payLdt")}
+        </button>
         <button className="px-4 py-2 rounded-md border">
           {t("viewHistory")}
         </button>
       </div>
+
+      {showPayModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">Tax Calculation</h3>
+            <div className="space-y-2 mb-4">
+              {calculations.map((calc, index) => (
+                <div key={index} className="border-b pb-2">
+                  <p>
+                    <strong>Land:</strong> {calc.land_name}
+                  </p>
+                  <p>
+                    <strong>Area:</strong> {calc.area} sq ft
+                  </p>
+                  <p>
+                    <strong>Type:</strong> {calc.type}
+                  </p>
+                  <p>
+                    <strong>Rate:</strong> {calc.rate} BDT
+                  </p>
+                  <p>
+                    <strong>Amount:</strong> {calc.amount} BDT
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="text-xl font-bold mb-4">Total: {totalAmount} BDT</p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleConfirmPayment}
+                disabled={paying}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+              >
+                {paying ? "Processing..." : "Confirm Payment"}
+              </button>
+              <button
+                onClick={() => setShowPayModal(false)}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
