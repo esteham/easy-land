@@ -54,11 +54,17 @@ class LandTaxPaymentController extends Controller
                 return response()->json(['error' => 'LDT already paid for this land for the current year.'], 400);
             }
 
-            // For simplicity, assume area and type
+            // Calculate rate based on land_type (Upazila level)
             $area = $registration->land_area; // sq ft
             $landType = $registration->land_type;
-            $rate = 15; // BDT per sq ft
-            $amount = $area * $rate;
+            $rates = [
+                'Residential' => 100, // BDT per 100 sq ft
+                'Commercial' => 200,
+                'Agricultural' => 80,
+                'Others' => 100,
+            ];
+            $rate = $rates[$landType] ?? 100; // per 100 sq ft
+            $amount = ($area / 100) * $rate;
             $totalAmount += $amount;
 
             $calculations[] = [
@@ -113,7 +119,16 @@ class LandTaxPaymentController extends Controller
             }
 
             // Calculate amount (same as calculate)
-            $amount = 15000; // 1000 * 15
+            $area = $registration->land_area; // sq ft
+            $landType = $registration->land_type;
+            $rates = [
+                'Residential' => 100, // BDT per 100 sq ft
+                'Commercial' => 200,
+                'Agricultural' => 80,
+                'Others' => 100,
+            ];
+            $rate = $rates[$landType] ?? 100; // per 100 sq ft
+            $amount = ($area / 100) * $rate;
 
             $payment = LandTaxPayment::create([
                 'user_id' => $user->id,
