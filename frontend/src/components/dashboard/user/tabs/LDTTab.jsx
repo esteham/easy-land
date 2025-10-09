@@ -152,6 +152,9 @@ const LDTTab = ({ lang, t, user }) => {
                   <strong>{t("khatiyanNumber")} :</strong> {reg.khatiyan_number}
                 </p>
                 <p>
+                  <strong>{t("landArea")} :</strong> {reg.land_area} &nbsp; {t("area")}
+                </p>
+                <p>
                   <strong>{t("registrationDate")} :</strong>{" "}
                   {new Date(reg.reviewed_at).toLocaleDateString()}
                 </p>
