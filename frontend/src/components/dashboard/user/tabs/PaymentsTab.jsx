@@ -7,6 +7,8 @@ const PaymentsTab = ({ lang, t }) => {
   const [loadingPayments, setLoadingPayments] = useState(false);
   const [ldtPayments, setLdtPayments] = useState([]);
   const [loadingLdtPayments, setLoadingLdtPayments] = useState(false);
+  const [visibleApps, setVisibleApps] = useState(3);
+  const [visibleLdt, setVisibleLdt] = useState(3);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -92,18 +94,18 @@ const PaymentsTab = ({ lang, t }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">
+      <h2 className="text-xl font-semibold text-gray-900 mb-5">
         {t("paymentsHeader")}
       </h2>
 
       {/* Application Payments Section */}
-      <div className="mb-8">
+      <div className="mb-5">
         <h3 className="text-lg font-semibold mb-4">Application Payments</h3>
         {paymentsApplications.length === 0 ? (
           <p className="text-gray-600">{t("noPayments")}</p>
         ) : (
           <div className="space-y-4">
-            {paymentsApplications.map((app) => (
+            {paymentsApplications.slice(0, visibleApps).map((app) => (
               <div
                 key={app.id}
                 className="border rounded p-4 flex justify-between items-center"
@@ -138,6 +140,22 @@ const PaymentsTab = ({ lang, t }) => {
                 </div>
               </div>
             ))}
+            {paymentsApplications.length > visibleApps && (
+              <button
+                onClick={() => setVisibleApps((prev) => prev + 10)}
+                className="px-2 py-1 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+              >
+                {t("showMore")}
+              </button>
+            )}
+            {visibleApps > 3 && (
+              <button
+                onClick={() => setVisibleApps(3)}
+                className="px-2 py-1 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+              >
+                {t("showLess")}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -149,7 +167,7 @@ const PaymentsTab = ({ lang, t }) => {
           <p className="text-gray-600">No LDT payments found.</p>
         ) : (
           <div className="space-y-4">
-            {ldtPayments.map((payment) => (
+            {ldtPayments.slice(0, visibleLdt).map((payment) => (
               <div key={payment.id} className="border rounded p-4">
                 <p>
                   <strong>Payment ID:</strong> {payment.id}
@@ -191,6 +209,22 @@ const PaymentsTab = ({ lang, t }) => {
                 </button>
               </div>
             ))}
+            {ldtPayments.length > visibleLdt && (
+              <button
+                onClick={() => setVisibleLdt((prev) => prev + 10)}
+                className="px-4 py-2 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+              >
+                {t("showMore")}
+              </button>
+            )}
+            {visibleLdt > 3 && (
+              <button
+                onClick={() => setVisibleLdt(3)}
+                className="px-4 py-2 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+              >
+                {t("showLess")}
+              </button>
+            )}
           </div>
         )}
       </div>

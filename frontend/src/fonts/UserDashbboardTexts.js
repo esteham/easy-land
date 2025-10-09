@@ -77,6 +77,8 @@ const TEXTS = {
     feeAmount: "Fee Amount",
     downloadInvoice: "Download Invoice",
     paymentPending: "Payment Pending",
+    showMore: "Show More",
+    showLess: "Show Less",
 
     // KYC
     profileKycHeader: "Profile & KYC",
@@ -193,6 +195,8 @@ const TEXTS = {
     feeAmount: "ফি পরিমাণ",
     downloadInvoice: "ইনভয়েস ডাউনলোড",
     paymentPending: "পেমেন্ট বাকি",
+    showMore: "আরও দেখুন",
+    showLess: "কম দেখুন",
 
     // KYC
     profileKycHeader: "প্রোফাইল ও কেওয়াইসি",

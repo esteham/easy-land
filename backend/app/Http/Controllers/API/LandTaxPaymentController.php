@@ -9,7 +9,7 @@ use App\Models\Kyc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class LandTaxPaymentController extends Controller
 {
