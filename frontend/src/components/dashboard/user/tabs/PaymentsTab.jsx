@@ -94,13 +94,13 @@ const PaymentsTab = ({ lang, t }) => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-5">
+      {/* <h2 className="text-xl font-semibold text-gray-900 mb-5">
         {t("paymentsHeader")}
-      </h2>
+      </h2> */}
 
       {/* Application Payments Section */}
       <div className="mb-5">
-        <h3 className="text-lg font-semibold mb-4">Application Payments</h3>
+        <h3 className="text-xl font-semibold mb-4">Application Payments</h3>
         {paymentsApplications.length === 0 ? (
           <p className="text-gray-600">{t("noPayments")}</p>
         ) : (
@@ -128,7 +128,7 @@ const PaymentsTab = ({ lang, t }) => {
                   {app.payment_status === "paid" ? (
                     <button
                       onClick={() => handleDownloadInvoice(app.id)}
-                      className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                      className="px-3 py-1 rounded-md bg-blue-600 text-white hover:bg-blue-700"
                     >
                       {t("downloadInvoice")}
                     </button>
@@ -162,13 +162,16 @@ const PaymentsTab = ({ lang, t }) => {
 
       {/* LDT Payments Section */}
       <div>
-        <h3 className="text-lg font-semibold mb-4">LDT Payment History</h3>
+        <h3 className="text-xl font-semibold mb-4">LDT Payment History</h3>
         {ldtPayments.length === 0 ? (
           <p className="text-gray-600">No LDT payments found.</p>
         ) : (
           <div className="space-y-4">
             {ldtPayments.slice(0, visibleLdt).map((payment) => (
-              <div key={payment.id} className="border rounded p-4">
+              <div
+                key={payment.id}
+                className="border rounded p-4 flex justify-between items-center"
+              >
                 <p>
                   <strong>Payment ID:</strong> {payment.id}
                 </p>
@@ -198,21 +201,23 @@ const PaymentsTab = ({ lang, t }) => {
                 </p>
                 <p>
                   <strong>Registration:</strong>{" "}
-                  {payment.land_tax_registration?.khatiyan_number} -{" "}
+                  {payment.land_tax_registration?.khatiyan_number}-
                   {payment.land_tax_registration?.dag_number}
                 </p>
-                <button
-                  onClick={() => handleDownloadLdtInvoice(payment.id)}
-                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Download Invoice
-                </button>
+                <div>
+                  <button
+                    onClick={() => handleDownloadLdtInvoice(payment.id)}
+                    className="px-4 py-1 bg-blue-600 text-sm text-white rounded hover:bg-blue-700"
+                  >
+                    Download Invoice
+                  </button>
+                </div>
               </div>
             ))}
             {ldtPayments.length > visibleLdt && (
               <button
                 onClick={() => setVisibleLdt((prev) => prev + 10)}
-                className="px-4 py-2 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+                className="px-2 py-1 rounded-md bg-gray-600 text-white hover:bg-gray-700"
               >
                 {t("showMore")}
               </button>
@@ -220,7 +225,7 @@ const PaymentsTab = ({ lang, t }) => {
             {visibleLdt > 3 && (
               <button
                 onClick={() => setVisibleLdt(3)}
-                className="px-4 py-2 rounded-md bg-gray-600 text-white hover:bg-gray-700"
+                className="px-2 py-1 rounded-md bg-gray-600 text-white hover:bg-gray-700"
               >
                 {t("showLess")}
               </button>
