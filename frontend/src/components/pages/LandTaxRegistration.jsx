@@ -24,6 +24,7 @@ export default function LandTaxRegistration() {
   // Inputs
   const [khatiyanNumber, setKhatiyanNumber] = useState("");
   const [dagNumber, setDagNumber] = useState("");
+  const [landType, setLandType] = useState("");
 
   // UI
   const [loading, setLoading] = useState(false);
@@ -140,6 +141,7 @@ export default function LandTaxRegistration() {
         survey_type_id: surveyTypeId,
         khatiyan_number: khatiyanNumber,
         dag_number: dagNumber,
+        land_type: landType,
       });
       alert(data.message);
       // Reset form
@@ -150,6 +152,7 @@ export default function LandTaxRegistration() {
       setSurveyTypeId("");
       setKhatiyanNumber("");
       setDagNumber("");
+      setLandType("");
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to submit registration");
     } finally {
@@ -300,6 +303,26 @@ export default function LandTaxRegistration() {
                 required
               />
             </div>
+
+            {khatiyanNumber && dagNumber && (
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Land Type
+                </label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={landType}
+                  onChange={(e) => setLandType(e.target.value)}
+                  required
+                >
+                  <option value="">Select Land Type</option>
+                  <option value="Agricultural">Agricultural</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Residential">Residential</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <button

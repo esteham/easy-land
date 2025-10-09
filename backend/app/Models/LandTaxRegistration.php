@@ -15,6 +15,7 @@ class LandTaxRegistration extends Model
         'survey_type_id',
         'khatiyan_number',
         'dag_number',
+        'land_type',
         'status',
         'submitted_at',
         'reviewed_at',

@@ -143,7 +143,7 @@ const LDTTab = ({ lang, t, user }) => {
                   <strong>{t("registrationId")}:</strong> {reg.id}
                 </p>
                 <p>
-                  <strong>{t("land")} :</strong> {reg.land_name ?? "N/A"}
+                  <strong>{t("land")} :</strong> {reg.land_type ?? "N/A"}
                 </p>
                 <p>
                   <strong>{t("dagNumber")} :</strong> {reg.dag_number}
