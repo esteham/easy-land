@@ -204,7 +204,11 @@ export default function LandExplorer() {
     }
   };
 
-  const handleSubmitApplication = async (feeAmount) => {
+  const handleSubmitApplication = async (
+    feeAmount,
+    paymentMethod,
+    payerIdentifier
+  ) => {
     try {
       setLoading(true);
       setError("");
@@ -214,6 +218,9 @@ export default function LandExplorer() {
         description: "User submitted a Khatian application",
         fee_amount: feeAmount,
         payment_status: "paid",
+        payment_method: paymentMethod,
+        payer_identifier: payerIdentifier,
+        transaction_id: `TXN-${Date.now()}`, // simple transaction id
       });
       alert("Khatian application submitted successfully.");
       // Redirect to dashboard Payments & Receipts tab
@@ -495,12 +502,12 @@ export default function LandExplorer() {
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                       <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
                         <div className="mb-3">
-                            <p>You paid for </p>
-                            <div className="mb-2 text-gray-600">
-                              Dag: {dagDetail.dag_no}
-                            </div>
-                            <p>Ammount : 200</p>
+                          <p>You paid for </p>
+                          <div className="mb-2 text-gray-600">
+                            Dag: {dagDetail.dag_no}
                           </div>
+                          <p>Ammount : 200</p>
+                        </div>
                         <h3 className="text-lg font-semibold mb-4">
                           Select Payment Method for Paymnet
                         </h3>
@@ -523,7 +530,6 @@ export default function LandExplorer() {
                           >
                             Online (Card/Bank)
                           </button>
-                          
                         </div>
                         {selectedPaymentMethod && (
                           <div className="mt-4">
@@ -603,6 +609,7 @@ export default function LandExplorer() {
                                 className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                                 onClick={() => {
                                   // Mock confirmation
+                                  let payerIdentifier = "";
                                   if (
                                     selectedPaymentMethod === "bKash" ||
                                     selectedPaymentMethod === "Nagad"
@@ -614,6 +621,7 @@ export default function LandExplorer() {
                                       alert("Please fill all fields");
                                       return;
                                     }
+                                    payerIdentifier = paymentCredentials.phone;
                                   } else {
                                     if (
                                       !paymentCredentials.cardNumber ||
@@ -623,6 +631,8 @@ export default function LandExplorer() {
                                       alert("Please fill all fields");
                                       return;
                                     }
+                                    payerIdentifier =
+                                      paymentCredentials.cardNumber;
                                   }
                                   alert("Payment successful!");
                                   // Close modal
@@ -630,7 +640,11 @@ export default function LandExplorer() {
                                   setSelectedPaymentMethod("");
                                   setPaymentCredentials({});
                                   // Submit application
-                                  handleSubmitApplication(200);
+                                  handleSubmitApplication(
+                                    200,
+                                    selectedPaymentMethod,
+                                    payerIdentifier
+                                  );
                                 }}
                                 disabled={loading}
                               >

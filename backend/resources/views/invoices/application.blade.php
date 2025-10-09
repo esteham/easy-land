@@ -225,16 +225,16 @@
               <td>{{ $application->type }}</td>
             </tr>
             <tr>
-              <th>Description</th>
-              <td>{{ $application->description ?? 'N/A' }}</td>
-            </tr>
-            <tr>
-              <th>Status</th>
-              <td>{{ ucfirst($application->status ?? 'N/A') }}</td>
-            </tr>
-            <tr>
               <th>Payment Status</th>
               <td>{{ ucfirst($application->payment_status ?? 'N/A') }}</td>
+            </tr>
+            <tr>
+              <th>Payment Methd</th>
+              <td>{{ ucfirst($application->payment_method ?? 'N/A') }}</td>
+            </tr>
+            <tr>
+              <th>Transaction ID</th>
+              <td>{{ ucfirst($application->transaction_id ?? 'N/A') }}</td>
             </tr>
             <tr>
               <th>Submitted At</th>
