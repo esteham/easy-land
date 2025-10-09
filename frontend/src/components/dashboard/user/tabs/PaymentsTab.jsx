@@ -5,6 +5,8 @@ import { LANGS } from "../../../../fonts/UserDashbboardTexts";
 const PaymentsTab = ({ lang, t }) => {
   const [paymentsApplications, setPaymentsApplications] = useState([]);
   const [loadingPayments, setLoadingPayments] = useState(false);
+  const [ldtPayments, setLdtPayments] = useState([]);
+  const [loadingLdtPayments, setLoadingLdtPayments] = useState(false);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -20,6 +22,20 @@ const PaymentsTab = ({ lang, t }) => {
       }
     };
     fetchPayments();
+
+    const fetchLdtPayments = async () => {
+      setLoadingLdtPayments(true);
+      try {
+        const { data } = await api.get("/land-tax-payments");
+        setLdtPayments(data);
+      } catch (error) {
+        console.error("Error fetching LDT payments:", error);
+        setLdtPayments([]);
+      } finally {
+        setLoadingLdtPayments(false);
+      }
+    };
+    fetchLdtPayments();
   }, []);
 
   const handleDownloadInvoice = async (appId) => {
@@ -45,19 +61,33 @@ const PaymentsTab = ({ lang, t }) => {
     }
   };
 
-  if (loadingPayments) {
-    return <p>{t("loading")}</p>;
-  }
+  const handleDownloadLdtInvoice = async (paymentId) => {
+    try {
+      const response = await api.get(
+        `/land-tax-payments/${paymentId}/invoice`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoice_ldt_payment_${paymentId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert(
+        lang === LANGS.BN
+          ? "ইনভয়েস ডাউনলোড ব্যর্থ। আবার চেষ্টা করুন।"
+          : "Failed to download invoice. Please try again."
+      );
+    }
+  };
 
-  if (paymentsApplications.length === 0) {
-    return (
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          {t("paymentsHeader")}
-        </h2>
-        <p className="text-gray-600">{t("noPayments")}</p>
-      </div>
-    );
+  if (loadingPayments || loadingLdtPayments) {
+    return <p>{t("loading")}</p>;
   }
 
   return (
@@ -65,42 +95,104 @@ const PaymentsTab = ({ lang, t }) => {
       <h2 className="text-xl font-semibold text-gray-900 mb-6">
         {t("paymentsHeader")}
       </h2>
-      <div className="space-y-4">
-        {paymentsApplications.map((app) => (
-          <div
-            key={app.id}
-            className="border rounded p-4 flex justify-between items-center"
-          >
-            <div>
-              <p>
-                <strong>{t("typeLabel")}:</strong> {app.type}
-              </p>
-              <p>
-                <strong>{t("feeAmount")}:</strong> {app.fee_amount}
-              </p>
-              <p>
-                <strong>{t("paymentStatus")}:</strong>{" "}
-                <span className="uppercase font-semibold text-green-600">
-                  {app.payment_status}
-                </span>
-              </p>
-            </div>
-            <div>
-              {app.payment_status === "paid" ? (
-                <button
-                  onClick={() => handleDownloadInvoice(app.id)}
-                  className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  {t("downloadInvoice")}
-                </button>
-              ) : (
-                <p className="text-red-600 font-semibold">
-                  {t("paymentPending")}
-                </p>
-              )}
-            </div>
+
+      {/* Application Payments Section */}
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-4">Application Payments</h3>
+        {paymentsApplications.length === 0 ? (
+          <p className="text-gray-600">{t("noPayments")}</p>
+        ) : (
+          <div className="space-y-4">
+            {paymentsApplications.map((app) => (
+              <div
+                key={app.id}
+                className="border rounded p-4 flex justify-between items-center"
+              >
+                <div>
+                  <p>
+                    <strong>{t("typeLabel")}:</strong> {app.type}
+                  </p>
+                  <p>
+                    <strong>{t("feeAmount")}:</strong> {app.fee_amount}
+                  </p>
+                  <p>
+                    <strong>{t("paymentStatus")}:</strong>{" "}
+                    <span className="uppercase font-semibold text-green-600">
+                      {app.payment_status}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  {app.payment_status === "paid" ? (
+                    <button
+                      onClick={() => handleDownloadInvoice(app.id)}
+                      className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      {t("downloadInvoice")}
+                    </button>
+                  ) : (
+                    <p className="text-red-600 font-semibold">
+                      {t("paymentPending")}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* LDT Payments Section */}
+      <div>
+        <h3 className="text-lg font-semibold mb-4">LDT Payment History</h3>
+        {ldtPayments.length === 0 ? (
+          <p className="text-gray-600">No LDT payments found.</p>
+        ) : (
+          <div className="space-y-4">
+            {ldtPayments.map((payment) => (
+              <div key={payment.id} className="border rounded p-4">
+                <p>
+                  <strong>Payment ID:</strong> {payment.id}
+                </p>
+                <p>
+                  <strong>Year:</strong> {payment.year}
+                </p>
+                <p>
+                  <strong>Amount:</strong> {payment.amount} BDT
+                </p>
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`uppercase text-sm font-semibold ${
+                      payment.status === "paid"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
+                    {payment.status}
+                  </span>
+                </p>
+                <p>
+                  <strong>Paid At:</strong>{" "}
+                  {payment.paid_at
+                    ? new Date(payment.paid_at).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                <p>
+                  <strong>Registration:</strong>{" "}
+                  {payment.land_tax_registration?.khatiyan_number} -{" "}
+                  {payment.land_tax_registration?.dag_number}
+                </p>
+                <button
+                  onClick={() => handleDownloadLdtInvoice(payment.id)}
+                  className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Download Invoice
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

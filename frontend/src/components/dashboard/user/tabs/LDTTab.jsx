@@ -161,8 +161,34 @@ const LDTTab = ({ lang, t, user }) => {
       <h2 className="text-xl font-semibold text-gray-900 mb-6">
         {t("ldtHeader")}
       </h2>
-      <p className="text-gray-600 mb-4">{t("ldtDesc")}</p>
+
       <div className="space-y-4">
+        <div className="flex gap-3 mt-6">
+          <p className="text-gray-600 mb-2">{t("ldtDesc")}</p>
+          <div className="text-end">
+            <a
+              onClick={handlePayLdt}
+              rel="noopener noreferrer"
+              className="text-green-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+            >
+              {t("payLdt")}
+            </a>{" "}
+            <a
+              href="/dashboard?tab=payments"
+              rel="noopener noreferrer"
+              className="text-blue-500 rounded-md border px-4 py-1 hover:bg-gray-300"
+            >
+              {t("paymentStatus")}
+            </a>
+          </div>
+
+          {/* <button
+          onClick={() => setShowHistoryModal(true)}
+          className="px-4 py-2 rounded-md border"
+        >
+          {t("viewHistory")}
+        </button> */}
+        </div>
         {ldtRegistrations.map((reg) => (
           <div
             key={reg.id}
@@ -231,20 +257,6 @@ const LDTTab = ({ lang, t, user }) => {
           </div>
         ))}
       </div>
-      <div className="flex gap-3 mt-6">
-        <button
-          onClick={handlePayLdt}
-          className="px-4 py-2 rounded-md border bg-blue-600 text-white hover:bg-blue-700"
-        >
-          {t("payLdt")}
-        </button>
-        <button
-          onClick={() => setShowHistoryModal(true)}
-          className="px-4 py-2 rounded-md border"
-        >
-          {t("viewHistory")}
-        </button>
-      </div>
 
       {showPayModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -297,7 +309,7 @@ const LDTTab = ({ lang, t, user }) => {
         </div>
       )}
 
-      {showHistoryModal && (
+      {/* {showHistoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">LDT Payment History</h3>
@@ -361,7 +373,7 @@ const LDTTab = ({ lang, t, user }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

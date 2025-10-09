@@ -139,8 +139,8 @@ const ProfileKYCTab = ({ lang, t, user }) => {
                         setKycData(data.kyc);
                         alert(
                           lang === LANGS.BN
-                            ? "কেওয়াইসি ডকুমেন্ট সফলভাবে আপলোড হয়েছে"
-                            : "KYC documents uploaded successfully"
+                            ? "কেওয়াইসি ডকুমেন্ট সফলভাবে আপলোড হয়েছে, কর্তৃপক্ষ আপনার রেজিস্ট্রেশন পর্যালোচনা করবেন এবং ৭ কার্যদিবসের মধ্যে অনুমোদন বা বাতিলের সিদ্ধান্ত জানাবেন। আপনার KYC আপডেট করার জন্য ধন্যবাদ।"
+                            : "KYC documents uploaded successfully, The authority will review your registration and approve or reject it within 7 working days. Thank you for update your KYC."
                         );
                         setIdFront(null);
                         setIdBack(null);
