@@ -199,7 +199,13 @@ const LDTTab = ({ lang, t, user }) => {
               {calculations.map((calc, index) => (
                 <div key={index} className="border-b pb-2">
                   <p>
-                    <strong>Land:</strong> {calc.land_name}
+                    <strong>State:</strong> {calc.state}
+                  </p>
+                  <p>
+                    <strong>Khatiyan:</strong> {calc.khatiyan_number}
+                  </p>
+                  <p>
+                    <strong>Dag:</strong> {calc.dag_number}
                   </p>
                   <p>
                     <strong>Area:</strong> {calc.area} sq ft

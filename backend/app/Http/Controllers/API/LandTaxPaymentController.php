@@ -56,15 +56,18 @@ class LandTaxPaymentController extends Controller
 
             // For simplicity, assume area and type
             $area = 1000; // sq ft
+            $landType = $registration->land_type;
             $rate = 15; // BDT per sq ft
             $amount = $area * $rate;
             $totalAmount += $amount;
 
             $calculations[] = [
                 'registration_id' => $regId,
-                'land_name' => $registration->mouza->name_en . ' - ' . $registration->dag_number,
+                'state' => $registration->mouza->name_en,
+                'khatiyan_number' => $registration->khatiyan_number,
+                'dag_number' => $registration->dag_number,
                 'area' => $area,
-                'type' => $registration->land_type,
+                'type' => $landType,
                 'rate' => $rate,
                 'amount' => $amount,
             ];
