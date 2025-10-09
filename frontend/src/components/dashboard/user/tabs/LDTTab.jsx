@@ -10,6 +10,9 @@ const LDTTab = ({ lang, t, user }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paying, setPaying] = useState(false);
   const [kycStatus, setKycStatus] = useState(null);
+  const [ldtPayments, setLdtPayments] = useState([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
   const handlePayLdt = async () => {
     if (selectedRegistrations.length === 0) {
@@ -47,11 +50,50 @@ const LDTTab = ({ lang, t, user }) => {
       alert(lang === "BN" ? "পেমেন্ট সফল হয়েছে।" : "Payment successful.");
       setShowPayModal(false);
       setSelectedRegistrations([]);
-      // Refresh registrations or payments
+      fetchPayments(); // Refresh payments
     } catch (error) {
       alert(error.response?.data?.error || "Payment failed.");
     } finally {
       setPaying(false);
+    }
+  };
+
+  const fetchPayments = async () => {
+    setLoadingPayments(true);
+    try {
+      const { data } = await api.get("/land-tax-payments");
+
+      setLdtPayments(data);
+    } catch (error) {
+      console.error("Error fetching LDT payments:", error);
+      setLdtPayments([]);
+    } finally {
+      setLoadingPayments(false);
+    }
+  };
+
+  const handleDownloadInvoice = async (paymentId) => {
+    try {
+      const response = await api.get(
+        `/land-tax-payments/${paymentId}/invoice`,
+        {
+          responseType: "blob",
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoice_ldt_payment_${paymentId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error downloading invoice:", error);
+      alert(
+        lang === "BN"
+          ? "ইনভয়েস ডাউনলোড ব্যর্থ। আবার চেষ্টা করুন।"
+          : "Failed to download invoice. Please try again."
+      );
     }
   };
 
@@ -79,6 +121,8 @@ const LDTTab = ({ lang, t, user }) => {
       }
     };
     fetchKyc();
+
+    fetchPayments();
   }, []);
 
   if (loadingLdt) {
@@ -100,7 +144,10 @@ const LDTTab = ({ lang, t, user }) => {
         </p>
         <div className="flex gap-3 mt-4">
           <button className="px-4 py-2 rounded-md border">{t("payLdt")}</button>
-          <button className="px-4 py-2 rounded-md border">
+          <button
+            onClick={() => setShowHistoryModal(true)}
+            className="px-4 py-2 rounded-md border"
+          >
             {t("viewHistory")}
           </button>
         </div>
@@ -152,7 +199,8 @@ const LDTTab = ({ lang, t, user }) => {
                   <strong>{t("khatiyanNumber")} :</strong> {reg.khatiyan_number}
                 </p>
                 <p>
-                  <strong>{t("landArea")} :</strong> {reg.land_area} &nbsp; {t("area")}
+                  <strong>{t("landArea")} :</strong> {reg.land_area} &nbsp;{" "}
+                  {t("area")}
                 </p>
                 <p>
                   <strong>{t("registrationDate")} :</strong>{" "}
@@ -189,7 +237,10 @@ const LDTTab = ({ lang, t, user }) => {
         >
           {t("payLdt")}
         </button>
-        <button className="px-4 py-2 rounded-md border">
+        <button
+          onClick={() => setShowHistoryModal(true)}
+          className="px-4 py-2 rounded-md border"
+        >
           {t("viewHistory")}
         </button>
       </div>
@@ -239,6 +290,72 @@ const LDTTab = ({ lang, t, user }) => {
                 className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHistoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">LDT Payment History</h3>
+            {loadingPayments ? (
+              <p>Loading payments...</p>
+            ) : ldtPayments.length === 0 ? (
+              <p>No payments found.</p>
+            ) : (
+              <div className="space-y-4">
+                {ldtPayments.map((payment) => (
+                  <div key={payment.id} className="border rounded p-4">
+                    <p>
+                      <strong>Payment ID:</strong> {payment.id}
+                    </p>
+                    <p>
+                      <strong>Year:</strong> {payment.year}
+                    </p>
+                    <p>
+                      <strong>Amount:</strong> {payment.amount} BDT
+                    </p>
+                    <p>
+                      <strong>Status:</strong>{" "}
+                      <span
+                        className={`uppercase text-sm font-semibold ${
+                          payment.status === "paid"
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {payment.status}
+                      </span>
+                    </p>
+                    <p>
+                      <strong>Paid At:</strong>{" "}
+                      {payment.paid_at
+                        ? new Date(payment.paid_at).toLocaleDateString()
+                        : "N/A"}
+                    </p>
+                    <p>
+                      <strong>Registration:</strong>{" "}
+                      {payment.land_tax_registration?.khatiyan_number} -{" "}
+                      {payment.land_tax_registration?.dag_number}
+                    </p>
+                    <button
+                      onClick={() => handleDownloadInvoice(payment.id)}
+                      className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                      Download Invoice
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setShowHistoryModal(false)}
+                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+              >
+                Close
               </button>
             </div>
           </div>

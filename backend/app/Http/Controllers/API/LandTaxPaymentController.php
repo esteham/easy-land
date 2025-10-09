@@ -9,6 +9,7 @@ use App\Models\Kyc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use PDF;
 
 class LandTaxPaymentController extends Controller
 {
@@ -146,5 +147,23 @@ class LandTaxPaymentController extends Controller
             'message' => 'LDT payment processed successfully.',
             'payments' => $payments,
         ]);
+    }
+
+    public function invoice($id)
+    {
+        $user = Auth::user();
+        $payment = LandTaxPayment::with('landTaxRegistration')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+
+        // Generate PDF invoice content
+        $data = [
+            'payment' => $payment,
+            'user' => $user,
+        ];
+
+        $pdf = PDF::loadView('invoices.land_tax_payment', $data);
+
+        $filename = 'invoice_ldt_payment_' . $payment->id . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

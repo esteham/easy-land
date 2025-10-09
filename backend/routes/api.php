@@ -118,6 +118,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Land Tax Payments
     Route::get('/land-tax-payments', [App\Http\Controllers\API\LandTaxPaymentController::class, 'index']);
+    Route::get('/land-tax-payments/{id}/invoice', [App\Http\Controllers\API\LandTaxPaymentController::class, 'invoice']);
     Route::post('/land-tax-payments/calculate', [App\Http\Controllers\API\LandTaxPaymentController::class, 'calculate']);
     Route::post('/land-tax-payments/pay', [App\Http\Controllers\API\LandTaxPaymentController::class, 'pay']);
 
