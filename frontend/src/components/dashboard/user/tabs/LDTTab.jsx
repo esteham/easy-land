@@ -139,7 +139,8 @@ const LDTTab = ({ lang, t, user }) => {
         <p className="text-gray-600">
           {t("noLdtRegistrations")}
           <a className="text-red-400" href="/land-tax">
-            Register Here
+            {" "}
+            &nbsp; Register Here
           </a>
         </p>
         <div className="flex gap-3 mt-4">

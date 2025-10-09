@@ -146,6 +146,9 @@ export default function LandTaxRegistration() {
         land_area: landArea,
       });
       alert(data.message);
+      nav("/dashboard?tab=ldt", {
+        state: { activeTab: "Land Development Tax (LDT)" },
+      });
       // Reset form
       setDivisionId("");
       setDistrictId("");

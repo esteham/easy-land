@@ -482,7 +482,9 @@ export default function LandExplorer() {
                           });
                           alert("Khatian application submitted successfully.");
                           // Redirect to dashboard Payments & Receipts tab
-                          nav("/dashboard", { state: { activeTab: "Payments & Receipts" } });
+                          nav("/dashboard?tab=applyKhatian", {
+                            state: { activeTab: "Payments & Receipts" },
+                          });
                         } catch (err) {
                           setError(
                             err?.response?.data?.message ||
