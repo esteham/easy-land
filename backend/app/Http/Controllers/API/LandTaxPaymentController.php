@@ -91,6 +91,9 @@ class LandTaxPaymentController extends Controller
         $request->validate([
             'registration_ids' => 'required|array',
             'registration_ids.*' => 'exists:land_tax_registrations,id',
+            'payment_method' => 'required|string',
+            'payer_identifier' => 'required|string',
+            'transaction_id' => 'nullable|string',
         ]);
 
         $user = Auth::user();
@@ -138,6 +141,9 @@ class LandTaxPaymentController extends Controller
                 'amount' => $amount,
                 'status' => 'paid', // assume paid for now
                 'paid_at' => now(),
+                'payment_method' => $request->payment_method,
+                'payer_identifier' => $request->payer_identifier,
+                'transaction_id' => $request->transaction_id,
             ]);
 
             $payments[] = $payment;

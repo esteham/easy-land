@@ -13,6 +13,9 @@ class LandTaxPayment extends Model
         'amount',
         'status',
         'paid_at',
+        'payment_method',
+        'payer_identifier',
+        'transaction_id',
     ];
 
     protected $casts = [

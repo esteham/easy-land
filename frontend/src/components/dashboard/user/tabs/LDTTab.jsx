@@ -11,6 +11,11 @@ const LDTTab = ({ lang, t, user }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paying, setPaying] = useState(false);
   const [kycStatus, setKycStatus] = useState(null);
+  const [showPaymentMethodSelector, setShowPaymentMethodSelector] =
+    useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [payerIdentifier, setPayerIdentifier] = useState("");
+  const [transactionId, setTransactionId] = useState("");
   // const [ldtPayments, setLdtPayments] = useState([]);
   // const [showHistoryModal, setShowHistoryModal] = useState(false);
   // const [loadingPayments, setLoadingPayments] = useState(false);
@@ -58,16 +63,27 @@ const LDTTab = ({ lang, t, user }) => {
     try {
       await api.post("/land-tax-payments/pay", {
         registration_ids: selectedRegistrations,
+        payment_method: paymentMethod,
+        payer_identifier: payerIdentifier,
+        transaction_id: transactionId,
       });
       alert(lang === "BN" ? "পেমেন্ট সফল হয়েছে।" : "Payment successful.");
       setShowPayModal(false);
+      setShowPaymentMethodSelector(false);
       setSelectedRegistrations([]);
+      setPaymentMethod("");
+      setPayerIdentifier("");
+      setTransactionId("");
       fetchPayments(); // Refresh payments
     } catch (error) {
       alert(error.response?.data?.error || "Payment failed.");
     } finally {
       setPaying(false);
     }
+  };
+
+  const handlePaymentClick = () => {
+    setShowPaymentMethodSelector(true);
   };
 
   const fetchPayments = async () => {
@@ -353,21 +369,84 @@ const LDTTab = ({ lang, t, user }) => {
               ))}
             </div>
             <p className="text-xl font-bold mb-4">Total: {totalAmount} BDT</p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleConfirmPayment}
-                disabled={paying}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-              >
-                {paying ? "Processing..." : "Confirm Payment"}
-              </button>
-              <button
-                onClick={() => setShowPayModal(false)}
-                className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-              >
-                Cancel
-              </button>
-            </div>
+            {!showPaymentMethodSelector ? (
+              <div className="flex gap-3">
+                <button
+                  onClick={handlePaymentClick}
+                  disabled={paying}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                >
+                  {paying ? "Processing..." : "Confirm Payment"}
+                </button>
+                <button
+                  onClick={() => setShowPayModal(false)}
+                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block mb-1 font-semibold">
+                    Payment Method
+                  </label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-full border rounded px-3 py-2"
+                  >
+                    <option value="">Select a method</option>
+                    <option value="bKash">bKash</option>
+                    <option value="Nagad">Nagad</option>
+                    <option value="Card/Bank">Card/Bank</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block mb-1 font-semibold">
+                    Payer Identifier
+                  </label>
+                  <input
+                    type="text"
+                    value={payerIdentifier}
+                    onChange={(e) => setPayerIdentifier(e.target.value)}
+                    placeholder={
+                      paymentMethod === "bKash" || paymentMethod === "Nagad"
+                        ? "Enter phone number"
+                        : "Enter card or bank number"
+                    }
+                    className="w-full border rounded px-3 py-2"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 font-semibold">
+                    Transaction ID (optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={transactionId}
+                    onChange={(e) => setTransactionId(e.target.value)}
+                    placeholder="Enter transaction ID"
+                    className="w-full border rounded px-3 py-2"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleConfirmPayment}
+                    disabled={paying || !paymentMethod || !payerIdentifier}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                  >
+                    {paying ? "Processing..." : "Confirm Payment"}
+                  </button>
+                  <button
+                    onClick={() => setShowPaymentMethodSelector(false)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Back
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

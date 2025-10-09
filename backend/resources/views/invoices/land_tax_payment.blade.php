@@ -237,6 +237,10 @@
               <td>{{ $payment->landTaxRegistration->land_type }}</td>
             </tr>
             <tr>
+              <th>Payment Method</th>
+              <td>{{ $payment->payment_method }}</td>
+            </tr>
+            <tr>
               <th>Year</th>
               <td>{{ $payment->year }}</td>
             </tr>
