@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import { makeT, LANGS } from "../../../fonts/UserDashbboardTexts";
 
@@ -26,7 +26,7 @@ const NAV_KEYS = [
 
 export default function UserDashboard() {
   const { user } = useAuth();
-  const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // ---- Language state (default: Bangla) ----
   const [lang, setLang] = useState(
@@ -35,14 +35,20 @@ export default function UserDashboard() {
   const t = useMemo(() => makeT(lang), [lang]);
 
   // ---- Nav & Active Tab (key-based) ----
-  const [activeKey, setActiveKey] = useState(
-    location.state?.activeKey || NAV_KEYS[0]
-  );
+  const [activeKey, setActiveKey] = useState(() => {
+    const tab = searchParams.get('tab');
+    return tab && NAV_KEYS.includes(tab) ? tab : NAV_KEYS[0];
+  });
 
   // Persist language choice
   useEffect(() => {
     localStorage.setItem("lang", lang);
   }, [lang]);
+
+  // Update URL when activeKey changes
+  useEffect(() => {
+    setSearchParams({ tab: activeKey });
+  }, [activeKey, setSearchParams]);
 
   // Avatar initials
   const getInitials = (name) => {
