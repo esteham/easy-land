@@ -33,14 +33,27 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Toaster
-          position="top-right"
+          position="top-center"
           toastOptions={{
             duration: 5000,
             style: { fontSize: "14px", borderRadius: "10px" },
-            success: { icon: "✅" },
-            error: { icon: "⚠️" },
+            success: {
+              icon: "✅",
+              style: {
+                background: "#16a34a",
+                color: "#fff",
+              },
+            },
+            error: {
+              icon: "⚠️",
+              style: {
+                background: "#dc2626",
+                color: "#fff",
+              },
+            },
           }}
         />
+
         <Routes>
           {/* Public routes with header & footer */}
           <Route
@@ -124,7 +137,10 @@ function App() {
             <Route path="zils" element={<AdminZils />} />
             <Route path="dags" element={<AdminDags />} />
             <Route path="kyc-approvals" element={<KycApproval />} />
-            <Route path="land-tax-registrations" element={<AdminLandTaxRegistrations />} />
+            <Route
+              path="land-tax-registrations"
+              element={<AdminLandTaxRegistrations />}
+            />
           </Route>
 
           {/* User dashboard - NOW WITH header/footer */}

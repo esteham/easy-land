@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../../../api";
+import toast from "react-hot-toast";
 
 const LDTTab = ({ lang, t, user }) => {
   const [ldtRegistrations, setLdtRegistrations] = useState([]);
@@ -10,9 +11,9 @@ const LDTTab = ({ lang, t, user }) => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [paying, setPaying] = useState(false);
   const [kycStatus, setKycStatus] = useState(null);
-  const [ldtPayments, setLdtPayments] = useState([]);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [loadingPayments, setLoadingPayments] = useState(false);
+  // const [ldtPayments, setLdtPayments] = useState([]);
+  // const [showHistoryModal, setShowHistoryModal] = useState(false);
+  // const [loadingPayments, setLoadingPayments] = useState(false);
 
   const handlePayLdt = async () => {
     if (selectedRegistrations.length === 0) {
@@ -26,6 +27,17 @@ const LDTTab = ({ lang, t, user }) => {
 
     if (kycStatus !== "success") {
       alert(lang === "BN" ? "KYC আপডেট করা হয়নি।" : "KYC not updated.");
+      return;
+    }
+
+    const hasUnapproved = selectedRegistrations.some((id) => {
+      const reg = ldtRegistrations.find((r) => r.id === id);
+      return reg.status !== "approved";
+    });
+    if (hasUnapproved) {
+      toast.error(
+        "Your registered land hasn’t been approved yet. You can pay once it’s approved. For assistance, call 01XXXXXXXXX."
+      );
       return;
     }
 
