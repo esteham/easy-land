@@ -7,6 +7,11 @@ export default function LandExplorer() {
   const nav = useNavigate();
   const { user } = useAuth();
 
+  // Payment states
+  const [showPaymentSelector, setShowPaymentSelector] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [paymentCredentials, setPaymentCredentials] = useState({});
+
   // Collections
   const [divisions, setDivisions] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -196,6 +201,29 @@ export default function LandExplorer() {
     if (e.key === "Enter") {
       e.preventDefault();
       handleFindDag();
+    }
+  };
+
+  const handleSubmitApplication = async (feeAmount) => {
+    try {
+      setLoading(true);
+      setError("");
+      await api.post("/applications", {
+        dag_id: dagDetail.id,
+        type: "khatian_request",
+        description: "User submitted a Khatian application",
+        fee_amount: feeAmount,
+        payment_status: "paid",
+      });
+      alert("Khatian application submitted successfully.");
+      // Redirect to dashboard Payments & Receipts tab
+      nav("/dashboard?tab=applyKhatian", {
+        state: { activeTab: "Payments & Receipts" },
+      });
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to submit application");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -449,56 +477,181 @@ export default function LandExplorer() {
                   <div className="mt-4">
                     <button
                       className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-                      onClick={async () => {
+                      onClick={() => {
                         if (!user) {
                           // Redirect to login page
                           alert("Please login first and then apply");
                           nav("/login");
                           return;
                         }
-                        try {
-                          setLoading(true);
-                          setError("");
-
-                          // Fixed fee for Khatian application
-                          const feeAmount = 200;
-
-                          // Simulate payment process (replace with real payment integration)
-                          const paymentConfirmed = window.confirm(
-                            `The application fee is BDT ${feeAmount}. Proceed to payment?`
-                          );
-                          if (!paymentConfirmed) {
-                            setLoading(false);
-                            return;
-                          }
-
-                          // Submit application API call
-                          await api.post("/applications", {
-                            dag_id: dagDetail.id,
-                            type: "khatian_request",
-                            description: "User submitted a Khatian application",
-                            fee_amount: feeAmount,
-                            payment_status: "paid",
-                          });
-                          alert("Khatian application submitted successfully.");
-                          // Redirect to dashboard Payments & Receipts tab
-                          nav("/dashboard?tab=applyKhatian", {
-                            state: { activeTab: "Payments & Receipts" },
-                          });
-                        } catch (err) {
-                          setError(
-                            err?.response?.data?.message ||
-                              "Failed to submit application"
-                          );
-                        } finally {
-                          setLoading(false);
-                        }
+                        setShowPaymentSelector(true);
                       }}
                       disabled={loading}
                     >
                       Submit Khatian Application
                     </button>
                   </div>
+                  {showPaymentSelector && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                      <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+                        <div className="mb-3">
+                            <p>You paid for </p>
+                            <div className="mb-2 text-gray-600">
+                              Dag: {dagDetail.dag_no}
+                            </div>
+                            <p>Ammount : 200</p>
+                          </div>
+                        <h3 className="text-lg font-semibold mb-4">
+                          Select Payment Method for Paymnet
+                        </h3>
+                        <div className="space-y-2">
+                          <button
+                            className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                            onClick={() => setSelectedPaymentMethod("bKash")}
+                          >
+                            bKash
+                          </button>
+                          <button
+                            className="w-full px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
+                            onClick={() => setSelectedPaymentMethod("Nagad")}
+                          >
+                            Nagad
+                          </button>
+                          <button
+                            className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            onClick={() => setSelectedPaymentMethod("Online")}
+                          >
+                            Online (Card/Bank)
+                          </button>
+                          
+                        </div>
+                        {selectedPaymentMethod && (
+                          <div className="mt-4">
+                            <h4 className="font-medium mb-2">
+                              Enter {selectedPaymentMethod} Details
+                            </h4>
+                            {selectedPaymentMethod === "bKash" ||
+                            selectedPaymentMethod === "Nagad" ? (
+                              <div className="space-y-2">
+                                <input
+                                  type="text"
+                                  placeholder="Phone Number"
+                                  className="w-full border rounded p-2"
+                                  value={paymentCredentials.phone || ""}
+                                  onChange={(e) =>
+                                    setPaymentCredentials({
+                                      ...paymentCredentials,
+                                      phone: e.target.value,
+                                    })
+                                  }
+                                />
+                                <input
+                                  type="password"
+                                  placeholder="PIN"
+                                  className="w-full border rounded p-2"
+                                  value={paymentCredentials.pin || ""}
+                                  onChange={(e) =>
+                                    setPaymentCredentials({
+                                      ...paymentCredentials,
+                                      pin: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
+                            ) : (
+                              <div className="space-y-2">
+                                <input
+                                  type="text"
+                                  placeholder="Card Number"
+                                  className="w-full border rounded p-2"
+                                  value={paymentCredentials.cardNumber || ""}
+                                  onChange={(e) =>
+                                    setPaymentCredentials({
+                                      ...paymentCredentials,
+                                      cardNumber: e.target.value,
+                                    })
+                                  }
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Expiry (MM/YY)"
+                                  className="w-full border rounded p-2"
+                                  value={paymentCredentials.expiry || ""}
+                                  onChange={(e) =>
+                                    setPaymentCredentials({
+                                      ...paymentCredentials,
+                                      expiry: e.target.value,
+                                    })
+                                  }
+                                />
+                                <input
+                                  type="password"
+                                  placeholder="CVV"
+                                  className="w-full border rounded p-2"
+                                  value={paymentCredentials.cvv || ""}
+                                  onChange={(e) =>
+                                    setPaymentCredentials({
+                                      ...paymentCredentials,
+                                      cvv: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
+                            )}
+                            <div className="mt-4 flex gap-2">
+                              <button
+                                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                                onClick={() => {
+                                  // Mock confirmation
+                                  if (
+                                    selectedPaymentMethod === "bKash" ||
+                                    selectedPaymentMethod === "Nagad"
+                                  ) {
+                                    if (
+                                      !paymentCredentials.phone ||
+                                      !paymentCredentials.pin
+                                    ) {
+                                      alert("Please fill all fields");
+                                      return;
+                                    }
+                                  } else {
+                                    if (
+                                      !paymentCredentials.cardNumber ||
+                                      !paymentCredentials.expiry ||
+                                      !paymentCredentials.cvv
+                                    ) {
+                                      alert("Please fill all fields");
+                                      return;
+                                    }
+                                  }
+                                  alert("Payment successful!");
+                                  // Close modal
+                                  setShowPaymentSelector(false);
+                                  setSelectedPaymentMethod("");
+                                  setPaymentCredentials({});
+                                  // Submit application
+                                  handleSubmitApplication(200);
+                                }}
+                                disabled={loading}
+                              >
+                                Pay BDT 200
+                              </button>
+                              <button
+                                className="px-4 py-2 bg-gray-500 text-white rounded"
+                                onClick={() => {
+                                  setShowPaymentSelector(false);
+                                  setSelectedPaymentMethod("");
+                                  setPaymentCredentials({});
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-gray-500">Loading...</div>
