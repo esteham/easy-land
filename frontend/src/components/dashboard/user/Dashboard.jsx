@@ -19,11 +19,11 @@ const NAV_KEYS = [
   "address",
   "applyKhatian",
   "ldt",
+  "mutations",
   "payments",
   "profileKyc",
   "messages",
   "security",
-  "mutations",
 ];
 
 export default function UserDashboard() {
@@ -81,6 +81,8 @@ export default function UserDashboard() {
         return <ApplyKhatianTab {...commonProps} />;
       case "ldt":
         return <LDTTab {...commonProps} />;
+      case "mutations":
+        return <MutationList {...commonProps} />;
       case "payments":
         return <PaymentsTab {...commonProps} />;
       case "profileKyc":
@@ -89,8 +91,6 @@ export default function UserDashboard() {
         return <MessagesTab {...commonProps} />;
       case "security":
         return <SecurityTab {...commonProps} />;
-      case "mutations":
-        return <MutationList {...commonProps} />;
       default:
         return null;
     }
