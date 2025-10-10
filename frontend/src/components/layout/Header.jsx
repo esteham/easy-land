@@ -48,6 +48,17 @@ export default function Header() {
               Land Records
             </Link>
 
+            <Link
+              to="/land-tax"
+              className={`font-medium transition duration-300 ${
+                location.pathname === "/land-tax"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Land TAX
+            </Link>
+
             {/* Show Dashboard for all logged-in users */}
             {user && (
               <Link
@@ -82,9 +93,9 @@ export default function Header() {
             {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-gray-700">Welcome, {user.name}</span>
-                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                {/* <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                   {user.role}
-                </span>
+                </span> */}
                 <button
                   onClick={handleLogout}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition duration-300"
@@ -131,11 +142,112 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation - similar updates here */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4">
-              {/* Mobile navigation items - same logic as desktop */}
+          <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="flex flex-col space-y-1 px-4 py-4">
+              {/* Mobile navigation links */}
+              <Link
+                to="/"
+                className={`block py-3 px-4 rounded-lg font-medium transition duration-300 ${
+                  location.pathname === "/"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/land"
+                className={`block py-3 px-4 rounded-lg font-medium transition duration-300 ${
+                  location.pathname === "/land"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Land Records
+              </Link>
+
+              <Link
+                to="/land-tax"
+                className={`block py-3 px-4 rounded-lg font-medium transition duration-300 ${
+                  location.pathname === "/land-tax"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Land TAX
+              </Link>
+
+              {/* Show Dashboard for all logged-in users */}
+              {user && (
+                <Link
+                  to="/dashboard"
+                  className={`block py-3 px-4 rounded-lg font-medium transition duration-300 ${
+                    location.pathname === "/dashboard"
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+              )}
+
+              {/* Show Admin Panel only for admin/acland */}
+              {(user?.role === "admin" || user?.role === "acland") && (
+                <Link
+                  to="/admin"
+                  className={`block py-3 px-4 rounded-lg font-medium transition duration-300 ${
+                    location.pathname.startsWith("/admin")
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Admin Panel
+                </Link>
+              )}
+
+              {/* Mobile Auth Section */}
+              <div className="border-t border-gray-200 mt-4 pt-4">
+                {user ? (
+                  <div className="flex flex-col space-y-3">
+                    <div className="px-4 py-2 text-gray-700">
+                      Welcome, {user.name}
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-40 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition duration-300 text-left"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col space-y-3">
+                    <Link
+                      to="/login"
+                      className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-medium transition duration-300 text-center"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition duration-300 text-center shadow-lg hover:shadow-xl"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
