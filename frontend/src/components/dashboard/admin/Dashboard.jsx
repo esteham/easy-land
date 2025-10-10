@@ -143,6 +143,9 @@ export default function AdminLayout() {
             >
               LDT Register Approvals
             </SideLink>
+            <SideLink to="mutations" icon={<FileText className="h-4 w-4" />}>
+              Mutation Approvals
+            </SideLink>
 
             <SectionTitle icon={<Globe className="h-4 w-4" />}>
               Geographic Data

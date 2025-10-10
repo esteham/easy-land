@@ -11,6 +11,7 @@ const TEXTS = {
     profileKyc: "Profile & KYC",
     messages: "Messages",
     security: "Security",
+    mutations: "Mutations",
 
     // Common
     edit: "Edit",
@@ -129,6 +130,7 @@ const TEXTS = {
     profileKyc: "প্রোফাইল ও কেওয়াইসি",
     messages: "বার্তা",
     security: "নিরাপত্তা",
+    mutations: "মিউটেশন",
 
     // Common
     edit: "সম্পাদনা",

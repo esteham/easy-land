@@ -25,6 +25,7 @@ import AdminDags from "./components/dashboard/admin/AdminDags";
 import AdminSurveyTypes from "./components/dashboard/admin/AdminSurveyTypes";
 import KycApproval from "./components/dashboard/admin/KycApproval";
 import AdminLandTaxRegistrations from "./components/dashboard/admin/AdminLandTaxRegistrations";
+import AdminMutations from "./components/dashboard/admin/AdminMutations";
 
 import UserDashboard from "./components/dashboard/user/Dashboard";
 
@@ -141,6 +142,7 @@ function App() {
               path="land-tax-registrations"
               element={<AdminLandTaxRegistrations />}
             />
+            <Route path="mutations" element={<AdminMutations />} />
           </Route>
 
           {/* User dashboard - NOW WITH header/footer */}

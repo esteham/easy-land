@@ -12,6 +12,7 @@ import PaymentsTab from "./tabs/PaymentsTab";
 import ProfileKYCTab from "./tabs/ProfileKYCTab";
 import MessagesTab from "./tabs/MessagesTab";
 import SecurityTab from "./tabs/SecurityTab";
+import MutationList from "./tabs/MutationList";
 
 const NAV_KEYS = [
   "personalInfo",
@@ -22,6 +23,7 @@ const NAV_KEYS = [
   "profileKyc",
   "messages",
   "security",
+  "mutations",
 ];
 
 export default function UserDashboard() {
@@ -87,6 +89,8 @@ export default function UserDashboard() {
         return <MessagesTab {...commonProps} />;
       case "security":
         return <SecurityTab {...commonProps} />;
+      case "mutations":
+        return <MutationList {...commonProps} />;
       default:
         return null;
     }

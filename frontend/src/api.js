@@ -11,4 +11,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Mutation API methods
+export const getMutations = (params = {}) => api.get('/mutations', { params });
+export const createMutation = (data) => api.post('/mutations', data);
+export const getMutation = (id) => api.get(`/mutations/${id}`);
+export const updateMutationStatus = (id, data) => api.patch(`/mutations/${id}/status`, data);
+export const uploadMutationDocuments = (id, formData) => api.post(`/mutations/${id}/documents`, formData, {
+  headers: { 'Content-Type': 'multipart/form-data' },
+});
+export const payMutation = (id, data) => api.post(`/mutations/${id}/pay`, data);
+export const getMutationInvoice = (id) => api.get(`/mutations/${id}/invoice`, { responseType: 'blob' });
+
+// Applications
+export const getApplications = (params = {}) => api.get('/applications', { params });
+
 export default api;

@@ -22,6 +22,7 @@ use App\Http\Controllers\API\SurveyTypeController;
 
 use \App\Http\Controllers\API\ApplicationController;
 use \App\Http\Controllers\API\LandTaxRegistrationController;
+use \App\Http\Controllers\API\MutationController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -113,6 +114,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/applications', [ApplicationController::class, 'store']);
     Route::get('/applications/{id}/invoice', [ApplicationController::class, 'invoice']);
 
+    // Mutations
+    Route::get('/mutations', [MutationController::class, 'index']);
+    Route::post('/mutations', [MutationController::class, 'store']);
+    Route::get('/mutations/{id}', [MutationController::class, 'show']);
+    Route::get('/mutations/{id}/invoice', [MutationController::class, 'invoice']);
+    Route::post('/mutations/{id}/documents', [MutationController::class, 'uploadDocuments']);
+    Route::post('/mutations/{id}/pay', [MutationController::class, 'pay']);
+
     // Land Tax Registration
     Route::apiResource('land-tax-registrations', LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
 
@@ -127,6 +136,10 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('admin/mouzas', MouzaController::class);
         Route::apiResource('admin/zils', ZilController::class);
         Route::apiResource('admin/dags', DagController::class);
+
+        // Mutations admin
+        Route::apiResource('admin/mutations', MutationController::class);
+        Route::patch('/mutations/{id}/status', [MutationController::class, 'updateStatus']);
     });
 
     Route::middleware('role:admin')->group(function () {
