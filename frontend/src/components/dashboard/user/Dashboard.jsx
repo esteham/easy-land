@@ -38,7 +38,7 @@ export default function UserDashboard() {
 
   // ---- Nav & Active Tab (key-based) ----
   const [activeKey, setActiveKey] = useState(() => {
-    const tab = searchParams.get('tab');
+    const tab = searchParams.get("tab");
     return tab && NAV_KEYS.includes(tab) ? tab : NAV_KEYS[0];
   });
 

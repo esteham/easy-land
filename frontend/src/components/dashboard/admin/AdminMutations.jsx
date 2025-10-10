@@ -39,7 +39,8 @@ const AdminMutations = ({ lang }) => {
   };
 
   const handleStatusUpdate = async (mutationId, newStatus) => {
-    if (!confirm(`Are you sure you want to update status to ${newStatus}?`)) return;
+    if (!confirm(`Are you sure you want to update status to ${newStatus}?`))
+      return;
 
     try {
       await api.patch(`/admin/mutations/${mutationId}`, { status: newStatus });
@@ -47,7 +48,11 @@ const AdminMutations = ({ lang }) => {
       alert(lang === LANGS.BN ? "স্ট্যাটাস আপডেট হয়েছে!" : "Status updated!");
     } catch (error) {
       console.error("Error updating status:", error);
-      alert(lang === LANGS.BN ? "স্ট্যাটাস আপডেট ব্যর্থ!" : "Failed to update status!");
+      alert(
+        lang === LANGS.BN
+          ? "স্ট্যাটাস আপডেট ব্যর্থ!"
+          : "Failed to update status!"
+      );
     }
   };
 
@@ -60,15 +65,22 @@ const AdminMutations = ({ lang }) => {
     return <p>{lang === LANGS.BN ? "লোড হচ্ছে..." : "Loading..."}</p>;
   }
 
-  const filteredMutations = mutations.filter(mutation =>
-    (mutation.application?.khatiyan_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (mutation.application?.dag_number || '').toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMutations = mutations.filter(
+    (mutation) =>
+      (mutation.application?.khatiyan_number || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      (mutation.application?.dag_number || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">
-        {lang === LANGS.BN ? "মিউটেশন অ্যাডমিন প্যানেল" : "Admin Mutations Panel"}
+        {lang === LANGS.BN
+          ? "মিউটেশন অ্যাডমিন প্যানেল"
+          : "Admin Mutations Panel"}
       </h2>
 
       {/* Filters */}
@@ -76,7 +88,11 @@ const AdminMutations = ({ lang }) => {
         <div className="flex gap-4">
           <input
             type="text"
-            placeholder={lang === LANGS.BN ? "খতিয়ান/দাগ সার্চ করুন" : "Search by Khatiyan/Dag"}
+            placeholder={
+              lang === LANGS.BN
+                ? "খতিয়ান/দাগ সার্চ করুন"
+                : "Search by Khatiyan/Dag"
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
@@ -86,7 +102,9 @@ const AdminMutations = ({ lang }) => {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">{lang === LANGS.BN ? "সকল স্ট্যাটাস" : "All Status"}</option>
+            <option value="">
+              {lang === LANGS.BN ? "সকল স্ট্যাটাস" : "All Status"}
+            </option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
@@ -130,18 +148,23 @@ const AdminMutations = ({ lang }) => {
             {filteredMutations.map((mutation) => (
               <tr key={mutation.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {mutation.application?.khatiyan_number || 'N/A'}
+                  {mutation.application?.khatiyan_number || "N/A"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {mutation.application?.dag_number || 'N/A'}
+                  {mutation.application?.dag_number || "N/A"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    mutation.status === "approved" ? "bg-green-100 text-green-800" :
-                    mutation.status === "pending" ? "bg-yellow-100 text-yellow-800" :
-                    mutation.status === "rejected" ? "bg-red-100 text-red-800" :
-                    "bg-blue-100 text-blue-800"
-                  }`}>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      mutation.status === "approved"
+                        ? "bg-green-100 text-green-800"
+                        : mutation.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : mutation.status === "rejected"
+                        ? "bg-red-100 text-red-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
                     {mutation.status}
                   </span>
                 </td>
@@ -160,10 +183,16 @@ const AdminMutations = ({ lang }) => {
                   </button>
                   <select
                     value=""
-                    onChange={(e) => handleStatusUpdate(mutation.id, e.target.value)}
+                    onChange={(e) =>
+                      handleStatusUpdate(mutation.id, e.target.value)
+                    }
                     className="text-sm border rounded"
                   >
-                    <option value="">{lang === LANGS.BN ? "স্ট্যাটাস পরিবর্তন করুন" : "Update Status"}</option>
+                    <option value="">
+                      {lang === LANGS.BN
+                        ? "স্ট্যাটাস পরিবর্তন করুন"
+                        : "Update Status"}
+                    </option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="rejected">Rejected</option>
@@ -177,7 +206,9 @@ const AdminMutations = ({ lang }) => {
 
         {mutations.length === 0 && (
           <p className="text-center py-8 text-gray-500">
-            {lang === LANGS.BN ? "কোনো মিউটেশন পাওয়া যায়নি।" : "No mutations found."}
+            {lang === LANGS.BN
+              ? "কোনো মিউটেশন পাওয়া যায়নি।"
+              : "No mutations found."}
           </p>
         )}
       </div>
@@ -196,7 +227,9 @@ const AdminMutations = ({ lang }) => {
             Page {currentPage} of {totalPages}
           </span>
           <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
           >
@@ -207,50 +240,141 @@ const AdminMutations = ({ lang }) => {
 
       {/* Details Modal */}
       {showModal && selectedMutation && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowModal(false)}>
-          <div className="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mt-3">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 {lang === LANGS.BN ? "মিউটেশন বিস্তারিত" : "Mutation Details"}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold text-gray-700">{lang === LANGS.BN ? "মিউটেশন তথ্য" : "Mutation Info"}</h4>
-                  <p><strong>{lang === LANGS.BN ? "আইডি:" : "ID:"}</strong> {selectedMutation.id}</p>
-                  <p><strong>{lang === LANGS.BN ? "মিউটেশন টাইপ:" : "Mutation Type:"}</strong> {selectedMutation.mutation_type}</p>
-                  <p><strong>{lang === LANGS.BN ? "কারণ:" : "Reason:"}</strong> {selectedMutation.reason}</p>
-                  <p><strong>{lang === LANGS.BN ? "ফি পরিমাণ:" : "Fee Amount:"}</strong> {selectedMutation.fee_amount}</p>
-                  <p><strong>{lang === LANGS.BN ? "স্ট্যাটাস:" : "Status:"}</strong> {selectedMutation.status}</p>
-                  <p><strong>{lang === LANGS.BN ? "রিমার্কস:" : "Remarks:"}</strong> {selectedMutation.remarks || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "তৈরি হয়েছে:" : "Created At:"}</strong> {new Date(selectedMutation.created_at).toLocaleString()}</p>
-                  <p><strong>{lang === LANGS.BN ? "আপডেট হয়েছে:" : "Reviewed At:"}</strong> {selectedMutation.reviewed_at ? new Date(selectedMutation.reviewed_at).toLocaleString() : 'N/A'}</p>
+                  <h4 className="font-semibold text-gray-700">
+                    {lang === LANGS.BN ? "মিউটেশন তথ্য" : "Mutation Info"}
+                  </h4>
+                  <p>
+                    <strong>{lang === LANGS.BN ? "আইডি:" : "ID:"}</strong>{" "}
+                    {selectedMutation.id}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "মিউটেশন টাইপ:" : "Mutation Type:"}
+                    </strong>{" "}
+                    {selectedMutation.mutation_type}
+                  </p>
+                  <p>
+                    <strong>{lang === LANGS.BN ? "কারণ:" : "Reason:"}</strong>{" "}
+                    {selectedMutation.reason}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "ফি পরিমাণ:" : "Fee Amount:"}
+                    </strong>{" "}
+                    {selectedMutation.fee_amount}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "স্ট্যাটাস:" : "Status:"}
+                    </strong>{" "}
+                    {selectedMutation.status}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "রিমার্কস:" : "Remarks:"}
+                    </strong>{" "}
+                    {selectedMutation.remarks || "N/A"}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "তৈরি হয়েছে:" : "Created At:"}
+                    </strong>{" "}
+                    {new Date(selectedMutation.created_at).toLocaleString()}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "আপডেট হয়েছে:" : "Reviewed At:"}
+                    </strong>{" "}
+                    {selectedMutation.reviewed_at
+                      ? new Date(selectedMutation.reviewed_at).toLocaleString()
+                      : "N/A"}
+                  </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-700">{lang === LANGS.BN ? "আবেদনকারী তথ্য" : "Applicant Info"}</h4>
-                  <p><strong>{lang === LANGS.BN ? "নাম:" : "Name:"}</strong> {selectedMutation.user?.name || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "ইমেইল:" : "Email:"}</strong> {selectedMutation.user?.email || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "রিভিউয়ার:" : "Reviewer:"}</strong> {selectedMutation.reviewer?.name || 'N/A'}</p>
-                  <h4 className="font-semibold text-gray-700 mt-4">{lang === LANGS.BN ? "আবেদন তথ্য" : "Application Info"}</h4>
-                  <p><strong>{lang === LANGS.BN ? "খতিয়ান নম্বর:" : "Khatiyan Number:"}</strong> {selectedMutation.application?.khatiyan_number || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}</strong> {selectedMutation.application?.dag_number || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "জমির ধরন:" : "Land Type:"}</strong> {selectedMutation.application?.land_type || 'N/A'}</p>
-                  <p><strong>{lang === LANGS.BN ? "জমির আয়তন:" : "Land Area:"}</strong> {selectedMutation.application?.land_area || 'N/A'}</p>
+                  <h4 className="font-semibold text-gray-700">
+                    {lang === LANGS.BN ? "আবেদনকারী তথ্য" : "Applicant Info"}
+                  </h4>
+                  <p>
+                    <strong>{lang === LANGS.BN ? "নাম:" : "Name:"}</strong>{" "}
+                    {selectedMutation.user?.name || "N/A"}
+                  </p>
+                  <p>
+                    <strong>{lang === LANGS.BN ? "ইমেইল:" : "Email:"}</strong>{" "}
+                    {selectedMutation.user?.email || "N/A"}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "রিভিউয়ার:" : "Reviewer:"}
+                    </strong>{" "}
+                    {selectedMutation.reviewer?.name || "N/A"}
+                  </p>
+                  <h4 className="font-semibold text-gray-700 mt-4">
+                    {lang === LANGS.BN ? "আবেদন তথ্য" : "Application Info"}
+                  </h4>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN
+                        ? "খতিয়ান নম্বর:"
+                        : "Khatiyan Number:"}
+                    </strong>{" "}
+                    {selectedMutation.application?.khatiyan_number || "N/A"}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}
+                    </strong>{" "}
+                    {selectedMutation.application?.dag_number || "N/A"}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "জমির ধরন:" : "Land Type:"}
+                    </strong>{" "}
+                    {selectedMutation.application?.land_type || "N/A"}
+                  </p>
+                  <p>
+                    <strong>
+                      {lang === LANGS.BN ? "জমির আয়তন:" : "Land Area:"}
+                    </strong>{" "}
+                    {selectedMutation.application?.land_area || "N/A"}
+                  </p>
                 </div>
               </div>
-              {selectedMutation.documents && selectedMutation.documents.length > 0 && (
-                <div className="mt-4">
-                  <h4 className="font-semibold text-gray-700">{lang === LANGS.BN ? "ডকুমেন্টস" : "Documents"}</h4>
-                  <ul className="list-disc list-inside">
-                    {selectedMutation.documents.map((doc, index) => (
-                      <li key={index}>
-                        <a href={`/storage/${doc.path}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                          {doc.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {selectedMutation.documents &&
+                selectedMutation.documents.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-gray-700">
+                      {lang === LANGS.BN ? "ডকুমেন্টস" : "Documents"}
+                    </h4>
+                    <ul className="list-disc list-inside">
+                      {selectedMutation.documents.map((doc, index) => (
+                        <li key={index}>
+                          <a
+                            href={`/storage/${doc.path}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            {doc.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               <div className="flex justify-end mt-4">
                 <button
                   onClick={() => setShowModal(false)}

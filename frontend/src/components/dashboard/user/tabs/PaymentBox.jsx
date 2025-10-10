@@ -23,7 +23,11 @@ const PaymentBox = ({ mutationId, lang, onSuccess }) => {
     try {
       await api.post(`/mutations/${mutationId}/pay`, paymentData);
 
-      alert(lang === LANGS.BN ? "পেমেন্ট সফলভাবে সম্পন্ন হয়েছে!" : "Payment completed successfully!");
+      alert(
+        lang === LANGS.BN
+          ? "পেমেন্ট সফলভাবে সম্পন্ন হয়েছে!"
+          : "Payment completed successfully!"
+      );
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -84,7 +88,13 @@ const PaymentBox = ({ mutationId, lang, onSuccess }) => {
           disabled={loading}
           className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:opacity-50"
         >
-          {loading ? (lang === LANGS.BN ? "প্রক্রিয়া হচ্ছে..." : "Processing...") : (lang === LANGS.BN ? "পেমেন্ট করুন" : "Pay Now")}
+          {loading
+            ? lang === LANGS.BN
+              ? "প্রক্রিয়া হচ্ছে..."
+              : "Processing..."
+            : lang === LANGS.BN
+            ? "পেমেন্ট করুন"
+            : "Pay Now"}
         </button>
       </form>
     </div>

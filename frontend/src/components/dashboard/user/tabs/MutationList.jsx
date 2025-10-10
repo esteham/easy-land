@@ -33,11 +33,25 @@ const MutationList = ({ lang, t, user }) => {
   }
 
   if (showForm) {
-    return <MutationForm lang={lang} onSuccess={() => { setShowForm(false); fetchMutations(); }} />;
+    return (
+      <MutationForm
+        lang={lang}
+        onSuccess={() => {
+          setShowForm(false);
+          fetchMutations();
+        }}
+      />
+    );
   }
 
   if (selectedMutationId) {
-    return <MutationDetails lang={lang} mutationId={selectedMutationId} onBack={() => setSelectedMutationId(null)} />;
+    return (
+      <MutationDetails
+        lang={lang}
+        mutationId={selectedMutationId}
+        onBack={() => setSelectedMutationId(null)}
+      />
+    );
   }
 
   return (
@@ -56,7 +70,9 @@ const MutationList = ({ lang, t, user }) => {
 
       {mutations.length === 0 ? (
         <p className="text-gray-600">
-          {lang === LANGS.BN ? "কোনো মিউটেশন পাওয়া যায়নি।" : "No mutations found."}
+          {lang === LANGS.BN
+            ? "কোনো মিউটেশন পাওয়া যায়নি।"
+            : "No mutations found."}
         </p>
       ) : (
         <div className="space-y-4">
@@ -67,28 +83,43 @@ const MutationList = ({ lang, t, user }) => {
             >
               <div>
                 <p>
-                  <strong>{lang === LANGS.BN ? "খতিয়ান নম্বর:" : "Khatiyan Number:"}</strong> {mutation.application?.khatiyan_number || 'N/A'}
+                  <strong>
+                    {lang === LANGS.BN ? "খতিয়ান নম্বর:" : "Khatiyan Number:"}
+                  </strong>{" "}
+                  {mutation.application?.khatiyan_number || "N/A"}
                 </p>
                 <p>
-                  <strong>{lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}</strong> {mutation.application?.dag_number || 'N/A'}
+                  <strong>
+                    {lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}
+                  </strong>{" "}
+                  {mutation.application?.dag_number || "N/A"}
                 </p>
                 <p>
                   <strong>{t("status")}:</strong>{" "}
-                  <span className={`uppercase font-semibold ${
-                    mutation.status === "approved" ? "text-green-600" :
-                    mutation.status === "pending" ? "text-yellow-600" :
-                    "text-red-600"
-                  }`}>
+                  <span
+                    className={`uppercase font-semibold ${
+                      mutation.status === "approved"
+                        ? "text-green-600"
+                        : mutation.status === "pending"
+                        ? "text-yellow-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     {mutation.status}
                   </span>
                 </p>
                 <p>
-                  <strong>{lang === LANGS.BN ? "আবেদন তারিখ:" : "Application Date:"}</strong>{" "}
+                  <strong>
+                    {lang === LANGS.BN ? "আবেদন তারিখ:" : "Application Date:"}
+                  </strong>{" "}
                   {new Date(mutation.created_at).toLocaleDateString()}
                 </p>
                 {mutation.documents && (
                   <p>
-                    <strong>{lang === LANGS.BN ? "ডকুমেন্টস:" : "Documents:"}</strong> {mutation.documents.length} files
+                    <strong>
+                      {lang === LANGS.BN ? "ডকুমেন্টস:" : "Documents:"}
+                    </strong>{" "}
+                    {mutation.documents.length} files
                   </p>
                 )}
               </div>

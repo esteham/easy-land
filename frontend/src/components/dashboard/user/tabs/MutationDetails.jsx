@@ -15,7 +15,11 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
         setMutation(data);
       } catch (error) {
         console.error("Error fetching mutation details:", error);
-        alert(lang === LANGS.BN ? "মিউটেশন বিস্তারিত লোড করতে ব্যর্থ হয়েছে।" : "Failed to load mutation details.");
+        alert(
+          lang === LANGS.BN
+            ? "মিউটেশন বিস্তারিত লোড করতে ব্যর্থ হয়েছে।"
+            : "Failed to load mutation details."
+        );
       } finally {
         setLoading(false);
       }
@@ -28,7 +32,11 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
   }
 
   if (!mutation) {
-    return <p>{lang === LANGS.BN ? "মিউটেশন পাওয়া যায়নি।" : "Mutation not found."}</p>;
+    return (
+      <p>
+        {lang === LANGS.BN ? "মিউটেশন পাওয়া যায়নি।" : "Mutation not found."}
+      </p>
+    );
   }
 
   return (
@@ -46,27 +54,38 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
 
       <div className="space-y-4">
         <div>
-          <strong>{lang === LANGS.BN ? "মিউটেশন টাইপ:" : "Mutation Type:"}</strong> {mutation.mutation_type || 'N/A'}
+          <strong>
+            {lang === LANGS.BN ? "মিউটেশন টাইপ:" : "Mutation Type:"}
+          </strong>{" "}
+          {mutation.mutation_type || "N/A"}
         </div>
         <div>
-          <strong>{lang === LANGS.BN ? "কারণ:" : "Reason:"}</strong> {mutation.reason || 'N/A'}
+          <strong>{lang === LANGS.BN ? "কারণ:" : "Reason:"}</strong>{" "}
+          {mutation.reason || "N/A"}
         </div>
         <div>
-          <strong>{lang === LANGS.BN ? "ফি পরিমাণ:" : "Fee Amount:"}</strong> {mutation.fee_amount || 'N/A'}
+          <strong>{lang === LANGS.BN ? "ফি পরিমাণ:" : "Fee Amount:"}</strong>{" "}
+          {mutation.fee_amount || "N/A"}
         </div>
         <div>
           <strong>{lang === LANGS.BN ? "স্ট্যাটাস:" : "Status:"}</strong>{" "}
-          <span className={`uppercase font-semibold ${
-            mutation.status === "approved" ? "text-green-600" :
-            mutation.status === "pending" ? "text-yellow-600" :
-            mutation.status === "rejected" ? "text-red-600" :
-            "text-blue-600"
-          }`}>
+          <span
+            className={`uppercase font-semibold ${
+              mutation.status === "approved"
+                ? "text-green-600"
+                : mutation.status === "pending"
+                ? "text-yellow-600"
+                : mutation.status === "rejected"
+                ? "text-red-600"
+                : "text-blue-600"
+            }`}
+          >
             {mutation.status}
           </span>
         </div>
         <div>
-          <strong>{lang === LANGS.BN ? "রিমার্কস:" : "Remarks:"}</strong> {mutation.remarks || 'N/A'}
+          <strong>{lang === LANGS.BN ? "রিমার্কস:" : "Remarks:"}</strong>{" "}
+          {mutation.remarks || "N/A"}
         </div>
         <div>
           <strong>{lang === LANGS.BN ? "তৈরি হয়েছে:" : "Created At:"}</strong>{" "}
@@ -74,27 +93,40 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
         </div>
         {mutation.reviewed_at && (
           <div>
-            <strong>{lang === LANGS.BN ? "রিভিউ হয়েছে:" : "Reviewed At:"}</strong>{" "}
+            <strong>
+              {lang === LANGS.BN ? "রিভিউ হয়েছে:" : "Reviewed At:"}
+            </strong>{" "}
             {new Date(mutation.reviewed_at).toLocaleDateString()}
           </div>
         )}
         <div>
-          <strong>{lang === LANGS.BN ? "রিভিউয়ার:" : "Reviewer:"}</strong> {mutation.reviewer?.name || 'N/A'}
+          <strong>{lang === LANGS.BN ? "রিভিউয়ার:" : "Reviewer:"}</strong>{" "}
+          {mutation.reviewer?.name || "N/A"}
         </div>
 
-        <h3 className="text-lg font-semibold mt-6">{lang === LANGS.BN ? "সংশ্লিষ্ট আবেদন তথ্য" : "Related Application Info"}</h3>
+        <h3 className="text-lg font-semibold mt-6">
+          {lang === LANGS.BN
+            ? "সংশ্লিষ্ট আবেদন তথ্য"
+            : "Related Application Info"}
+        </h3>
         <div className="space-y-2 ml-4">
           <div>
-            <strong>{lang === LANGS.BN ? "খতিয়ান নম্বর:" : "Khatiyan Number:"}</strong> {mutation.application?.khatiyan_number || 'N/A'}
+            <strong>
+              {lang === LANGS.BN ? "খতিয়ান নম্বর:" : "Khatiyan Number:"}
+            </strong>{" "}
+            {mutation.application?.khatiyan_number || "N/A"}
           </div>
           <div>
-            <strong>{lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}</strong> {mutation.application?.dag_number || 'N/A'}
+            <strong>{lang === LANGS.BN ? "দাগ নম্বর:" : "Dag Number:"}</strong>{" "}
+            {mutation.application?.dag_number || "N/A"}
           </div>
           <div>
-            <strong>{lang === LANGS.BN ? "জমির ধরন:" : "Land Type:"}</strong> {mutation.application?.land_type || 'N/A'}
+            <strong>{lang === LANGS.BN ? "জমির ধরন:" : "Land Type:"}</strong>{" "}
+            {mutation.application?.land_type || "N/A"}
           </div>
           <div>
-            <strong>{lang === LANGS.BN ? "জমির পরিমাণ:" : "Land Area:"}</strong> {mutation.application?.land_area || 'N/A'} sq ft
+            <strong>{lang === LANGS.BN ? "জমির পরিমাণ:" : "Land Area:"}</strong>{" "}
+            {mutation.application?.land_area || "N/A"} sq ft
           </div>
         </div>
         {mutation.documents && mutation.documents.length > 0 && (
@@ -103,7 +135,12 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
             <ul className="list-disc list-inside">
               {mutation.documents.map((doc, index) => (
                 <li key={index}>
-                  <a href={`/storage/${doc.path}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  <a
+                    href={`/storage/${doc.path}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline"
+                  >
                     {doc.name}
                   </a>
                 </li>
@@ -114,7 +151,11 @@ const MutationDetails = ({ lang, mutationId, onBack }) => {
 
         {mutation.status === "pending_payment" && (
           <div className="mt-6">
-            <PaymentBox mutationId={mutation.id} lang={lang} onSuccess={() => window.location.reload()} />
+            <PaymentBox
+              mutationId={mutation.id}
+              lang={lang}
+              onSuccess={() => window.location.reload()}
+            />
           </div>
         )}
       </div>
