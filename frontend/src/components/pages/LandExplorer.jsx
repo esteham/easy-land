@@ -14,6 +14,7 @@ export default function LandExplorer() {
   const [showPaymentSelector, setShowPaymentSelector] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [paymentCredentials, setPaymentCredentials] = useState({});
+  const [paymentErrors, setPaymentErrors] = useState({});
 
   // Collections
   const [divisions, setDivisions] = useState([]);
@@ -691,19 +692,28 @@ export default function LandExplorer() {
                     <div className="space-y-2">
                       <button
                         className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                        onClick={() => setSelectedPaymentMethod("bKash")}
+                        onClick={() => {
+                          setSelectedPaymentMethod("bKash");
+                          setPaymentErrors({});
+                        }}
                       >
                         bKash
                       </button>
                       <button
                         className="w-full px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700"
-                        onClick={() => setSelectedPaymentMethod("Nagad")}
+                        onClick={() => {
+                          setSelectedPaymentMethod("Nagad");
+                          setPaymentErrors({});
+                        }}
                       >
                         Nagad
                       </button>
                       <button
                         className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        onClick={() => setSelectedPaymentMethod("Online")}
+                        onClick={() => {
+                          setSelectedPaymentMethod("Online");
+                          setPaymentErrors({});
+                        }}
                       >
                         Online (Card/Bank)
                       </button>
@@ -728,6 +738,11 @@ export default function LandExplorer() {
                                 })
                               }
                             />
+                            {paymentErrors.phone && (
+                              <p className="text-red-500 text-sm">
+                                {paymentErrors.phone}
+                              </p>
+                            )}
                             <input
                               type="password"
                               placeholder="PIN"
@@ -740,6 +755,11 @@ export default function LandExplorer() {
                                 })
                               }
                             />
+                            {paymentErrors.pin && (
+                              <p className="text-red-500 text-sm">
+                                {paymentErrors.pin}
+                              </p>
+                            )}
                           </div>
                         ) : (
                           <div className="space-y-2">
@@ -755,6 +775,11 @@ export default function LandExplorer() {
                                 })
                               }
                             />
+                            {paymentErrors.cardNumber && (
+                              <p className="text-red-500 text-sm">
+                                {paymentErrors.cardNumber}
+                              </p>
+                            )}
                             <input
                               type="text"
                               placeholder="Expiry (MM/YY)"
@@ -767,6 +792,11 @@ export default function LandExplorer() {
                                 })
                               }
                             />
+                            {paymentErrors.expiry && (
+                              <p className="text-red-500 text-sm">
+                                {paymentErrors.expiry}
+                              </p>
+                            )}
                             <input
                               type="password"
                               placeholder="CVV"
@@ -779,12 +809,56 @@ export default function LandExplorer() {
                                 })
                               }
                             />
+                            {paymentErrors.cvv && (
+                              <p className="text-red-500 text-sm">
+                                {paymentErrors.cvv}
+                              </p>
+                            )}
                           </div>
                         )}
                         <div className="mt-4 flex gap-2">
                           <button
                             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
                             onClick={() => {
+                              setPaymentErrors({});
+                              // Validation
+                              if (
+                                selectedPaymentMethod === "bKash" ||
+                                selectedPaymentMethod === "Nagad"
+                              ) {
+                                if (
+                                  !/^01\d{9}$/.test(paymentCredentials.phone)
+                                ) {
+                                  setPaymentErrors({
+                                    phone: "Please inter a valid phone number",
+                                  });
+                                  return;
+                                }
+                                if (!/^\d{4,5}$/.test(paymentCredentials.pin)) {
+                                  setPaymentErrors({
+                                    pin: "PIN must be 4-5 digits.",
+                                  });
+                                  return;
+                                }
+                              } else {
+                                if (
+                                  !/^\d{1,13}$/.test(
+                                    paymentCredentials.cardNumber
+                                  )
+                                ) {
+                                  setPaymentErrors({
+                                    cardNumber:
+                                      "Please provide a valid card number",
+                                  });
+                                  return;
+                                }
+                                if (!/^\d{3}$/.test(paymentCredentials.cvv)) {
+                                  setPaymentErrors({
+                                    cvv: "Please input correct CVV number",
+                                  });
+                                  return;
+                                }
+                              }
                               // Mock confirmation
                               let payerIdentifier = "";
                               if (
@@ -832,6 +906,7 @@ export default function LandExplorer() {
                               setShowPaymentSelector(false);
                               setSelectedPaymentMethod("");
                               setPaymentCredentials({});
+                              setPaymentErrors({});
                             }}
                           >
                             Cancel
