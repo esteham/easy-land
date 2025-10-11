@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
-use PDF; // Assuming a PDF package like barryvdh/laravel-dompdf is installed
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class ApplicationController extends Controller
 {
