@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
 import { useLanguage } from "../../../contexts/LanguageContext";
-import { makeT, LANGS } from "../../../fonts/UserDashbboardTexts";
+import { makeT } from "../../../fonts/UserDashbboardFonts";
 
 // Import all tab components
 import PersonalInfoTab from "./tabs/PersonalInfoTab";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../../../api";
-import { LANGS } from "../../../fonts/UserDashbboardTexts";
+import { LANGS } from "../../../fonts/UserDashbboardFonts";
 
 const AdminMutations = ({ lang }) => {
   const [mutations, setMutations] = useState([]);

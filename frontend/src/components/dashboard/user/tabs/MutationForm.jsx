@@ -4,7 +4,7 @@ import {
   createMutation,
   uploadMutationDocuments,
 } from "../../../../api";
-import { LANGS } from "../../../../fonts/UserDashbboardTexts";
+import { LANGS } from "../../../../fonts/UserDashbboardFonts";
 
 const MutationForm = ({ lang, onSuccess }) => {
   const [formData, setFormData] = useState({

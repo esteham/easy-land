@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "../../../../api";
-import { LANGS } from "../../../../fonts/UserDashbboardTexts";
+import { LANGS } from "../../../../fonts/UserDashbboardFonts";
 
 const PaymentBox = ({ mutationId, lang, onSuccess }) => {
   const [paymentData, setPaymentData] = useState({

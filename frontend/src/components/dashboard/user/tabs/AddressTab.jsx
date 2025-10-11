@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../../auth/AuthContext";
 import api from "../../../../api";
-import { LANGS } from "../../../../fonts/UserDashbboardTexts";
+import { LANGS } from "../../../../fonts/UserDashbboardFonts";
 
 const AddressTab = ({ lang, t, user }) => {
   const { updateUser } = useAuth();
