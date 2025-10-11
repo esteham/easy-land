@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('dag_id')->constrained()->onDelete('cascade');
+            $table->foreignId('dag_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('type'); // e.g., 'mutation', 'ownership_transfer'
             $table->text('description')->nullable();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

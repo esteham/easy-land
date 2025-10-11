@@ -23,6 +23,7 @@ use App\Http\Controllers\API\SurveyTypeController;
 use \App\Http\Controllers\API\ApplicationController;
 use \App\Http\Controllers\API\LandTaxRegistrationController;
 use \App\Http\Controllers\API\MutationController;
+use \App\Http\Controllers\API\MouzaMapController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -64,7 +65,7 @@ Route::get('/locations/upazilas/{upazila}/mouzas', function (Upazila $upazila) {
     return $upazila->mouzas()->select('id','upazila_id','name_en','name_bn','jl_no','mouza_code')->orderBy('name_en')->get();
 });
 
-// New: zils and dags
+// New: zils, dags, and mouza maps
 Route::get('/locations/mouzas/{mouza}/zils', function (Mouza $mouza) {
     return $mouza->zils()->select('id','mouza_id','zil_no','map_url')->orderBy('zil_no')->get();
 });
@@ -75,6 +76,14 @@ Route::get('/locations/zils/{zil}/dags', function (Zil $zil) {
 
 Route::get('/locations/dags/{dag}', function (Dag $dag) {
     return $dag->only(['id','zil_id','dag_no','khotiyan','meta']);
+});
+
+Route::get('/locations/zils/{zil}/mouza-maps', function (Zil $zil) {
+    return $zil->mouzaMaps()->select('id','zil_id','name')->orderBy('name')->get();
+});
+
+Route::get('/locations/mouza-maps/{mouzaMap}', function (\App\Models\MouzaMap $mouzaMap) {
+    return $mouzaMap->only(['id','zil_id','name']);
 });
 
 Route::get('/locations/survey-types', function () {
@@ -91,6 +100,17 @@ Route::get('/dag/{dag}/download', function (Dag $dag) {
     }
     return response()->file($path);
 })->name('dag.download');
+
+Route::get('/mouza-map/{mouzaMap}/download', function (\App\Models\MouzaMap $mouzaMap) {
+    if (!$mouzaMap->document) {
+        return response()->json(['error' => 'Document not found'], 404);
+    }
+    $path = storage_path('app/public/' . $mouzaMap->document);
+    if (!file_exists($path)) {
+        return response()->json(['error' => 'File not found'], 404);
+    }
+    return response()->file($path);
+})->name('mouza-map.download');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -136,6 +156,7 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('admin/mouzas', MouzaController::class);
         Route::apiResource('admin/zils', ZilController::class);
         Route::apiResource('admin/dags', DagController::class);
+        Route::apiResource('admin/mouza-maps', MouzaMapController::class);
 
         // Mutations admin
         Route::apiResource('admin/mutations', MutationController::class);

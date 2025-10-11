@@ -31,4 +31,18 @@ export const getMutationInvoice = (id) =>
 export const getApplications = (params = {}) =>
   api.get("/applications", { params });
 
+// Mouza Maps
+export const getMouzaMaps = () => api.get("/admin/mouza-maps");
+export const createMouzaMap = (formData) =>
+  api.post("/admin/mouza-maps", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+export const updateMouzaMap = (id, formData) => {
+  formData.append('_method', 'PUT');
+  return api.post(`/admin/mouza-maps/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+export const deleteMouzaMap = (id) => api.delete(`/admin/mouza-maps/${id}`);
+
 export default api;

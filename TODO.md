@@ -1,8 +1,8 @@
-- [x] Update UserDashboard.jsx to import useLanguage from global context
-- [x] Replace local lang state with global language
-- [x] Remove localStorage useEffect for 'lang'
-- [x] Remove language toggle buttons from sidebar
-- [x] Update renderContent to use language instead of lang
-- [x] Update navItems to use t(language)
-- [ ] Test Header toggle affects dashboard language
-- [ ] Verify translations display correctly in both languages
+# Fix createMouzaMap is not a function error
+
+## Steps
+- [ ] Update import in AdminMouzaMaps.jsx to include named exports: createMouzaMap, updateMouzaMap, deleteMouzaMap
+- [ ] Change api.createMouzaMap to createMouzaMap in onSubmit
+- [ ] Change api.updateMouzaMap to updateMouzaMap in onSubmit
+- [ ] Change api.deleteMouzaMap to deleteMouzaMap in onDelete
+- [ ] Test the application to ensure API calls work

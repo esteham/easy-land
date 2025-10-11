@@ -24,4 +24,9 @@ class Zil extends Model
     {
         return $this->hasMany(Dag::class);
     }
+
+    public function mouzaMaps()
+    {
+        return $this->hasMany(MouzaMap::class);
+    }
 }

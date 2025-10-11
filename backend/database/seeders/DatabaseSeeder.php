@@ -18,6 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(GeographicalSeeder::class);
         $this->call(SurveyTypeSeeder::class);
-        $this->call(MutationSeeder::class);
+        // $this->call(MutationSeeder::class);
     }
 }

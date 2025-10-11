@@ -16,7 +16,7 @@ class ApplicationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $applications = Application::with('dag')->where('user_id', $user->id)->get();
+        $applications = Application::with(['dag', 'mouzaMap'])->where('user_id', $user->id)->get();
 
         return response()->json($applications);
     }
@@ -24,7 +24,8 @@ class ApplicationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dag_id' => 'required|exists:dags,id',
+            'dag_id' => 'nullable|exists:dags,id',
+            'mouza_map_id' => 'nullable|exists:mouza_maps,id',
             'type' => 'required|string',
             'description' => 'nullable|string',
             'fee_amount' => 'required|numeric|min:0',
@@ -34,11 +35,17 @@ class ApplicationController extends Controller
             'transaction_id' => 'nullable|string',
         ]);
 
+        // Ensure either dag_id or mouza_map_id is provided
+        if (!$request->dag_id && !$request->mouza_map_id) {
+            return response()->json(['error' => 'Either dag_id or mouza_map_id must be provided'], 422);
+        }
+
         $user = Auth::user();
 
         $application = Application::create([
             'user_id' => $user->id,
             'dag_id' => $request->dag_id,
+            'mouza_map_id' => $request->mouza_map_id,
             'type' => $request->type,
             'description' => $request->description,
             'status' => 'pending',
@@ -56,7 +63,7 @@ class ApplicationController extends Controller
     public function invoice($id)
     {
         $user = Auth::user();
-        $application = Application::with('dag')->where('id', $id)->where('user_id', $user->id)->firstOrFail();
+        $application = Application::with(['dag', 'mouzaMap'])->where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
         // Generate PDF invoice content (simple example)
         $data = [
