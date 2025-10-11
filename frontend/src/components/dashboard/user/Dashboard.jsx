@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuth } from "../../../auth/AuthContext";
+import { useLanguage } from "../../../contexts/LanguageContext";
 import { makeT, LANGS } from "../../../fonts/UserDashbboardTexts";
 
 // Import all tab components
@@ -29,23 +30,15 @@ const NAV_KEYS = [
 export default function UserDashboard() {
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { language } = useLanguage();
 
-  // ---- Language state (default: Bangla) ----
-  const [lang, setLang] = useState(
-    () => localStorage.getItem("lang") || LANGS.BN
-  );
-  const t = useMemo(() => makeT(lang), [lang]);
+  const t = useMemo(() => makeT(language), [language]);
 
   // ---- Nav & Active Tab (key-based) ----
   const [activeKey, setActiveKey] = useState(() => {
     const tab = searchParams.get("tab");
     return tab && NAV_KEYS.includes(tab) ? tab : NAV_KEYS[0];
   });
-
-  // Persist language choice
-  useEffect(() => {
-    localStorage.setItem("lang", lang);
-  }, [lang]);
 
   // Update URL when activeKey changes
   useEffect(() => {
@@ -67,7 +60,7 @@ export default function UserDashboard() {
   // ---- Render body per tab (by key) ----
   const renderContent = () => {
     const commonProps = {
-      lang,
+      lang: language,
       t,
       user,
     };
@@ -108,28 +101,6 @@ export default function UserDashboard() {
         <div className="grid grid-cols-12 gap-6">
           {/* Sidebar */}
           <div className="col-span-12 md:col-span-4 bg-white shadow-lg rounded-lg p-6">
-            <div className="flex items-center justify-between mb-4">
-              {/* Language switch */}
-              <div className="inline-flex rounded overflow-hidden border">
-                <button
-                  className={`px-3 py-1 text-sm ${
-                    lang === LANGS.BN ? "bg-blue-600 text-white" : "bg-white"
-                  }`}
-                  onClick={() => setLang(LANGS.BN)}
-                >
-                  বাংলা
-                </button>
-                <button
-                  className={`px-3 py-1 text-sm ${
-                    lang === LANGS.EN ? "bg-blue-600 text-white" : "bg-white"
-                  }`}
-                  onClick={() => setLang(LANGS.EN)}
-                >
-                  EN
-                </button>
-              </div>
-            </div>
-
             <div className="text-center mb-6">
               <div className="w-20 h-20 bg-gradient-to-r from-blue-600 to-blue-800 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
                 {getInitials(user?.name)}

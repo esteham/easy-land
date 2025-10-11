@@ -1,12 +1,41 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { language, toggleLanguage } = useLanguage();
+
+  const translations = {
+    en: {
+      home: "Home",
+      landRecords: "Land Records",
+      landTax: "Land TAX",
+      dashboard: "Dashboard",
+      adminPanel: "Admin Panel",
+      login: "Login",
+      register: "Register",
+      logout: "Logout",
+      welcome: "Welcome",
+      toggle: "বাংলা"
+    },
+    bn: {
+      home: "হোম",
+      landRecords: "ভূমি রেকর্ড",
+      landTax: "ভূমি কর",
+      dashboard: "ড্যাশবোর্ড",
+      adminPanel: "অ্যাডমিন প্যানেল",
+      login: "লগইন",
+      register: "রেজিস্টার",
+      logout: "লগআউট",
+      welcome: "স্বাগতম",
+      toggle: "English"
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -35,7 +64,7 @@ export default function Header() {
                   : "text-gray-700 hover:text-blue-600"
               }`}
             >
-              Home
+              {translations[language].home}
             </Link>
             <Link
               to="/land"
@@ -45,7 +74,7 @@ export default function Header() {
                   : "text-gray-700 hover:text-blue-600"
               }`}
             >
-              Land Records
+              {translations[language].landRecords}
             </Link>
 
             <Link
@@ -56,7 +85,7 @@ export default function Header() {
                   : "text-gray-700 hover:text-blue-600"
               }`}
             >
-              Land TAX
+              {translations[language].landTax}
             </Link>
 
             {/* Show Dashboard for all logged-in users */}
@@ -69,7 +98,7 @@ export default function Header() {
                     : "text-gray-700 hover:text-blue-600"
                 }`}
               >
-                Dashboard
+                {translations[language].dashboard}
               </Link>
             )}
 
@@ -83,16 +112,22 @@ export default function Header() {
                     : "text-gray-700 hover:text-blue-600"
                 }`}
               >
-                Admin Panel
+                {translations[language].adminPanel}
               </Link>
             )}
           </nav>
 
           {/* Auth Buttons - Desktop */}
           <div className="hidden md:flex items-center space-x-4">
+            <button
+              onClick={toggleLanguage}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300"
+            >
+              {translations[language].toggle}
+            </button>
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-700">Welcome, {user.name}</span>
+                <span className="text-gray-700">{translations[language].welcome}, {user.name}</span>
                 {/* <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                   {user.role}
                 </span> */}
@@ -100,7 +135,7 @@ export default function Header() {
                   onClick={handleLogout}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition duration-300"
                 >
-                  Logout
+                  {translations[language].logout}
                 </button>
               </div>
             ) : (
@@ -109,13 +144,13 @@ export default function Header() {
                   to="/login"
                   className="text-gray-700 hover:text-blue-600 font-medium transition duration-300"
                 >
-                  Login
+                  {translations[language].login}
                 </Link>
                 <Link
                   to="/register"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-300 shadow-lg hover:shadow-xl"
                 >
-                  Register
+                  {translations[language].register}
                 </Link>
               </>
             )}
@@ -146,6 +181,14 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-200">
             <div className="flex flex-col space-y-1 px-4 py-4">
+              {/* Language Toggle */}
+              <button
+                onClick={toggleLanguage}
+                className="block w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-lg transition duration-300 text-center"
+              >
+                {translations[language].toggle}
+              </button>
+
               {/* Mobile navigation links */}
               <Link
                 to="/"
@@ -156,7 +199,7 @@ export default function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Home
+                {translations[language].home}
               </Link>
               <Link
                 to="/land"
@@ -167,7 +210,7 @@ export default function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Land Records
+                {translations[language].landRecords}
               </Link>
 
               <Link
@@ -179,7 +222,7 @@ export default function Header() {
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Land TAX
+                {translations[language].landTax}
               </Link>
 
               {/* Show Dashboard for all logged-in users */}
@@ -193,7 +236,7 @@ export default function Header() {
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Dashboard
+                  {translations[language].dashboard}
                 </Link>
               )}
 
@@ -208,7 +251,7 @@ export default function Header() {
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Admin Panel
+                  {translations[language].adminPanel}
                 </Link>
               )}
 
@@ -217,7 +260,7 @@ export default function Header() {
                 {user ? (
                   <div className="flex flex-col space-y-3">
                     <div className="px-4 py-2 text-gray-700">
-                      Welcome, {user.name}
+                      {translations[language].welcome}, {user.name}
                     </div>
                     <button
                       onClick={() => {
@@ -226,7 +269,7 @@ export default function Header() {
                       }}
                       className="w-40 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg font-medium transition duration-300 text-left"
                     >
-                      Logout
+                      {translations[language].logout}
                     </button>
                   </div>
                 ) : (
@@ -236,14 +279,14 @@ export default function Header() {
                       className="block w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-medium transition duration-300 text-center"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Login
+                      {translations[language].login}
                     </Link>
                     <Link
                       to="/register"
                       className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition duration-300 text-center shadow-lg hover:shadow-xl"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Register
+                      {translations[language].register}
                     </Link>
                   </div>
                 )}

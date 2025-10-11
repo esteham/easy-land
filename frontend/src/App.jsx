@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthProvider from "./auth/AuthContext";
+import LanguageProvider from "./contexts/LanguageContext";
 import RoleRoute from "./auth/RoleRoute";
 
 import MainLayout from "./components/layout/MainLayout";
@@ -32,7 +33,8 @@ import UserDashboard from "./components/dashboard/user/Dashboard";
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>
         <Toaster
           position="top-center"
           toastOptions={{
@@ -159,7 +161,8 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
+        </BrowserRouter>
+      </LanguageProvider>
     </AuthProvider>
   );
 }
