@@ -8,7 +8,7 @@ export default function LandExplorer() {
   const { user } = useAuth();
 
   // Type selection: 'khatiyan' or 'mouza_map'
-  const [selectedType, setSelectedType] = useState('khatiyan');
+  const [selectedType, setSelectedType] = useState("khatiyan");
 
   // Payment states
   const [showPaymentSelector, setShowPaymentSelector] = useState(false);
@@ -163,7 +163,7 @@ export default function LandExplorer() {
     (async () => {
       try {
         setLoading(true);
-        if (selectedType === 'khatiyan') {
+        if (selectedType === "khatiyan") {
           const { data } = await api.get(`/locations/zils/${zilId}/dags`);
           setDags(data);
         } else {
@@ -171,7 +171,11 @@ export default function LandExplorer() {
           setMouzaMaps(data);
         }
       } catch {
-        setError(`Failed to load ${selectedType === 'khatiyan' ? 'dags' : 'mouza maps'}`);
+        setError(
+          `Failed to load ${
+            selectedType === "khatiyan" ? "dags" : "mouza maps"
+          }`
+        );
       } finally {
         setLoading(false);
       }
@@ -228,8 +232,8 @@ export default function LandExplorer() {
   // Filter items by search
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return selectedType === 'khatiyan' ? dags : mouzaMaps;
-    if (selectedType === 'khatiyan') {
+    if (!q) return selectedType === "khatiyan" ? dags : mouzaMaps;
+    if (selectedType === "khatiyan") {
       return dags.filter((d) => String(d.dag_no).toLowerCase().includes(q));
     } else {
       return mouzaMaps.filter((m) => String(m.name).toLowerCase().includes(q));
@@ -239,7 +243,7 @@ export default function LandExplorer() {
   const handleFindItem = () => {
     if (!zilId || !search.trim()) return;
     const q = search.trim().toLowerCase();
-    if (selectedType === 'khatiyan') {
+    if (selectedType === "khatiyan") {
       const exact = dags.find((d) => String(d.dag_no).toLowerCase() === q);
       if (exact) {
         setDagId(String(exact.id));
@@ -272,23 +276,29 @@ export default function LandExplorer() {
       setLoading(true);
       setError("");
       const applicationData = {
-        type: selectedType === 'khatiyan' ? "khatian_request" : "mouza_map_request",
-        description: selectedType === 'khatiyan'
-          ? "User submitted a Khatian application"
-          : "User submitted a Mouza Map application",
+        type:
+          selectedType === "khatiyan" ? "khatian_request" : "mouza_map_request",
+        description:
+          selectedType === "khatiyan"
+            ? "User submitted a Khatian application"
+            : "User submitted a Mouza Map application",
         fee_amount: feeAmount,
         payment_status: "paid",
         payment_method: paymentMethod,
         payer_identifier: payerIdentifier,
         transaction_id: `TXN-${Date.now()}`, // simple transaction id
       };
-      if (selectedType === 'khatiyan') {
+      if (selectedType === "khatiyan") {
         applicationData.dag_id = dagDetail.id;
       } else {
         applicationData.mouza_map_id = mouzaMapDetail.id;
       }
       await api.post("/applications", applicationData);
-      alert(`${selectedType === 'khatiyan' ? 'Khatian' : 'Mouza Map'} application submitted successfully.`);
+      alert(
+        `${
+          selectedType === "khatiyan" ? "Khatian" : "Mouza Map"
+        } application submitted successfully.`
+      );
       // Redirect to dashboard Payments & Receipts tab
       nav("/dashboard?tab=applyKhatian", {
         state: { activeTab: "Payments & Receipts" },
@@ -299,6 +309,8 @@ export default function LandExplorer() {
       setLoading(false);
     }
   };
+
+  const amount = selectedType === "khatiyan" ? 100 : 500;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -312,21 +324,21 @@ export default function LandExplorer() {
             <div className="flex gap-2">
               <button
                 className={`px-4 py-2 rounded ${
-                  selectedType === 'khatiyan'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-700'
+                  selectedType === "khatiyan"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700"
                 }`}
-                onClick={() => setSelectedType('khatiyan')}
+                onClick={() => setSelectedType("khatiyan")}
               >
                 Khatian
               </button>
               <button
                 className={`px-4 py-2 rounded ${
-                  selectedType === 'mouza_map'
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-700'
+                  selectedType === "mouza_map"
+                    ? "bg-indigo-600 text-white"
+                    : "bg-gray-200 text-gray-700"
                 }`}
-                onClick={() => setSelectedType('mouza_map')}
+                onClick={() => setSelectedType("mouza_map")}
               >
                 Mouza Map
               </button>
@@ -474,11 +486,12 @@ export default function LandExplorer() {
             {/* Items + Search */}
             <section>
               <h2 className="text-xl font-semibold mb-2">
-                {selectedType === 'khatiyan' ? 'Dags (Plots)' : 'Mouza Maps'}
+                {selectedType === "khatiyan" ? "Dags (Plots)" : "Mouza Maps"}
               </h2>
               {!zilId ? (
                 <p className="text-gray-500">
-                  Select a Zil to view {selectedType === 'khatiyan' ? 'Dags' : 'Mouza Maps'}.
+                  Select a Zil to view{" "}
+                  {selectedType === "khatiyan" ? "Dags" : "Mouza Maps"}.
                 </p>
               ) : (
                 <>
@@ -488,7 +501,7 @@ export default function LandExplorer() {
                       type="text"
                       className="border rounded p-2 w-full md:w-64"
                       placeholder={
-                        selectedType === 'khatiyan'
+                        selectedType === "khatiyan"
                           ? "Search dag no (e.g., 123)"
                           : "Search mouza map name"
                       }
@@ -517,44 +530,49 @@ export default function LandExplorer() {
                       )}
                     </div>
                     <div className="text-xs text-gray-500 md:ml-2">
-                      Showing {filteredItems.length} of {
-                        selectedType === 'khatiyan' ? dags.length : mouzaMaps.length
-                      }
+                      Showing {filteredItems.length} of{" "}
+                      {selectedType === "khatiyan"
+                        ? dags.length
+                        : mouzaMaps.length}
                     </div>
                   </div>
 
-                  {(selectedType === 'khatiyan' ? dags : mouzaMaps).length === 0 ? (
+                  {(selectedType === "khatiyan" ? dags : mouzaMaps).length ===
+                  0 ? (
                     <p className="text-gray-500">
-                      No {selectedType === 'khatiyan' ? 'Dags' : 'Mouza Maps'} found.
+                      No {selectedType === "khatiyan" ? "Dags" : "Mouza Maps"}{" "}
+                      found.
                     </p>
                   ) : filteredItems.length === 0 ? (
-                    <p className="text-gray-500">
-                      No matches for "{search}".
-                    </p>
+                    <p className="text-gray-500">No matches for "{search}".</p>
                   ) : (
                     <div className="flex flex-wrap gap-2">
                       {filteredItems.map((item) => (
                         <button
                           key={item.id}
                           onClick={() => {
-                            if (selectedType === 'khatiyan') {
+                            if (selectedType === "khatiyan") {
                               setDagId(String(item.id));
                             } else {
                               setMouzaMapId(String(item.id));
                             }
                           }}
                           className={`px-3 py-1 border rounded text-sm ${
-                            (selectedType === 'khatiyan' ? String(dagId) : String(mouzaMapId)) === String(item.id)
+                            (selectedType === "khatiyan"
+                              ? String(dagId)
+                              : String(mouzaMapId)) === String(item.id)
                               ? "bg-indigo-600 text-white border-indigo-600"
                               : "hover:bg-gray-50"
                           }`}
                           title={
-                            selectedType === 'khatiyan'
+                            selectedType === "khatiyan"
                               ? `Dag ${item.dag_no}`
                               : `Mouza Map ${item.name}`
                           }
                         >
-                          {selectedType === 'khatiyan' ? `Dag ${item.dag_no}` : item.name}
+                          {selectedType === "khatiyan"
+                            ? `Dag ${item.dag_no}`
+                            : item.name}
                         </button>
                       ))}
                     </div>
@@ -566,11 +584,15 @@ export default function LandExplorer() {
             {/* Detail */}
             <section>
               <h2 className="text-xl font-semibold mb-2">
-                {selectedType === 'khatiyan' ? 'Khotiyan (Land Record)' : 'Mouza Map Detail'}
+                {selectedType === "khatiyan"
+                  ? "Khotiyan (Land Record)"
+                  : "Mouza Map Detail"}
               </h2>
-              {selectedType === 'khatiyan' ? (
+              {selectedType === "khatiyan" ? (
                 !dagId ? (
-                  <p className="text-gray-500">Select a Dag to view khotiyan.</p>
+                  <p className="text-gray-500">
+                    Select a Dag to view khotiyan.
+                  </p>
                 ) : dagDetail ? (
                   <div className="bg-white border rounded p-4 text-sm">
                     <div className="mb-2 text-gray-600">
@@ -620,37 +642,36 @@ export default function LandExplorer() {
                 ) : (
                   <div className="text-gray-500">Loading...</div>
                 )
-              ) : (
-                !mouzaMapId ? (
-                  <p className="text-gray-500">Select a Mouza Map to view details.</p>
-                ) : mouzaMapDetail ? (
-                  <div className="bg-white border rounded p-4 text-sm">
-                    <div className="mb-2 text-gray-600">
-                      Mouza Map: {mouzaMapDetail.name}
-                    </div>                   
-                    <div className="mt-4">
-                      <button
-                        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
-                        onClick={() => {
-                          if (!user) {
-                            // Redirect to login page
-                            alert("Please login first and then apply");
-                            nav("/login");
-                            return;
-                          }
-                          setShowPaymentSelector(true);
-                        }}
-                        disabled={loading}
-                      >
-                        Submit Mouza Map Application
-                      </button>
-                    </div>
-                    {/* Mouza Map Application Submission */}
-                    
+              ) : !mouzaMapId ? (
+                <p className="text-gray-500">
+                  Select a Mouza Map to view details.
+                </p>
+              ) : mouzaMapDetail ? (
+                <div className="bg-white border rounded p-4 text-sm">
+                  <div className="mb-2 text-gray-600">
+                    Mouza Map: {mouzaMapDetail.name}
                   </div>
-                ) : (
-                  <div className="text-gray-500">Loading...</div>
-                )
+                  <div className="mt-4">
+                    <button
+                      className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+                      onClick={() => {
+                        if (!user) {
+                          // Redirect to login page
+                          alert("Please login first and then apply");
+                          nav("/login");
+                          return;
+                        }
+                        setShowPaymentSelector(true);
+                      }}
+                      disabled={loading}
+                    >
+                      Submit Mouza Map Application
+                    </button>
+                  </div>
+                  {/* Mouza Map Application Submission */}
+                </div>
+              ) : (
+                <div className="text-gray-500">Loading...</div>
               )}
               {showPaymentSelector && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -658,12 +679,11 @@ export default function LandExplorer() {
                     <div className="mb-3">
                       <p>You paid for </p>
                       <div className="mb-2 text-gray-600">
-                        {selectedType === 'khatiyan'
+                        {selectedType === "khatiyan"
                           ? `Dag: ${dagDetail.dag_no}`
-                          : `Mouza Map: ${mouzaMapDetail.name}`
-                        }
+                          : `Mouza Map: ${mouzaMapDetail.name}`}
                       </div>
-                      <p>Amount : 200</p>
+                      <p>Amount : {amount}</p>
                     </div>
                     <h3 className="text-lg font-semibold mb-4">
                       Select Payment Method for Payment
@@ -788,8 +808,7 @@ export default function LandExplorer() {
                                   alert("Please fill all fields");
                                   return;
                                 }
-                                payerIdentifier =
-                                  paymentCredentials.cardNumber;
+                                payerIdentifier = paymentCredentials.cardNumber;
                               }
                               alert("Payment successful!");
                               // Close modal
@@ -798,14 +817,14 @@ export default function LandExplorer() {
                               setPaymentCredentials({});
                               // Submit application
                               handleSubmitApplication(
-                                200,
+                                amount,
                                 selectedPaymentMethod,
                                 payerIdentifier
                               );
                             }}
                             disabled={loading}
                           >
-                            Pay BDT 200
+                            Pay BDT {amount}
                           </button>
                           <button
                             className="px-4 py-2 bg-gray-500 text-white rounded"
