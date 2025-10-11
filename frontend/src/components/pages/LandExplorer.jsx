@@ -627,37 +627,7 @@ export default function LandExplorer() {
                   <div className="bg-white border rounded p-4 text-sm">
                     <div className="mb-2 text-gray-600">
                       Mouza Map: {mouzaMapDetail.name}
-                    </div>
-                    {mouzaMapDetail.map_url && (
-                      <img
-                        src={mouzaMapDetail.map_url}
-                        alt={mouzaMapDetail.name}
-                        className="w-full h-64 object-cover rounded border mb-4"
-                      />
-                    )}
-                    <pre className="bg-gray-50 p-3 rounded border overflow-auto">
-                      {JSON.stringify(mouzaMapDetail.details || {}, null, 2)}
-                    </pre>
-                    {mouzaMapDetail.document_url && (
-                      <div className="mt-2 flex gap-3">
-                        <a
-                          className="text-blue-600 underline"
-                          href={mouzaMapDetail.document_url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          View Document
-                        </a>
-                        <a
-                          className="text-green-600 underline"
-                          href={mouzaMapDetail.document_url}
-                          download
-                        >
-                          Download
-                        </a>
-                      </div>
-                    )}
-                    {/* Mouza Map Application Submission */}
+                    </div>                   
                     <div className="mt-4">
                       <button
                         className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
@@ -675,6 +645,8 @@ export default function LandExplorer() {
                         Submit Mouza Map Application
                       </button>
                     </div>
+                    {/* Mouza Map Application Submission */}
+                    
                   </div>
                 ) : (
                   <div className="text-gray-500">Loading...</div>
