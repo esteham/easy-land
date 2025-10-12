@@ -27,17 +27,19 @@ class KycController extends Controller
 
         if ($request->hasFile('id_front')) {
             if ($kyc->id_front) {
-                Storage::delete($kyc->id_front);
+                Storage::disk('public')->delete($kyc->id_front);
             }
-            $pathFront = $request->file('id_front')->store('kyc');
+            $filenameFront = $user->name . '_id_front_' . time() . '.' . $request->file('id_front')->getClientOriginalExtension();
+            $pathFront = $request->file('id_front')->storeAs('kyc', $filenameFront, 'public');
             $kyc->id_front = $pathFront;
         }
 
         if ($request->hasFile('id_back')) {
             if ($kyc->id_back) {
-                Storage::delete($kyc->id_back);
+                Storage::disk('public')->delete($kyc->id_back);
             }
-            $pathBack = $request->file('id_back')->store('kyc');
+            $filenameBack = $user->name . '_id_back_' . time() . '.' . $request->file('id_back')->getClientOriginalExtension();
+            $pathBack = $request->file('id_back')->storeAs('kyc', $filenameBack, 'public');
             $kyc->id_back = $pathBack;
         }
 
