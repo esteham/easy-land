@@ -6,6 +6,7 @@ use App\Models\Dag;
 use App\Models\District;
 use App\Models\Division;
 use App\Models\Mouza;
+use App\Models\MouzaMap;
 use App\Models\Upazila;
 use App\Models\Zil;
 use Illuminate\Database\Seeder;
@@ -107,38 +108,140 @@ class GeographicalSeeder extends Seeder
 
     private $upazilasData = [
         'Dhaka' => [
-            ['name_en' => 'Dhamrai', 'name_bn' => 'ধামরাই', 'bbs_code' => '01'],
-            ['name_en' => 'Dohar', 'name_bn' => 'দোহার', 'bbs_code' => '02'],
-            ['name_en' => 'Keraniganj', 'name_bn' => 'কেরানীগঞ্জ', 'bbs_code' => '03'],
-            ['name_en' => 'Nawabganj', 'name_bn' => 'নবাবগঞ্জ', 'bbs_code' => '04'],
-            ['name_en' => 'Savar', 'name_bn' => 'সাভার', 'bbs_code' => '05'],
+            ['name_en' => 'Dhamrai', 'name_bn' => 'ধামরাই'],
+            ['name_en' => 'Dohar', 'name_bn' => 'দোহার'],
+            ['name_en' => 'Keraniganj', 'name_bn' => 'কেরাণীগঞ্জ'],
+            ['name_en' => 'Nawabganj', 'name_bn' => 'নবাবগঞ্জ'],
+            ['name_en' => 'Savar', 'name_bn' => 'সাভার'],
+        ],
+        'Gazipur' => [
+            ['name_en' => 'Gazipur Sadar', 'name_bn' => 'গাজীপুর সদর'],
+            ['name_en' => 'Kaliakair', 'name_bn' => 'কালিয়াকৈর'],
+            ['name_en' => 'Kapasia', 'name_bn' => 'কাপাসিয়া'],
+            ['name_en' => 'Sreepur', 'name_bn' => 'শ্রীপুর'],
+            ['name_en' => 'Kaliganj', 'name_bn' => 'কালীগঞ্জ'],
+        ],
+        'Narayanganj' => [
+            ['name_en' => 'Araihazar', 'name_bn' => 'আড়াইহাজার'],
+            ['name_en' => 'Bandar', 'name_bn' => 'বন্দর'],
+            ['name_en' => 'Narayanganj Sadar', 'name_bn' => 'নারায়ণগঞ্জ সদর'],
+            ['name_en' => 'Rupganj', 'name_bn' => 'রূপগঞ্জ'],
+            ['name_en' => 'Sonargaon', 'name_bn' => 'সোনারগাঁ'],
+        ],
+        'Chittagong' => [
+            ['name_en' => 'Anwara', 'name_bn' => 'আনোয়ারা'],
+            ['name_en' => 'Boalkhali', 'name_bn' => 'বোয়ালখালী'],
+            ['name_en' => 'Chandanaish', 'name_bn' => 'চন্দনাইশ'],
+            ['name_en' => 'Fatikchhari', 'name_bn' => 'ফটিকছড়ি'],
+            ['name_en' => 'Hathazari', 'name_bn' => 'হাটহাজারী'],
+            ['name_en' => 'Lohagara', 'name_bn' => 'লোহাগাড়া'],
+            ['name_en' => 'Mirsharai', 'name_bn' => 'মিরসরাই'],
+            ['name_en' => 'Patiya', 'name_bn' => 'পটিয়া'],
+            ['name_en' => 'Rangunia', 'name_bn' => 'রাঙ্গুনিয়া'],
+            ['name_en' => 'Raozan', 'name_bn' => 'রাউজান'],
+            ['name_en' => 'Sandwip', 'name_bn' => 'সন্দ্বীপ'],
+            ['name_en' => 'Satkania', 'name_bn' => 'সাতকানিয়া'],
+            ['name_en' => 'Sitakunda', 'name_bn' => 'সীতাকুণ্ড'],
+        ],
+        'Cox\'s Bazar' => [
+            ['name_en' => 'Chakaria', 'name_bn' => 'চকরিয়া'],
+            ['name_en' => 'Cox\'s Bazar Sadar', 'name_bn' => 'কক্সবাজার সদর'],
+            ['name_en' => 'Kutubdia', 'name_bn' => 'কুতুবদিয়া'],
+            ['name_en' => 'Maheshkhali', 'name_bn' => 'মহেশখালী'],
+            ['name_en' => 'Ramu', 'name_bn' => 'রামু'],
+            ['name_en' => 'Teknaf', 'name_bn' => 'টেকনাফ'],
+            ['name_en' => 'Ukhia', 'name_bn' => 'উখিয়া'],
+            ['name_en' => 'Pekua', 'name_bn' => 'পেকুয়া'],
+        ],
+        'Comilla' => [
+            ['name_en' => 'Barura', 'name_bn' => 'বরুরা'],
+            ['name_en' => 'Brahmanpara', 'name_bn' => 'ব্রাহ্মণপাড়া'],
+            ['name_en' => 'Burichang', 'name_bn' => 'বুড়িচং'],
+            ['name_en' => 'Chandina', 'name_bn' => 'চান্দিনা'],
+            ['name_en' => 'Chauddagram', 'name_bn' => 'চৌদ্দগ্রাম'],
+            ['name_en' => 'Daudkandi', 'name_bn' => 'দাউদকান্দি'],
+            ['name_en' => 'Debidwar', 'name_bn' => 'দেবিদ্বার'],
+            ['name_en' => 'Homna', 'name_bn' => 'হোমনা'],
+            ['name_en' => 'Laksam', 'name_bn' => 'লাকসাম'],
+            ['name_en' => 'Muradnagar', 'name_bn' => 'মুরাদনগর'],
+            ['name_en' => 'Nangalkot', 'name_bn' => 'নাঙ্গলকোট'],
+            ['name_en' => 'Comilla Sadar Dakshin', 'name_bn' => 'কুমিল্লা সদর দক্ষিণ'],
+            ['name_en' => 'Titas', 'name_bn' => 'তিতাস'],
+        ],
+        'Rajshahi' => [
+            ['name_en' => 'Bagha', 'name_bn' => 'বাঘা'],
+            ['name_en' => 'Bagmara', 'name_bn' => 'বাগমারা'],
+            ['name_en' => 'Charghat', 'name_bn' => 'চারঘাট'],
+            ['name_en' => 'Durgapur', 'name_bn' => 'দুর্গাপুর'],
+            ['name_en' => 'Godagari', 'name_bn' => 'গোদাগাড়ী'],
+            ['name_en' => 'Mohanpur', 'name_bn' => 'মোহনপুর'],
+            ['name_en' => 'Paba', 'name_bn' => 'পবা'],
+            ['name_en' => 'Puthia', 'name_bn' => 'পুঠিয়া'],
+            ['name_en' => 'Tanore', 'name_bn' => 'তানোর'],
+        ],
+        'Khulna' => [
+            ['name_en' => 'Batiaghata', 'name_bn' => 'বটিয়াঘাটা'],
+            ['name_en' => 'Dacope', 'name_bn' => 'দাকোপ'],
+            ['name_en' => 'Dumuria', 'name_bn' => 'ডুমুরিয়া'],
+            ['name_en' => 'Dighalia', 'name_bn' => 'দিঘলিয়া'],
+            ['name_en' => 'Koyra', 'name_bn' => 'কয়রা'],
+            ['name_en' => 'Paikgacha', 'name_bn' => 'পাইকগাছা'],
+            ['name_en' => 'Phultala', 'name_bn' => 'ফুলতলা'],
+            ['name_en' => 'Rupsa', 'name_bn' => 'রূপসা'],
+            ['name_en' => 'Terokhada', 'name_bn' => 'তেরখাদা'],
+        ],
+        'Barisal' => [
+            ['name_en' => 'Agailjhara', 'name_bn' => 'আগৈলঝাড়া'],
+            ['name_en' => 'Babuganj', 'name_bn' => 'বাবুগঞ্জ'],
+            ['name_en' => 'Bakerganj', 'name_bn' => 'বাকেরগঞ্জ'],
+            ['name_en' => 'Banaripara', 'name_bn' => 'বানারীপাড়া'],
+            ['name_en' => 'Gaurnadi', 'name_bn' => 'গৌরনদী'],
+            ['name_en' => 'Hizla', 'name_bn' => 'হিজলা'],
+            ['name_en' => 'Mehendiganj', 'name_bn' => 'মেহেন্দিগঞ্জ'],
+            ['name_en' => 'Muladi', 'name_bn' => 'মুলাদি'],
+            ['name_en' => 'Wazirpur', 'name_bn' => 'ওয়াজিরপুর'],
+        ],
+        'Sylhet' => [
+            ['name_en' => 'Balaganj', 'name_bn' => 'বালাগঞ্জ'],
+            ['name_en' => 'Beanibazar', 'name_bn' => 'বিয়ানীবাজার'],
+            ['name_en' => 'Bishwanath', 'name_bn' => 'বিশ্বনাথ'],
+            ['name_en' => 'Companiganj', 'name_bn' => 'কোম্পানীগঞ্জ'],
+            ['name_en' => 'Dakshin Surma', 'name_bn' => 'দক্ষিণ সুরমা'],
+            ['name_en' => 'Fenchuganj', 'name_bn' => 'ফেঞ্চুগঞ্জ'],
+            ['name_en' => 'Golapganj', 'name_bn' => 'গোলাপগঞ্জ'],
+            ['name_en' => 'Gowainghat', 'name_bn' => 'গোয়াইনঘাট'],
+            ['name_en' => 'Jaintiapur', 'name_bn' => 'জৈন্তাপুর'],
+            ['name_en' => 'Kanaighat', 'name_bn' => 'কানাইঘাট'],
+            ['name_en' => 'Sylhet Sadar', 'name_bn' => 'সিলেট সদর'],
+            ['name_en' => 'Zakiganj', 'name_bn' => 'জকিগঞ্জ'],
+        ],
+        'Rangpur' => [
+            ['name_en' => 'Badarganj', 'name_bn' => 'বদরগঞ্জ'],
+            ['name_en' => 'Gangachara', 'name_bn' => 'গঙ্গাচড়া'],
+            ['name_en' => 'Kaunia', 'name_bn' => 'কাউনিয়া'],
+            ['name_en' => 'Mithapukur', 'name_bn' => 'মিঠাপুকুর'],
+            ['name_en' => 'Pirgachha', 'name_bn' => 'পীরগাছা'],
+            ['name_en' => 'Pirganj', 'name_bn' => 'পীরগঞ্জ'],
+            ['name_en' => 'Rangpur Sadar', 'name_bn' => 'রংপুর সদর'],
+            ['name_en' => 'Taraganj', 'name_bn' => 'তারাগঞ্জ'],
+        ],
+        'Mymensingh' => [
+            ['name_en' => 'Bhaluka', 'name_bn' => 'ভালুকা'],
+            ['name_en' => 'Dhobaura', 'name_bn' => 'ধোবাউরা'],
+            ['name_en' => 'Fulbaria', 'name_bn' => 'ফুলবাড়ীয়া'],
+            ['name_en' => 'Gaffargaon', 'name_bn' => 'গফরগাঁও'],
+            ['name_en' => 'Gauripur', 'name_bn' => 'গৌরীপুর'],
+            ['name_en' => 'Haluaghat', 'name_bn' => 'হালুয়াঘাট'],
+            ['name_en' => 'Ishwarganj', 'name_bn' => 'ঈশ্বরগঞ্জ'],
+            ['name_en' => 'Muktagachha', 'name_bn' => 'মুক্তাগাছা'],
+            ['name_en' => 'Mymensingh Sadar', 'name_bn' => 'ময়মনসিংহ সদর'],
+            ['name_en' => 'Nandail', 'name_bn' => 'নান্দাইল'],
+            ['name_en' => 'Phulpur', 'name_bn' => 'ফুলপুর'],
+            ['name_en' => 'Trishal', 'name_bn' => 'ত্রিশাল'],
         ],
     ];
 
-    private $mouzasData = [
-        'Dhamrai' => [
-            ['name_en' => 'Mouza1', 'name_bn' => 'মৌজা ১', 'jl_no' => '001', 'mouza_code' => 'D001'],
-            ['name_en' => 'Mouza2', 'name_bn' => 'মৌজা ২', 'jl_no' => '002', 'mouza_code' => 'D002'],
-        ],
-    ];
 
-    private $zilsData = [
-        'Mouza1' => [
-            ['zil_no' => 'Z001', 'map_url' => null, 'meta' => null],
-            ['zil_no' => 'Z002', 'map_url' => null, 'meta' => null],
-        ],
-    ];
-
-    private $dagsData = [
-        'Z001' => [
-            ['dag_no' => 'DAG001', 'khotiyan' => ['owner' => 'Owner1', 'area' => '100 sqft']],
-            ['dag_no' => 'DAG002', 'khotiyan' => ['owner' => 'Owner2', 'area' => '150 sqft']],
-        ],
-    ];
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Create Divisions
@@ -147,7 +250,7 @@ class GeographicalSeeder extends Seeder
             $divisions[] = Division::create($data);
         }
 
-        // Create Districts for each Division
+        // Create Districts
         $districts = [];
         foreach ($divisions as $division) {
             $districtsForDivision = $this->districtsData[$division->name_en] ?? [];
@@ -156,38 +259,68 @@ class GeographicalSeeder extends Seeder
             }
         }
 
-        // Create Upazilas for each District
+        // Create Upazilas
         $upazilas = [];
         foreach ($districts as $district) {
             $upazilasForDistrict = $this->upazilasData[$district->name_en] ?? [];
-            foreach ($upazilasForDistrict as $data) {
-                $upazilas[] = Upazila::create(array_merge($data, ['district_id' => $district->id]));
+            foreach ($upazilasForDistrict as $upazilaData) {
+                $upazilas[] = Upazila::create([
+                    'name_en' => $upazilaData['name_en'],
+                    'name_bn' => $upazilaData['name_bn'],
+                    'bbs_code' => null,
+                    'district_id' => $district->id,
+                ]);
             }
         }
 
-        // Create Mouzas for each Upazila
+
+        // Create 2 Mouzas per Upazila
         $mouzas = [];
         foreach ($upazilas as $upazila) {
-            $mouzasForUpazila = $this->mouzasData[$upazila->name_en] ?? [];
-            foreach ($mouzasForUpazila as $data) {
-                $mouzas[] = Mouza::create(array_merge($data, ['upazila_id' => $upazila->id]));
+            for ($i = 1; $i <= 2; $i++) {
+                $mouzas[] = Mouza::create([
+                    'name_en' => "Mouza_{$upazila->name_en}_{$i}",
+                    'name_bn' => "মৌজা {$i}",
+                    'jl_no' => str_pad($i, 3, '0', STR_PAD_LEFT),
+                    'mouza_code' => strtoupper(substr($upazila->name_en, 0, 3)) . "_{$i}",
+                    'upazila_id' => $upazila->id,
+                ]);
             }
         }
 
-        // Create Zils for each Mouza
+        // Create 2 Zils per Mouza
         $zils = [];
         foreach ($mouzas as $mouza) {
-            $zilsForMouza = $this->zilsData[$mouza->name_en] ?? [];
-            foreach ($zilsForMouza as $data) {
-                $zils[] = Zil::create(array_merge($data, ['mouza_id' => $mouza->id]));
+            for ($j = 1; $j <= 2; $j++) {
+                $zils[] = Zil::create([
+                    'zil_no' => "{$mouza->id}_Z{$j}",
+                    'map_url' => null,
+                    'meta' => null,
+                    'mouza_id' => $mouza->id,
+                ]);
             }
         }
 
-        // Create Dags for each Zil
+        // Create 1 MouzaMap per Zil
+        $surveyTypes = [1, 2, 3, 4, 5];
         foreach ($zils as $zil) {
-            $dagsForZil = $this->dagsData[$zil->zil_no] ?? [];
-            foreach ($dagsForZil as $data) {
-                Dag::create(array_merge($data, ['zil_id' => $zil->id]));
+            MouzaMap::create([
+                'zil_id' => $zil->id,
+                'name' => "Map for Zil {$zil->id}",
+                'document' => null,
+                'survey_type_id' => $surveyTypes[array_rand($surveyTypes)],
+            ]);
+        }
+
+        // Create 2 Dags per Zil
+        foreach ($zils as $zil) {
+            for ($k = 1; $k <= 2; $k++) {
+                Dag::create([
+                    'dag_no' => "{$zil->id}_D{$k}",
+                    'khotiyan' => ['owner' => "Owner_{$zil->id}_{$k}", 'area' => rand(100, 1000) . ' sqft'],
+                    'survey_type_id' => $surveyTypes[array_rand($surveyTypes)],
+                    'zil_id' => $zil->id,
+                ]);
             }
         }
     }
