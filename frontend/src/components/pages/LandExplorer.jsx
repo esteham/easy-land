@@ -34,6 +34,10 @@ export default function LandExplorer() {
   const [dagId, setDagId] = useState("");
   const [mouzaMapId, setMouzaMapId] = useState("");
 
+  // Survey Types
+  const [surveyTypes, setSurveyTypes] = useState([]);
+  const [selectedSurveyType, setSelectedSurveyType] = useState("");
+
   // Details / UI
   const [dagDetail, setDagDetail] = useState(null);
   const [mouzaMapDetail, setMouzaMapDetail] = useState(null);
@@ -165,10 +169,18 @@ export default function LandExplorer() {
       try {
         setLoading(true);
         if (selectedType === "khatiyan") {
-          const { data } = await api.get(`/locations/zils/${zilId}/dags`);
+          let url = `/locations/zils/${zilId}/dags`;
+          if (selectedSurveyType) {
+            url += `?survey_type_id=${selectedSurveyType}`;
+          }
+          const { data } = await api.get(url);
           setDags(data);
         } else {
-          const { data } = await api.get(`/locations/zils/${zilId}/mouza-maps`);
+          let url = `/locations/zils/${zilId}/mouza-maps`;
+          if (selectedSurveyType) {
+            url += `?survey_type_id=${selectedSurveyType}`;
+          }
+          const { data } = await api.get(url);
           setMouzaMaps(data);
         }
       } catch {
@@ -177,6 +189,27 @@ export default function LandExplorer() {
             selectedType === "khatiyan" ? "dags" : "mouza maps"
           }`
         );
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [zilId, selectedType, selectedSurveyType]);
+
+  // Load Survey Types for Zil
+  useEffect(() => {
+    setSurveyTypes([]);
+    setSelectedSurveyType("");
+    if (!zilId) return;
+
+    (async () => {
+      try {
+        setLoading(true);
+        const { data } = await api.get(
+          `/locations/zils/${zilId}/survey-types?type=${selectedType}`
+        );
+        setSurveyTypes(data);
+      } catch {
+        setError("Failed to load survey types");
       } finally {
         setLoading(false);
       }
@@ -228,6 +261,7 @@ export default function LandExplorer() {
     setMouzaMapId("");
     setMouzaMapDetail(null);
     setSearch("");
+    setSelectedSurveyType("");
   }, [selectedType]);
 
   // Filter items by search
@@ -353,7 +387,7 @@ export default function LandExplorer() {
           </div>
         )}
 
-        {/* Two-column layout: Left = Geo selectors, Right = Zils + Items + Detail */}
+        {/* Two-column layout: Left = Geo selectors, Right = Survey Type + Items + Detail */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT: Geo Sidebar */}
           <aside className="lg:col-span-1">
@@ -433,7 +467,10 @@ export default function LandExplorer() {
                 <select
                   className="w-full border rounded p-2"
                   value={mouzaId}
-                  onChange={(e) => setMouzaId(e.target.value)}
+                  onChange={(e) => {
+                    setMouzaId(e.target.value);
+                    setZilId("");
+                  }}
                   disabled={!upazilaId || loading}
                 >
                   <option value="">Select Mouza</option>
@@ -444,40 +481,50 @@ export default function LandExplorer() {
                   ))}
                 </select>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Zil</label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={zilId}
+                  onChange={(e) => setZilId(e.target.value)}
+                  disabled={!mouzaId || loading}
+                >
+                  <option value="">Select Zil</option>
+                  {zils.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      Zil {z.zil_no}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </aside>
 
           {/* RIGHT: Content */}
           <main className="lg:col-span-2 space-y-8">
-            {/* Zils */}
+            {/* Survey Type Selector */}
             <section>
-              <h2 className="text-xl font-semibold mb-2">Zils (Map/Zone)</h2>
-              {!mouzaId ? (
-                <p className="text-gray-500">Select a Mouza to view Zils.</p>
-              ) : zils.length === 0 ? (
-                <p className="text-gray-500">No Zils found.</p>
+              <h2 className="text-xl font-semibold mb-2">Survey Type</h2>
+              {!zilId ? (
+                <p className="text-gray-500">
+                  Select a Zil to view survey types.
+                </p>
+              ) : surveyTypes.length === 0 ? (
+                <p className="text-gray-500">No survey types found.</p>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {zils.map((z) => (
+                <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+                  {surveyTypes.map((st) => (
                     <div
-                      key={z.id}
-                      className={`border rounded p-3 cursor-pointer hover:shadow ${
-                        String(zilId) === String(z.id)
+                      key={st.id}
+                      className={`border rounded p-1 cursor-pointer hover:shadow ${
+                        String(selectedSurveyType) === String(st.id)
                           ? "ring-2 ring-indigo-500"
                           : ""
                       }`}
-                      onClick={() => setZilId(String(z.id))}
+                      onClick={() => setSelectedSurveyType(String(st.id))}
                     >
-                      <div className="font-semibold">Zil: {z.zil_no}</div>
-                      {z.map_url ? (
-                        <img
-                          src={z.map_url}
-                          alt={`Zil ${z.zil_no} map`}
-                          className="mt-2 w-full h-32 object-cover rounded"
-                        />
-                      ) : (
-                        <div className="mt-2 text-xs text-gray-500">No map</div>
-                      )}
+                      <div className="font-semibold">{st.code}</div>
                     </div>
                   ))}
                 </div>
@@ -489,9 +536,9 @@ export default function LandExplorer() {
               <h2 className="text-xl font-semibold mb-2">
                 {selectedType === "khatiyan" ? "Dags (Plots)" : "Mouza Maps"}
               </h2>
-              {!zilId ? (
+              {!zilId || !selectedSurveyType ? (
                 <p className="text-gray-500">
-                  Select a Zil to view{" "}
+                  Select a Zil and Survey Type to view{" "}
                   {selectedType === "khatiyan" ? "Dags" : "Mouza Maps"}.
                 </p>
               ) : (

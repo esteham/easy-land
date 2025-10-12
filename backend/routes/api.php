@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\PasswordController;
@@ -70,20 +71,40 @@ Route::get('/locations/mouzas/{mouza}/zils', function (Mouza $mouza) {
     return $mouza->zils()->select('id','mouza_id','zil_no','map_url')->orderBy('zil_no')->get();
 });
 
-Route::get('/locations/zils/{zil}/dags', function (Zil $zil) {
-    return $zil->dags()->select('id','zil_id','dag_no')->orderBy('dag_no')->get();
+Route::get('/locations/zils/{zil}/dags', function (Zil $zil, Request $request) {
+    $query = $zil->dags()->select('id','zil_id','dag_no','survey_type_id');
+    if ($request->filled('survey_type_id')) {
+        $query->where('survey_type_id', $request->input('survey_type_id'));
+    }
+    return $query->orderBy('dag_no')->get();
 });
 
 Route::get('/locations/dags/{dag}', function (Dag $dag) {
     return $dag->only(['id','zil_id','dag_no','khotiyan','meta']);
 });
 
-Route::get('/locations/zils/{zil}/mouza-maps', function (Zil $zil) {
-    return $zil->mouzaMaps()->select('id','zil_id','name')->orderBy('name')->get();
+Route::get('/locations/zils/{zil}/mouza-maps', function (Zil $zil, Request $request) {
+    $query = $zil->mouzaMaps()->select('id','zil_id','name','survey_type_id');
+    if ($request->filled('survey_type_id')) {
+        $query->where('survey_type_id', $request->input('survey_type_id'));
+    }
+    return $query->orderBy('name')->get();
 });
 
 Route::get('/locations/mouza-maps/{mouzaMap}', function (\App\Models\MouzaMap $mouzaMap) {
     return $mouzaMap->only(['id','zil_id','name']);
+});
+
+Route::get('/locations/zils/{zil}/survey-types', function (Zil $zil, Request $request) {
+    $type = $request->query('type');
+    if ($type === 'khatiyan') {
+        $distinctIds = $zil->dags()->whereNotNull('survey_type_id')->distinct('survey_type_id')->pluck('survey_type_id');
+        return SurveyType::whereIn('id', $distinctIds)->select('id','code','name_en','name_bn')->orderBy('name_en')->get();
+    } elseif ($type === 'mouza_map') {
+        $distinctIds = $zil->mouzaMaps()->whereNotNull('survey_type_id')->distinct('survey_type_id')->pluck('survey_type_id');
+        return SurveyType::whereIn('id', $distinctIds)->select('id','code','name_en','name_bn')->orderBy('name_en')->get();
+    }
+    return response()->json([], 200);
 });
 
 Route::get('/locations/survey-types', function () {

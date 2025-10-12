@@ -10,8 +10,13 @@ class MouzaMap extends Model
     use HasFactory;
 
     protected $fillable = [
-        'zil_id', 'name', 'document'
+        'zil_id', 'name', 'document', 'survey_type_id'
     ];
+
+    public function surveyType()
+    {
+        return $this->belongsTo(SurveyType::class);
+    }
 
     protected $appends = ['document_url'];
 
