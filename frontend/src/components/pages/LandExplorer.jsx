@@ -365,7 +365,7 @@ export default function LandExplorer() {
           backgroundSize: "contain",
           backgroundPosition: "center",
           backgroundColor: "transparent",
-          transition: "background-image 400ms ease-in-out",
+          transition: "background-image 900ms ease-in-out",
           filter: "brightness(.98)",
         }}
         aria-hidden="true"
