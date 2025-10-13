@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kyc;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -81,6 +82,18 @@ class KycController extends Controller
         $kyc->approved_at = now();
         $kyc->save();
 
+        // Create notification
+        Notification::create([
+            'user_id' => $kyc->user_id,
+            'type' => 'kyc_approved',
+            'title' => 'KYC Approved',
+            'message' => 'Your KYC verification has been approved. You can now proceed with other services.',
+            'data' => ['kyc_id' => $kyc->id],
+        ]);
+
+        // Send email notification
+        $kyc->user->notify(new \App\Notifications\KycApproved($kyc));
+
         return response()->json(['message' => 'KYC approved successfully', 'kyc' => $kyc]);
     }
 
@@ -103,6 +116,18 @@ class KycController extends Controller
         $kyc->status = 'rejected';
         $kyc->rejection_reason = $request->rejection_reason;
         $kyc->save();
+
+        // Create notification
+        Notification::create([
+            'user_id' => $kyc->user_id,
+            'type' => 'kyc_rejected',
+            'title' => 'KYC Rejected',
+            'message' => 'Your KYC verification has been rejected. Reason: ' . $request->rejection_reason,
+            'data' => ['kyc_id' => $kyc->id, 'reason' => $request->rejection_reason],
+        ]);
+
+        // Send email notification
+        $kyc->user->notify(new \App\Notifications\KycRejected($kyc));
 
         return response()->json(['message' => 'KYC rejected', 'kyc' => $kyc]);
     }

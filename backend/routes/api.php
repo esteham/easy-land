@@ -25,6 +25,7 @@ use \App\Http\Controllers\API\ApplicationController;
 use \App\Http\Controllers\API\LandTaxRegistrationController;
 use \App\Http\Controllers\API\MutationController;
 use \App\Http\Controllers\API\MouzaMapController;
+use \App\Http\Controllers\API\NotificationController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -174,6 +175,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/land-tax-payments/{id}/invoice', [App\Http\Controllers\API\LandTaxPaymentController::class, 'invoice']);
     Route::post('/land-tax-payments/calculate', [App\Http\Controllers\API\LandTaxPaymentController::class, 'calculate']);
     Route::post('/land-tax-payments/pay', [App\Http\Controllers\API\LandTaxPaymentController::class, 'pay']);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::patch('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
 
     Route::middleware('role:admin,acland')->group(function () {
         Route::apiResource('admin/upazilas', UpazilaController::class);

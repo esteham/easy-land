@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\LandTaxRegistration;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -97,12 +98,44 @@ class LandTaxRegistrationController extends Controller
 
         $registration = LandTaxRegistration::findOrFail($id);
 
+        $oldStatus = $registration->status;
+        $newStatus = $request->status;
+
         $registration->update([
-            'status' => $request->status,
+            'status' => $newStatus,
             'reviewed_at' => now(),
             'reviewer_id' => Auth::id(),
             'notes' => $request->notes,
         ]);
+
+        // Create notification if status changed
+        if ($oldStatus !== $newStatus) {
+            $type = 'land_tax_' . $newStatus;
+            $title = 'Land Tax Registration ' . ucfirst($newStatus);
+            $message = "Your land tax registration for Khatiyan {$registration->khatiyan_number}, Dag {$registration->dag_number} has been {$newStatus}.";
+
+            if ($newStatus === 'rejected' && $request->notes) {
+                $message .= " Notes: {$request->notes}";
+            }
+
+            Notification::create([
+                'user_id' => $registration->user_id,
+                'type' => $type,
+                'title' => $title,
+                'message' => $message,
+                'data' => [
+                    'registration_id' => $registration->id,
+                    'khatiyan_number' => $registration->khatiyan_number,
+                    'dag_number' => $registration->dag_number,
+                    'status' => $newStatus,
+                    'notes' => $request->notes,
+                ],
+            ]);
+
+            // Send email notification
+            $notificationClass = '\\App\\Notifications\\LandTax' . ucfirst($newStatus);
+            $registration->user->notify(new $notificationClass($registration));
+        }
 
         return response()->json([
             'message' => 'Registration status updated successfully.',

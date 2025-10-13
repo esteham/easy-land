@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mutation;
 use App\Models\Application;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
@@ -90,12 +91,43 @@ class MutationController extends Controller
         $user = Auth::user();
         $mutation = Mutation::findOrFail($id);
 
+        $oldStatus = $mutation->status;
+        $newStatus = $request->status;
+
         $mutation->update([
-            'status' => $request->status,
+            'status' => $newStatus,
             'remarks' => $request->remarks,
             'reviewed_by' => $user->id,
             'reviewed_at' => now(),
         ]);
+
+        // Create notification if status changed
+        if ($oldStatus !== $newStatus) {
+            $type = 'mutation_' . $newStatus;
+            $title = 'Mutation ' . ucfirst($newStatus);
+            $message = "Your mutation application for {$mutation->mutation_type} has been {$newStatus}.";
+
+            if ($newStatus === 'rejected' && $request->remarks) {
+                $message .= " Remarks: {$request->remarks}";
+            }
+
+            Notification::create([
+                'user_id' => $mutation->user_id,
+                'type' => $type,
+                'title' => $title,
+                'message' => $message,
+                'data' => [
+                    'mutation_id' => $mutation->id,
+                    'mutation_type' => $mutation->mutation_type,
+                    'status' => $newStatus,
+                    'remarks' => $request->remarks,
+                ],
+            ]);
+
+            // Send email notification
+            $notificationClass = '\\App\\Notifications\\Mutation' . ucfirst($newStatus);
+            $mutation->user->notify(new $notificationClass($mutation));
+        }
 
         return response()->json(['message' => 'Status updated successfully', 'mutation' => $mutation]);
     }
