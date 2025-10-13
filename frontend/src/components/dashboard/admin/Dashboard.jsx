@@ -180,8 +180,11 @@ export default function AdminLayout() {
             <SideLink to="zils" icon={<SquareGanttChart className="h-4 w-4" />}>
               Zils (Sheet)
             </SideLink>
-            <SideLink to="mouza-maps" icon={<Map className="h-4 w-4" />}>
+            <SideLink to="mouza-maps" icon={<MapPin className="h-4 w-4" />}>
               Mouza Maps
+            </SideLink>
+            <SideLink to="draw-maps" icon={<Map className="h-4 w-4" />}>
+              Draw Maps
             </SideLink>
             <SideLink to="dags" icon={<Map className="h-4 w-4" />}>
               Dags

@@ -38,11 +38,21 @@ export const createMouzaMap = (formData) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 export const updateMouzaMap = (id, formData) => {
-  formData.append('_method', 'PUT');
+  formData.append("_method", "PUT");
   return api.post(`/admin/mouza-maps/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
 export const deleteMouzaMap = (id) => api.delete(`/admin/mouza-maps/${id}`);
+
+//Admin Side: Polygon /GeoJSON Save
+export const saveDagGeometry = (dagId, data) =>
+  api.post(`/admin/dags/${dagId}/geometry`, data, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+//User Side: search by dag_no (show map)
+export const searchDagGeometry = (dagNo, params = {}) =>
+  api.get(`/map/dags/search/${dagNo}`, { params });
 
 export default api;

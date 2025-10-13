@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+
+/* App.css বা গ্লোবাল CSS */
+.leaflet-top.leaflet-left {
+  top: 88px;
+  left: 16px;
+} /* হেডারের নিচে নামালাম */
+.leaflet-control {
+  z-index: 1200;
+} /* overlay-এর উপরে আনলাম */

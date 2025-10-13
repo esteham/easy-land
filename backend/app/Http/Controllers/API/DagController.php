@@ -128,7 +128,119 @@ class DagController extends Controller
         return response()->json(['deleted' => true]);
     }
 
+    //ComputeBBoxFromGeoJSON
+    private function computeCentroidFromBBox(?array $bbox): ?array
+    {
+        if (!$bbox || count($bbox) !== 4) return null;
+        return [
+            'lat' => ($bbox[1] + $bbox[3]) / 2.0,
+            'lng' => ($bbox[0] + $bbox[2]) / 2.0,
+        ];
+    }
+
+    public function saveGeometry(Request $request, Dag $dag)
+    {
+        // Admin only route (already under auth/admin middleware)
+        $data = $request->validate([
+            'geojson' => 'required|array',            // Feature/FeatureCollection
+            'bbox'    => 'nullable|array',            // [minLng,minLat,maxLng,maxLat]
+            'centroid_lat' => 'nullable|numeric',
+            'centroid_lng' => 'nullable|numeric',
+        ]);
+
+        // নিরাপদে সার্ভার-সাইডে bbox/centroid কম্পিউট করবো, ক্লায়েন্ট দিলে cross-check
+        $serverBBox = $this->computeBBoxFromGeoJSON($data['geojson']);
+        $bbox = $data['bbox'] ?? $serverBBox ?? null;
+
+        $centroid = $this->computeCentroidFromBBox($bbox);
+        $centroidLat = $data['centroid_lat'] ?? ($centroid['lat'] ?? null);
+        $centroidLng = $data['centroid_lng'] ?? ($centroid['lng'] ?? null);
+
+        $dag->update([
+            'geojson_data' => json_encode($data['geojson']),
+            'bbox'         => $bbox,
+            'centroid_lat' => $centroidLat,
+            'centroid_lng' => $centroidLng,
+        ]);
+
+        // fresh load for response consistency
+        $dag->load('zil:id,zil_no', 'surveyType:id,code,name_en');
+
+        return response()->json([
+            'message'  => 'geometry_saved',
+            'dag_id'   => $dag->id,
+            'dag_no'   => $dag->dag_no,
+            'bbox'     => $bbox,
+            'centroid' => ['lat'=>$centroidLat, 'lng'=>$centroidLng],
+        ], 201);
+    }
+
+    public function searchGeometry($dag_no, Request $request)
+    {
+        // Optional filters: zil_id, survey_type_id
+        $query = Dag::query()->where('dag_no', $dag_no);
+
+        if ($request->filled('zil_id')) {
+            $query->where('zil_id', $request->integer('zil_id'));
+        }
+        if ($request->filled('survey_type_id')) {
+            $query->where('survey_type_id', $request->integer('survey_type_id'));
+        }
+
+        $dag = $query->first();
+        if (!$dag) return response()->json(['message' => 'Not found'], 404);
+
+        $geo = $dag->geojson_data ? json_decode($dag->geojson_data, true) : null;
+        if (!$geo) return response()->json(['message' => 'Boundary not available'], 422);
+
+        return response()->json([
+            'id'         => $dag->id,
+            'dag_no'     => $dag->dag_no,
+            'zil_id'     => $dag->zil_id,
+            'survey_type_id' => $dag->survey_type_id,
+            'geojson'    => $geo,
+            'bbox'       => $dag->bbox,
+            'centroid'   => [
+                'lat' => $dag->centroid_lat,
+                'lng' => $dag->centroid_lng,
+            ],
+        ]);
+    }
+
+
     // ---------- helpers (same as earlier lenient versions) ----------
+
+     private function computeBBoxFromGeoJSON(array $geo): ?array
+    {
+        // Expect FeatureCollection or Feature with Polygon/MultiPolygon
+        $coords = [];
+        $collect = function($geometry) use (&$coords, &$collect) {
+            if (!$geometry || !isset($geometry['type'])) return;
+            $type = $geometry['type'];
+            if ($type === 'Feature') {
+                $collect($geometry['geometry'] ?? null);
+            } elseif ($type === 'FeatureCollection') {
+                foreach (($geometry['features'] ?? []) as $f) $collect($f);
+            } elseif ($type === 'Polygon') {
+                foreach (($geometry['coordinates'][0] ?? []) as $pt) {
+                    if (is_array($pt) && count($pt) >= 2) $coords[] = $pt; // [lng,lat]
+                }
+            } elseif ($type === 'MultiPolygon') {
+                foreach (($geometry['coordinates'] ?? []) as $poly) {
+                    foreach (($poly[0] ?? []) as $pt) {
+                        if (is_array($pt) && count($pt) >= 2) $coords[] = $pt;
+                    }
+                }
+            }
+        };
+        $collect($geo);
+
+        if (empty($coords)) return null;
+
+        $lngs = array_column($coords, 0);
+        $lats = array_column($coords, 1);
+        return [min($lngs), min($lats), max($lngs), max($lats)]; // [minLng,minLat,maxLng,maxLat]
+    }
 
     private function normalizeToArray($value, $fallback = [])
     {

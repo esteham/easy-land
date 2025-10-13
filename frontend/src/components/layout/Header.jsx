@@ -15,26 +15,28 @@ export default function Header() {
       home: "Home",
       landRecords: "Land Records",
       landTax: "Land TAX",
+      landMap: "Search Dag",
       dashboard: "Dashboard",
       adminPanel: "Admin Panel",
       login: "Login",
       register: "Register",
       logout: "Logout",
       welcome: "Welcome",
-      toggle: "বাংলা"
+      toggle: "বাংলা",
     },
     bn: {
       home: "হোম",
       landRecords: "ভূমি রেকর্ড",
       landTax: "ভূমি কর",
+      landMap: "Search Dag",
       dashboard: "ড্যাশবোর্ড",
       adminPanel: "অ্যাডমিন প্যানেল",
       login: "লগইন",
       register: "রেজিস্টার",
       logout: "লগআউট",
       welcome: "স্বাগতম",
-      toggle: "English"
-    }
+      toggle: "English",
+    },
   };
 
   const handleLogout = () => {
@@ -88,6 +90,17 @@ export default function Header() {
               {translations[language].landTax}
             </Link>
 
+            <Link
+              to="/dag-search-map"
+              className={`font-medium transition duration-300 ${
+                location.pathname === "/dag-search-map"
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              {translations[language].landMap}
+            </Link>
+
             {/* Show Dashboard for all logged-in users */}
             {user && (
               <Link
@@ -127,7 +140,9 @@ export default function Header() {
             </button>
             {user ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-700">{translations[language].welcome}, {user.name}</span>
+                <span className="text-gray-700">
+                  {translations[language].welcome}, {user.name}
+                </span>
                 {/* <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                   {user.role}
                 </span> */}

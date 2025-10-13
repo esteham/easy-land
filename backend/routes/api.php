@@ -133,6 +133,9 @@ Route::get('/mouza-map/{mouzaMap}/download', function (\App\Models\MouzaMap $mou
     return response()->file($path);
 })->name('mouza-map.download');
 
+//Public search
+Route::get('/map/dags/search{dag_no}', [DagController::class, 'searchGeometry']);
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me', [AuthController::class, 'update']);
@@ -182,6 +185,9 @@ Route::middleware('auth:api')->group(function () {
         // Mutations admin
         Route::apiResource('admin/mutations', MutationController::class);
         Route::patch('/mutations/{id}/status', [MutationController::class, 'updateStatus']);
+
+        //Leaflet Map
+        Route::post('/admin/dags/{dag}/geometry', [DagController::class, 'saveGeometry']);
     });
 
     Route::middleware('role:admin')->group(function () {
