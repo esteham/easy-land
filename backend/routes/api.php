@@ -138,12 +138,85 @@ Route::get('/mouza-map/{mouzaMap}/download', function (\App\Models\MouzaMap $mou
 // Public: fetch latest geojson by dag_no
 Route::get('/map/geojson/by-dag/{dag_no}', [GeojsonDataController::class, 'byDagNo']);
 
+// Search endpoint
+Route::get('/search', function (Request $request) {
+    $q = $request->query('q');
+    if (!$q) return response()->json(['results' => []]);
+
+    $results = [];
+
+    $models = [
+        ['model' => Division::class, 'fields' => ['name_en', 'name_bn'], 'type' => 'division', 'route' => 'divisions'],
+        ['model' => District::class, 'fields' => ['name_en', 'name_bn'], 'type' => 'district', 'route' => 'districts'],
+        ['model' => Upazila::class, 'fields' => ['name_en', 'name_bn'], 'type' => 'upazila', 'route' => 'upazilas'],
+        ['model' => Mouza::class, 'fields' => ['name_en', 'name_bn'], 'type' => 'mouza', 'route' => 'mouzas'],
+        ['model' => Zil::class, 'fields' => ['zil_no'], 'type' => 'zil', 'route' => 'zils'],
+        ['model' => Dag::class, 'fields' => ['dag_no'], 'type' => 'dag', 'route' => 'dags'],
+        ['model' => SurveyType::class, 'fields' => ['name_en', 'name_bn', 'code'], 'type' => 'survey_type', 'route' => 'survey-types'],
+    ];
+
+    foreach ($models as $m) {
+        $query = $m['model']::query();
+        foreach ($m['fields'] as $field) {
+            $query->orWhere($field, 'like', "%$q%");
+        }
+        $items = $query->limit(10)->get();
+        foreach ($items as $item) {
+            $name = $item->name_en ?? $item->name_bn ?? $item->zil_no ?? $item->dag_no ?? $item->code;
+            $results[] = [
+                'type' => $m['type'],
+                'id' => $item->id,
+                'name' => $name,
+                'to' => $m['route']
+            ];
+        }
+    }
+
+    return response()->json(['results' => $results]);
+});
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/me/change-password', [AuthController::class, 'changePassword']);
     Route::get('/dashboard', function () {
+        $now = now();
+        $startOfDay = $now->copy()->startOfDay();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $startOfYear = $now->copy()->startOfYear();
+
+        // Revenue from Applications
+        $dailyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfDay)
+            ->sum('fee_amount');
+
+        $monthlyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfMonth)
+            ->sum('fee_amount');
+
+        $yearlyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfYear)
+            ->sum('fee_amount');
+
+        // Revenue from Land Tax Payments
+        $dailyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfDay)
+            ->sum('amount');
+
+        $monthlyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfMonth)
+            ->sum('amount');
+
+        $yearlyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfYear)
+            ->sum('amount');
+
+        // Total revenue
+        $dailyRevenue = $dailyRevenueApplications + $dailyRevenueLDT;
+        $monthlyRevenue = $monthlyRevenueApplications + $monthlyRevenueLDT;
+        $yearlyRevenue = $yearlyRevenueApplications + $yearlyRevenueLDT;
+
         return response()->json([
             'stats' => [
                 'divisions' => Division::count(),
@@ -152,6 +225,11 @@ Route::middleware('auth:api')->group(function () {
                 'mouzas' => Mouza::count(),
                 'zils' => Zil::count(),
                 'dags' => Dag::count(),
+            ],
+            'revenue' => [
+                'daily' => $dailyRevenue,
+                'monthly' => $monthlyRevenue,
+                'yearly' => $yearlyRevenue,
             ]
         ]);
     });
