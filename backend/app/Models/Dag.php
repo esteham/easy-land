@@ -10,7 +10,7 @@ class Dag extends Model
     use HasFactory;
 
     protected $fillable = [
-                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document', 'survey_type_id', 'geojson_data', 'bbox', 'centroid_lat', 'centroid_lng',
+                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document', 'survey_type_id',
             ];
 
     protected $appends = ['document_url'];
@@ -18,7 +18,6 @@ class Dag extends Model
     protected $casts = [
         'meta' => 'array',
         'khotiyan' => 'array',
-        'bbox' => 'array',
     ];
 
     public function zil()

@@ -20,6 +20,7 @@ use App\Http\Controllers\API\MouzaController;
 use App\Http\Controllers\API\ZilController;
 use App\Http\Controllers\API\DagController;
 use App\Http\Controllers\API\SurveyTypeController;
+use App\Http\Controllers\API\GeojsonDataController;
 
 use \App\Http\Controllers\API\ApplicationController;
 use \App\Http\Controllers\API\LandTaxRegistrationController;
@@ -134,8 +135,8 @@ Route::get('/mouza-map/{mouzaMap}/download', function (\App\Models\MouzaMap $mou
     return response()->file($path);
 })->name('mouza-map.download');
 
-//Public search
-Route::get('/map/dags/search{dag_no}', [DagController::class, 'searchGeometry']);
+// Public: fetch latest geojson by dag_no
+Route::get('/map/geojson/by-dag/{dag_no}', [GeojsonDataController::class, 'byDagNo']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
@@ -194,8 +195,8 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('admin/mutations', MutationController::class);
         Route::patch('/mutations/{id}/status', [MutationController::class, 'updateStatus']);
 
-        //Leaflet Map
-        Route::post('/admin/dags/{dag}/geometry', [DagController::class, 'saveGeometry']);
+        // GeoJSON datas CRUD
+        Route::apiResource('admin/geojson-datas', GeojsonDataController::class);
     });
 
     Route::middleware('role:admin')->group(function () {
