@@ -10,7 +10,7 @@ class Dag extends Model
     use HasFactory;
 
     protected $fillable = [
-                'zil_id', 'dag_no', 'khotiyan', 'meta', 'document', 'survey_type_id',
+                'zil_id', 'khatiyan_number', 'dag_no', 'khotiyan', 'meta', 'document', 'survey_type_id',
             ];
 
     protected $appends = ['document_url'];

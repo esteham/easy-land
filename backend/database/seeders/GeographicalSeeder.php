@@ -316,6 +316,7 @@ class GeographicalSeeder extends Seeder
         foreach ($zils as $zil) {
             for ($k = 1; $k <= 2; $k++) {
                 Dag::create([
+                    'khatiyan_number' => rand(10000, 999999),
                     'dag_no' => "{$zil->id}_D{$k}",
                     'khotiyan' => ['owner' => "Owner_{$zil->id}_{$k}", 'area' => rand(100, 1000) . ' sqft'],
                     'survey_type_id' => $surveyTypes[array_rand($surveyTypes)],

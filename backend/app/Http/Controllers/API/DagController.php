@@ -25,6 +25,7 @@ class DagController extends Controller
     {
         $request->validate([
             'zil_id'         => 'required|exists:zils,id',
+            'khatiyan_number' => 'required|string',
             'dag_no'         => 'required|string',
             'survey_type_id' => 'nullable|exists:survey_types,id',
             'document'       => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
@@ -42,6 +43,7 @@ class DagController extends Controller
 
         $dag = Dag::create([
             'zil_id'         => $request->zil_id,
+            'khatiyan_number' => $request->khatiyan_number,
             'dag_no'         => $request->dag_no,
             'survey_type_id' => $request->survey_type_id,
             'khotiyan'       => $khotiyan,
@@ -66,6 +68,7 @@ class DagController extends Controller
     {
         $request->validate([
             'zil_id'         => 'sometimes|exists:zils,id',
+            'khatiyan_number' => 'sometimes|required|string',
             'dag_no'         => 'sometimes|required|string',
             'survey_type_id' => 'nullable|exists:survey_types,id',
             'document'       => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:8192',
@@ -77,6 +80,7 @@ class DagController extends Controller
         $data = [];
 
         if ($request->filled('zil_id')) $data['zil_id'] = $request->zil_id;
+        if ($request->filled('khatiyan_number')) $data['khatiyan_number'] = $request->khatiyan_number;
         if ($request->filled('dag_no')) $data['dag_no'] = $request->dag_no;
         if ($request->has('survey_type_id')) $data['survey_type_id'] = $request->survey_type_id;
 

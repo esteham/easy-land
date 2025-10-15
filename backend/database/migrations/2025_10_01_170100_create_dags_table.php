@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('dags', function (Blueprint $table) {
             $table->id();
             $table->foreignId('zil_id')->constrained()->cascadeOnDelete();
+            $table->string('khatiyan_number');
             $table->string('dag_no');
             $table->json('khotiyan')->nullable();
             $table->json('meta')->nullable();
