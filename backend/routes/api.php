@@ -247,6 +247,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/mutations/{id}/pay', [MutationController::class, 'pay']);
 
     // Land Tax Registration
+    Route::post('/land-tax-registrations/{id}/match-land-details', [LandTaxRegistrationController::class, 'matchLandDetails']);
     Route::apiResource('land-tax-registrations', LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
 
     // Land Tax Payments

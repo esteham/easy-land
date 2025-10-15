@@ -87,6 +87,63 @@ class LandTaxRegistrationController extends Controller
     }
 
     /**
+     * Match land details against database.
+     */
+    public function matchLandDetails(Request $request, string $id)
+    {
+        $registration = LandTaxRegistration::findOrFail($id);
+
+        // Find land record by khatiyan and dag number
+        $landRecord = \App\Models\Land_Record::where([
+            'khatiyan_number' => $registration->khatiyan_number,
+            'dag_number' => $registration->dag_number,
+        ])->first();
+
+        $fieldMatches = [
+            'division' => false,
+            'district' => false,
+            'upazila' => false,
+            'mouza' => false,
+            'survey_type' => false,
+            'khatiyan_number' => false,
+            'dag_number' => false,
+            'land_area' => false,
+        ];
+
+        $overallMatch = false;
+
+        if ($landRecord) {
+            // Compare each field
+            $fieldMatches['division'] = $registration->division_id == $landRecord->division_id;
+            $fieldMatches['district'] = $registration->district_id == $landRecord->district_id;
+            $fieldMatches['upazila'] = $registration->upazila_id == $landRecord->upazila_id;
+            $fieldMatches['mouza'] = $registration->mouza_id == $landRecord->mouza_id;
+            $fieldMatches['survey_type'] = $registration->survey_type_id == $landRecord->survey_type_id;
+            $fieldMatches['khatiyan_number'] = $registration->khatiyan_number == $landRecord->khatiyan_number;
+            $fieldMatches['dag_number'] = $registration->dag_number == $landRecord->dag_number;
+            $fieldMatches['land_area'] = $registration->land_area == $landRecord->land_area;
+
+            // Overall match if all fields match
+            $overallMatch = collect($fieldMatches)->every(function ($match) {
+                return $match;
+            });
+
+            return response()->json([
+                'match' => $overallMatch,
+                'message' => $overallMatch ? 'Data Match' : 'Partial Match',
+                'land_record' => $landRecord,
+                'field_matches' => $fieldMatches
+            ]);
+        } else {
+            return response()->json([
+                'match' => false,
+                'message' => 'No matching land record found',
+                'field_matches' => $fieldMatches
+            ]);
+        }
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)

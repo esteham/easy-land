@@ -1,22 +1,15 @@
-# TODO: Implement MessagesTab with Real-Time Notifications
+# TODO: Implement Match Endpoint for Land Tax Registrations
 
-## Backend Changes
-- [ ] Create Notification model and migration (user_id, type, title, message, data, read_at, created_at)
-- [ ] Create NotificationController with index (fetch user notifications) and markAsRead methods
-- [ ] Update KycController approve/reject to create notifications
-- [ ] Update LandTaxRegistrationController update to create notifications on status change
-- [ ] Update MutationController update to create notifications on status change
-- [ ] Create email notification classes (KycApproved, KycRejected, LandTaxApproved/Rejected/Flagged, MutationApproved/Rejected/Flagged)
-- [ ] Add notification API routes
+## Steps to Complete
 
-## Frontend Changes
-- [ ] Add notification API functions to api.js
-- [ ] Implement MessagesTab with notification list, polling every 30s, mark as read functionality
-- [ ] Update Dashboard.jsx to fetch unread count and display badge on Messages tab
-- [ ] Add translation keys for notification messages
+- [x] Add custom route for `/land-tax-registrations/{id}/match` in `backend/routes/api.php` inside the `auth:api` middleware group.
+- [x] Implement the `match` method in `backend/app/Http/Controllers/API/LandTaxRegistrationController.php` to check if dag_number exists in mouza's dags with matching survey_type_id and khatiyan_number is in the dag's khotiyan array.
+- [x] Optimize the match method to use a single query with exists() and whereJsonContains for better performance.
+- [x] Update route parameter to use model binding: `{land_tax_registration}` instead of `{id}`.
+- [x] Update controller method to use model binding: `LandTaxRegistration $land_tax_registration` instead of `$id`.
+- [x] Testing skipped as per user request.
 
-## Followup Steps
-- [ ] Run migrations
-- [ ] Test notification creation on admin actions
-- [ ] Test email notifications
-- [ ] Test frontend polling and badge updates
+## Notes
+- The route should be added after the existing `land-tax-registrations` resource route.
+- The match method should query Dag via mouza->zils->dags relationship.
+- Ensure the response is JSON with 'matched' key as boolean.
