@@ -8,7 +8,7 @@ return [
     'allowed_origins' => [
         'https://eland.xetroot.com',
         'http://localhost:5173',
-        'https://eland-frontend.vercel.app',
+        'https://eland-chi.vercel.app',
     ],
     
     'allowed_origins_patterns' => [],
