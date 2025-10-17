@@ -13,6 +13,12 @@ use App\Models\Mouza;
 use App\Models\Zil;
 use App\Models\Dag;
 use App\Models\SurveyType;
+use App\Models\MouzaMap;
+
+//Revenue API
+use App\Models\Application;
+use App\Models\LandTaxPayment;
+
 use App\Http\Controllers\API\DivisionController;
 use App\Http\Controllers\API\DistrictController;
 use App\Http\Controllers\API\UpazilaController;
@@ -27,6 +33,9 @@ use \App\Http\Controllers\API\LandTaxRegistrationController;
 use \App\Http\Controllers\API\MutationController;
 use \App\Http\Controllers\API\MouzaMapController;
 use \App\Http\Controllers\API\NotificationController;
+
+use App\Http\Controllers\API\LandTaxPaymentController;
+use App\Http\Controllers\KycController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -93,7 +102,7 @@ Route::get('/locations/zils/{zil}/mouza-maps', function (Zil $zil, Request $requ
     return $query->orderBy('name')->get();
 });
 
-Route::get('/locations/mouza-maps/{mouzaMap}', function (\App\Models\MouzaMap $mouzaMap) {
+Route::get('/locations/mouza-maps/{mouzaMap}', function (MouzaMap $mouzaMap) {
     return $mouzaMap->only(['id','zil_id','name']);
 });
 
@@ -124,7 +133,7 @@ Route::get('/dag/{dag}/download', function (Dag $dag) {
     return response()->file($path);
 })->name('dag.download');
 
-Route::get('/mouza-map/{mouzaMap}/download', function (\App\Models\MouzaMap $mouzaMap) {
+Route::get('/mouza-map/{mouzaMap}/download', function (MouzaMap $mouzaMap) {
     if (!$mouzaMap->document) {
         return response()->json(['error' => 'Document not found'], 404);
     }
@@ -187,28 +196,28 @@ Route::middleware('auth:api')->group(function () {
         $startOfYear = $now->copy()->startOfYear();
 
         // Revenue from Applications
-        $dailyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+        $dailyRevenueApplications = Application::where('payment_status', 'paid')
             ->where('submitted_at', '>=', $startOfDay)
             ->sum('fee_amount');
 
-        $monthlyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+        $monthlyRevenueApplications = Application::where('payment_status', 'paid')
             ->where('submitted_at', '>=', $startOfMonth)
             ->sum('fee_amount');
 
-        $yearlyRevenueApplications = \App\Models\Application::where('payment_status', 'paid')
+        $yearlyRevenueApplications = Application::where('payment_status', 'paid')
             ->where('submitted_at', '>=', $startOfYear)
             ->sum('fee_amount');
 
         // Revenue from Land Tax Payments
-        $dailyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+        $dailyRevenueLDT = LandTaxPayment::where('status', 'paid')
             ->where('paid_at', '>=', $startOfDay)
             ->sum('amount');
 
-        $monthlyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+        $monthlyRevenueLDT = LandTaxPayment::where('status', 'paid')
             ->where('paid_at', '>=', $startOfMonth)
             ->sum('amount');
 
-        $yearlyRevenueLDT = \App\Models\LandTaxPayment::where('status', 'paid')
+        $yearlyRevenueLDT = LandTaxPayment::where('status', 'paid')
             ->where('paid_at', '>=', $startOfYear)
             ->sum('amount');
 
@@ -251,10 +260,10 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('land-tax-registrations', LandTaxRegistrationController::class)->only(['index', 'store', 'update']);
 
     // Land Tax Payments
-    Route::get('/land-tax-payments', [App\Http\Controllers\API\LandTaxPaymentController::class, 'index']);
-    Route::get('/land-tax-payments/{id}/invoice', [App\Http\Controllers\API\LandTaxPaymentController::class, 'invoice']);
-    Route::post('/land-tax-payments/calculate', [App\Http\Controllers\API\LandTaxPaymentController::class, 'calculate']);
-    Route::post('/land-tax-payments/pay', [App\Http\Controllers\API\LandTaxPaymentController::class, 'pay']);
+    Route::get('/land-tax-payments', [LandTaxPaymentController::class, 'index']);
+    Route::get('/land-tax-payments/{id}/invoice', [LandTaxPaymentController::class, 'invoice']);
+    Route::post('/land-tax-payments/calculate', [LandTaxPaymentController::class, 'calculate']);
+    Route::post('/land-tax-payments/pay', [LandTaxPaymentController::class, 'pay']);
 
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -286,9 +295,9 @@ Route::middleware('auth:api')->group(function () {
         Route::apiResource('admin/survey-types', SurveyTypeController::class);
 
         // KYC admin routes
-        Route::get('/admin/kyc/pending', [\App\Http\Controllers\KycController::class, 'listPendingKyc']);
-        Route::post('/admin/kyc/{id}/approve', [\App\Http\Controllers\KycController::class, 'approveKyc']);
-        Route::post('/admin/kyc/{id}/reject', [\App\Http\Controllers\KycController::class, 'rejectKyc']);
+        Route::get('/admin/kyc/pending', [KycController::class, 'listPendingKyc']);
+        Route::post('/admin/kyc/{id}/approve', [KycController::class, 'approveKyc']);
+        Route::post('/admin/kyc/{id}/reject', [KycController::class, 'rejectKyc']);
 
     });
 
@@ -300,8 +309,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/user/dashboard', fn() => response()->json(['ok' => 'user only']));
 
         // KYC upload and get
-        Route::post('/user/kyc/upload', [\App\Http\Controllers\KycController::class, 'upload']);
-        Route::get('/user/kyc', [\App\Http\Controllers\KycController::class, 'getKyc']);
+        Route::post('/user/kyc/upload', [KycController::class, 'upload']);
+        Route::get('/user/kyc', [KycController::class, 'getKyc']);
 
         // Land Tax Registrations for user
         Route::get('/user/land-tax-registrations', [LandTaxRegistrationController::class, 'userIndex']);
