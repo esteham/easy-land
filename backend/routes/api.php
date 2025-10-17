@@ -243,6 +243,64 @@ Route::middleware('auth:api')->group(function () {
         ]);
     });
 
+    Route::get('/revenue-details', function () {
+        $now = now();
+        $startOfDay = $now->copy()->startOfDay();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $startOfYear = $now->copy()->startOfYear();
+
+        // Applications revenue breakdown
+        $dailyApplications = Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfDay)
+            ->sum('fee_amount');
+
+        $monthlyApplications = Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfMonth)
+            ->sum('fee_amount');
+
+        $yearlyApplications = Application::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfYear)
+            ->sum('fee_amount');
+
+        $recentApplications = Application::where('payment_status', 'paid')
+            ->orderBy('submitted_at', 'desc')
+            ->limit(10)
+            ->get(['id', 'fee_amount', 'submitted_at']);
+
+        // Land Tax Payments revenue breakdown
+        $dailyLDT = LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfDay)
+            ->sum('amount');
+
+        $monthlyLDT = LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfMonth)
+            ->sum('amount');
+
+        $yearlyLDT = LandTaxPayment::where('status', 'paid')
+            ->where('paid_at', '>=', $startOfYear)
+            ->sum('amount');
+
+        $recentLDT = LandTaxPayment::where('status', 'paid')
+            ->orderBy('paid_at', 'desc')
+            ->limit(10)
+            ->get(['id', 'amount', 'paid_at']);
+
+        return response()->json([
+            'applications' => [
+                'daily' => $dailyApplications,
+                'monthly' => $monthlyApplications,
+                'yearly' => $yearlyApplications,
+                'recent' => $recentApplications
+            ],
+            'land_tax_payments' => [
+                'daily' => $dailyLDT,
+                'monthly' => $monthlyLDT,
+                'yearly' => $yearlyLDT,
+                'recent' => $recentLDT
+            ]
+        ]);
+    });
+
     Route::get('/applications', [ApplicationController::class, 'index']);
     Route::post('/applications', [ApplicationController::class, 'store']);
     Route::get('/applications/{id}/invoice', [ApplicationController::class, 'invoice']);
@@ -298,6 +356,52 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/admin/kyc/pending', [KycController::class, 'listPendingKyc']);
         Route::post('/admin/kyc/{id}/approve', [KycController::class, 'approveKyc']);
         Route::post('/admin/kyc/{id}/reject', [KycController::class, 'rejectKyc']);
+
+        // Revenue details by date
+        Route::get('/admin/revenue/applications/{date}', function ($date) {
+            $applications = Application::where('payment_status', 'paid')
+                ->whereDate('submitted_at', $date)
+                ->with('user:id,name,email')
+                ->get(['id', 'user_id', 'fee_amount', 'payment_method', 'submitted_at']);
+            return response()->json($applications);
+        });
+
+        Route::get('/admin/revenue/land-tax-payments/{date}', function ($date) {
+            $payments = LandTaxPayment::where('status', 'paid')
+                ->whereDate('paid_at', $date)
+                ->with('user:id,name,email')
+                ->get(['id', 'user_id', 'amount', 'payment_method', 'paid_at']);
+            return response()->json($payments);
+        });
+
+        // CSV export
+        Route::get('/admin/revenue/applications/{date}/csv', function ($date) {
+            $applications = Application::where('payment_status', 'paid')
+                ->whereDate('submitted_at', $date)
+                ->with('user:id,name,email')
+                ->get(['user_id', 'fee_amount', 'payment_method', 'submitted_at']);
+
+            $csv = "Username,Date Time,Fee,Payment Method\n";
+            foreach ($applications as $app) {
+                $csv .= $app->user->name . "," . $app->submitted_at->format('Y-m-d H:i:s') . "," . $app->fee_amount . "," . $app->payment_method . "\n";
+            }
+
+            return response($csv)->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="applications_revenue_' . $date . '.csv"');
+        });
+
+        Route::get('/admin/revenue/land-tax-payments/{date}/csv', function ($date) {
+            $payments = LandTaxPayment::where('status', 'paid')
+                ->whereDate('paid_at', $date)
+                ->with('user:id,name,email')
+                ->get(['user_id', 'amount', 'payment_method', 'paid_at']);
+
+            $csv = "Username,Date Time,Fee,Payment Method\n";
+            foreach ($payments as $payment) {
+                $csv .= $payment->user->name . "," . $payment->paid_at->format('Y-m-d H:i:s') . "," . $payment->amount . "," . $payment->payment_method . "\n";
+            }
+
+            return response($csv)->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="land_tax_payments_revenue_' . $date . '.csv"');
+        });
 
     });
 

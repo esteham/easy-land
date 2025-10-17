@@ -1,6 +1,12 @@
-# TODO: Add khatiyan_number to dags table
+# Revenue Details Feature Implementation
 
-- [x] Modify migration file `backend/database/migrations/2025_10_01_170100_create_dags_table.php` to add `khatiyan_number` string column before `dag_no`.
-- [x] Update seeder file `backend/database/seeders/GeographicalSeeder.php` to include `khatiyan_number` in Dag creation.
-- [ ] Run `php artisan migrate:fresh` to apply migration changes (user denied, pending).
-- [ ] Run `php artisan db:seed` to populate data with new field (user denied, pending).
+## Pending Tasks
+- [x] Create backend /revenue-details endpoint returning breakdown by source (Applications and LDT), with totals and recent transactions.
+- [x] Create AdminRevenue.jsx component for detailed revenue view.
+- [x] Update AdminHome to wrap revenue grid in Link to /admin/revenue.
+- [x] Update AdminLayout sidebar to add "Revenue Details" under "Land Records" section.
+- [x] Update App.jsx to add /admin/revenue route.
+
+## Followup Steps
+- [ ] Test navigation and data display.
+- [ ] Ensure responsive design.
