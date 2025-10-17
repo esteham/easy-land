@@ -144,6 +144,14 @@
     }
     .split td { vertical-align: top; }
     .w-50 { width: 50%; }
+    .stamp-fixed {
+      position: fixed;   /* প্রতিটা পেজেই একই জায়গায় */
+      top: 920px;
+      right: 20px;
+      height: 110px;
+      z-index: 10;
+      opacity: 0.85;
+    }
   </style>
 </head>
 <body>
@@ -164,10 +172,9 @@
         <tr>
           <td class="w-50">
             {{-- Optional logo (Dompdf: use public_path or base64) --}}
-            {{-- <img src="{{ public_path('images/logo.png') }}" alt="Logo" style="height:38px;"> --}}
-            <div class="brand-name">{{ $brandName }}</div>
+            <img src="{{ public_path('images/LogoInvoice.png') }}" alt="Logo" style="height:38px;">
             <div class="brand-meta">
-              {{ $brandAddress }} • {{ $brandPhone }} • {{ $brandEmail }}
+              •{{ $brandAddress }} <br/>• {{ $brandPhone }} <br/>• {{ $brandEmail }}
             </div>
           </td>
           <td class="w-50" style="text-align:right;">
@@ -315,5 +322,6 @@
       This is a computer-generated invoice. For support, contact {{ $brandEmail }}.
     </div>
   </div>
+  <img class="stamp-fixed" src="{{ public_path('images/SealInvoice.png')}}" alt="Seal" style="height:110px; margin-top:10px;" align="right">
 </body>
 </html>

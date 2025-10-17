@@ -26,7 +26,6 @@
       line-height: 1.5;
       background: #fff;
     }
-
     .invoice {
       border: 1px solid var(--line);
       border-radius: 10px;
@@ -164,14 +163,13 @@
         <tr>
           <td class="w-50">
             {{-- Optional logo (Dompdf: use public_path or base64) --}}
-            {{-- <img src="{{ public_path('images/logo.png') }}" alt="Logo" style="height:38px;"> --}}
-            <div class="brand-name">{{ $brandName }}</div>
+            <img src="{{ public_path('images/LogoInvoice.png') }}" alt="Logo" style="height:38px;">
             <div class="brand-meta">
-              {{ $brandAddress }} • {{ $brandPhone }} • {{ $brandEmail }}
+              •{{ $brandAddress }} <br/>• {{ $brandPhone }} <br/>• {{ $brandEmail }}
             </div>
           </td>
           <td class="w-50" style="text-align:right;">
-            <div style="font-size:18px; font-weight:800;">Application Invoice</div>
+            <div style="font-size:18px; font-weight:800;">Khatian Invoice</div>
             <table class="meta" align="right">
               <tr>
                 <td class="label">Invoice ID</td>
@@ -307,5 +305,6 @@
       This is a computer-generated invoice. For support, contact {{ $brandEmail }}.
     </div>
   </div>
+  <img src="{{ public_path('images/SealInvoice.png')}}" alt="Seal" style="height:110px; margin-top:10px;" align="right">
 </body>
 </html>
