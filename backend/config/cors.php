@@ -8,6 +8,7 @@ return [
     'allowed_origins' => [
         'https://eland.xetroot.com',
         'http://localhost:5173',
+        'https://e-land.netlify.app',
         'https://eland-chi.vercel.app',
     ],
     
