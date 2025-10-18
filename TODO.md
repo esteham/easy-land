@@ -1,12 +1,10 @@
-# Revenue Details Feature Implementation
+# Fix 422 Unprocessable Content Error in Mutation Form Submission
 
 ## Pending Tasks
-- [x] Create backend /revenue-details endpoint returning breakdown by source (Applications and LDT), with totals and recent transactions.
-- [x] Create AdminRevenue.jsx component for detailed revenue view.
-- [x] Update AdminHome to wrap revenue grid in Link to /admin/revenue.
-- [x] Update AdminLayout sidebar to add "Revenue Details" under "Land Records" section.
-- [x] Update App.jsx to add /admin/revenue route.
-
-## Followup Steps
-- [ ] Test navigation and data display.
-- [ ] Ensure responsive design.
+- [ ] Create new migration to add missing fields to mutations table (mouza_name, khatian_number, dag_number, buyer_name, buyer_nid, buyer_address, previous_owner_name, previous_owner_nid, previous_owner_address, deed_number, deed_date, registry_office, land_type, contact_number)
+- [ ] Update Mutation model fillable array and casts for new fields
+- [ ] Update MutationStoreRequest validation rules for new fields
+- [ ] Update MutationController store method to save new fields
+- [ ] Update MutationForm.jsx to include missing fields, set documents to empty array in mutationData
+- [ ] Run migration to apply database changes
+- [ ] Test form submission to ensure 422 error is resolved

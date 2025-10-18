@@ -61,12 +61,26 @@ class MutationController extends Controller
 
         $mutation = Mutation::create([
             'user_id' => $user->id,
-            'application_id' => $request->application_id,
+            'application_id' => $request->application_id ?: null,
             'mutation_type' => $request->mutation_type,
             'reason' => $request->reason,
             'documents' => $request->documents ?? [],
             'fee_amount' => $request->fee_amount,
             'status' => 'pending',
+            'mouza_name' => $request->mouza_name,
+            'khatian_number' => $request->khatian_number,
+            'dag_number' => $request->dag_number,
+            'buyer_name' => $request->buyer_name,
+            'buyer_nid' => $request->buyer_nid,
+            'buyer_address' => $request->buyer_address,
+            'previous_owner_name' => $request->previous_owner_name,
+            'previous_owner_nid' => $request->previous_owner_nid,
+            'previous_owner_address' => $request->previous_owner_address,
+            'deed_number' => $request->deed_number,
+            'deed_date' => $request->deed_date,
+            'registry_office' => $request->registry_office,
+            'land_type' => $request->land_type,
+            'contact_number' => $request->contact_number,
         ]);
 
         return response()->json(['message' => 'Mutation submitted successfully', 'mutation' => $mutation], 201);

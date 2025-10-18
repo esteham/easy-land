@@ -22,22 +22,38 @@ class MutationStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'application_id' => 'required|exists:applications,id',
+            'application_id' => 'nullable|exists:applications,id',
             'mutation_type' => 'required|in:sale,inheritance,gift,partition,decree',
             'reason' => 'nullable|string',
             'documents' => 'nullable|array',
             'documents.*.name' => 'string',
             'documents.*.path' => 'string',
             'fee_amount' => 'required|numeric|min:0',
+            'mouza_name' => 'nullable|string',
+            'khatian_number' => 'nullable|string',
+            'dag_number' => 'nullable|string',
+            'buyer_name' => 'nullable|string',
+            'buyer_nid' => 'nullable|string',
+            'buyer_address' => 'nullable|string',
+            'previous_owner_name' => 'nullable|string',
+            'previous_owner_nid' => 'nullable|string',
+            'previous_owner_address' => 'nullable|string',
+            'deed_number' => 'nullable|string',
+            'deed_date' => 'nullable|date',
+            'registry_office' => 'nullable|string',
+            'land_type' => 'nullable|in:agricultural,non-agricultural',
+            'contact_number' => 'nullable|string',
         ];
     }
 
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $application = \App\Models\Application::find($this->application_id);
-            if ($application && $application->user_id !== auth()->id()) {
-                $validator->errors()->add('application_id', 'The selected application does not belong to you.');
+            if ($this->application_id) {
+                $application = \App\Models\Application::find($this->application_id);
+                if ($application && $application->user_id !== auth()->id()) {
+                    $validator->errors()->add('application_id', 'The selected application does not belong to you.');
+                }
             }
         });
     }
