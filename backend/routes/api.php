@@ -18,6 +18,7 @@ use App\Models\MouzaMap;
 //Revenue API
 use App\Models\Application;
 use App\Models\LandTaxPayment;
+use App\Models\Mutation;
 
 use App\Http\Controllers\API\DivisionController;
 use App\Http\Controllers\API\DistrictController;
@@ -221,10 +222,23 @@ Route::middleware('auth:api')->group(function () {
             ->where('paid_at', '>=', $startOfYear)
             ->sum('amount');
 
+        // Revenue from Mutations
+        $dailyRevenueMutations = Mutation::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfDay)
+            ->sum('fee_amount');
+
+        $monthlyRevenueMutations = Mutation::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfMonth)
+            ->sum('fee_amount');
+
+        $yearlyRevenueMutations = Mutation::where('payment_status', 'paid')
+            ->where('submitted_at', '>=', $startOfYear)
+            ->sum('fee_amount');
+
         // Total revenue
-        $dailyRevenue = $dailyRevenueApplications + $dailyRevenueLDT;
-        $monthlyRevenue = $monthlyRevenueApplications + $monthlyRevenueLDT;
-        $yearlyRevenue = $yearlyRevenueApplications + $yearlyRevenueLDT;
+        $dailyRevenue = $dailyRevenueApplications + $dailyRevenueLDT + $dailyRevenueMutations;
+        $monthlyRevenue = $monthlyRevenueApplications + $monthlyRevenueLDT + $monthlyRevenueMutations;
+        $yearlyRevenue = $yearlyRevenueApplications + $yearlyRevenueLDT + $yearlyRevenueMutations;
 
         return response()->json([
             'stats' => [
@@ -285,6 +299,24 @@ Route::middleware('auth:api')->group(function () {
             ->limit(10)
             ->get(['id', 'amount', 'paid_at']);
 
+        // Mutations revenue breakdown
+        $dailyMutations = Mutation::where('payment_status', 'paid')
+            ->where('created_at', '>=', $startOfDay)
+            ->sum('fee_amount');
+
+        $monthlyMutations = Mutation::where('payment_status', 'paid')
+            ->where('created_at', '>=', $startOfMonth)
+            ->sum('fee_amount');
+
+        $yearlyMutations = Mutation::where('payment_status', 'paid')
+            ->where('created_at', '>=', $startOfYear)
+            ->sum('fee_amount');
+
+        $recentMutations = Mutation::where('payment_status', 'paid')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get(['id', 'fee_amount', 'created_at']);
+
         return response()->json([
             'applications' => [
                 'daily' => $dailyApplications,
@@ -297,6 +329,12 @@ Route::middleware('auth:api')->group(function () {
                 'monthly' => $monthlyLDT,
                 'yearly' => $yearlyLDT,
                 'recent' => $recentLDT
+            ],
+            'mutations' => [
+                'daily' => $dailyMutations,
+                'monthly' => $monthlyMutations,
+                'yearly' => $yearlyMutations,
+                'recent' => $recentMutations
             ]
         ]);
     });
@@ -374,6 +412,31 @@ Route::middleware('auth:api')->group(function () {
             return response()->json($payments);
         });
 
+        // Revenue details by date
+        Route::get('/admin/revenue/applications/{date}', function ($date) {
+            $applications = Application::where('payment_status', 'paid')
+                ->whereDate('created_at', $date)
+                ->with('user:id,name,email')
+                ->get(['id', 'user_id', 'fee_amount', 'payment_method', 'created_at']);
+            return response()->json($applications);
+        });
+
+        Route::get('/admin/revenue/land-tax-payments/{date}', function ($date) {
+            $payments = LandTaxPayment::where('status', 'paid')
+                ->whereDate('paid_at', $date)
+                ->with('user:id,name,email')
+                ->get(['id', 'user_id', 'amount', 'payment_method', 'paid_at']);
+            return response()->json($payments);
+        });
+
+        Route::get('/admin/revenue/mutations/{date}', function ($date) {
+            $mutations = Mutation::where('payment_status', 'paid')
+                ->whereDate('created_at', $date)
+                ->with('user:id,name,email')
+                ->get(['id', 'user_id', 'fee_amount', 'payment_method', 'created_at']);
+            return response()->json($mutations);
+        });
+
         // CSV export
         Route::get('/admin/revenue/applications/{date}/csv', function ($date) {
             $applications = Application::where('payment_status', 'paid')
@@ -401,6 +464,20 @@ Route::middleware('auth:api')->group(function () {
             }
 
             return response($csv)->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="land_tax_payments_revenue_' . $date . '.csv"');
+        });
+
+        Route::get('/admin/revenue/mutations/{date}/csv', function ($date) {
+            $mutations = Mutation::where('payment_status', 'paid')
+                ->whereDate('submitted_at', $date)
+                ->with('user:id,name,email')
+                ->get(['user_id', 'fee_amount', 'payment_method', 'submitted_at']);
+
+            $csv = "Username,Date Time,Fee,Payment Method\n";
+            foreach ($mutations as $mutation) {
+                $csv .= $mutation->user->name . "," . $mutation->submitted_at->format('Y-m-d H:i:s') . "," . $mutation->fee_amount . "," . $mutation->payment_method . "\n";
+            }
+
+            return response($csv)->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="mutations_revenue_' . $date . '.csv"');
         });
 
     });
