@@ -80,6 +80,7 @@ class MutationController extends Controller
             'deed_date' => $request->deed_date,
             'registry_office' => $request->registry_office,
             'land_type' => $request->land_type,
+            'land_area' => $request->land_area,
             'contact_number' => $request->contact_number,
         ]);
 
@@ -192,13 +193,13 @@ class MutationController extends Controller
         ]);
 
         $user = Auth::user();
-        $mutation = Mutation::where('id', $id)->where('user_id', $user->id)->where('status', 'approved')->firstOrFail();
+        $mutation = Mutation::where('id', $id)->where('user_id', $user->id)->firstOrFail();
 
-        // For demo, just update mutation with payment fields (reuse Application pattern)
+        // Update mutation with payment fields
         $mutation->update([
-            'payment_status' => 'paid', // Add to migration if needed, but for now use existing or add
+            'payment_status' => 'paid',
             'payment_method' => $request->payment_method,
-            'payer_identifier' => $request->payer_identifier,
+            'payer_identifier' => hash('sha256', $request->payer_identifier),
             'transaction_id' => $request->transaction_id ?: 'DEMO-' . time(),
             'paid_at' => now(),
         ]);

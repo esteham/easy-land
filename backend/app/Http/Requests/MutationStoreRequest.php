@@ -42,6 +42,7 @@ class MutationStoreRequest extends FormRequest
             'deed_date' => 'nullable|date',
             'registry_office' => 'nullable|string',
             'land_type' => 'nullable|in:agricultural,non-agricultural',
+            'land_area' => 'nullable|numeric|min:0',
             'contact_number' => 'nullable|string',
         ];
     }

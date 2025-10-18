@@ -36,12 +36,14 @@ class Mutation extends Model
         'deed_date',
         'registry_office',
         'land_type',
+        'land_area',
         'contact_number',
     ];
 
     protected $casts = [
         'documents' => 'array',
         'fee_amount' => 'decimal:2',
+        'land_area' => 'decimal:2',
         'reviewed_at' => 'datetime',
         'paid_at' => 'datetime',
         'deed_date' => 'date',
