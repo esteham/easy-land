@@ -224,15 +224,13 @@ Route::middleware('auth:api')->group(function () {
 
         // Revenue from Mutations
         $dailyRevenueMutations = Mutation::where('payment_status', 'paid')
-            ->where('submitted_at', '>=', $startOfDay)
+            ->where('created_at', '>=', $startOfDay)
             ->sum('fee_amount');
-
         $monthlyRevenueMutations = Mutation::where('payment_status', 'paid')
-            ->where('submitted_at', '>=', $startOfMonth)
+            ->where('created_at', '>=', $startOfMonth)
             ->sum('fee_amount');
-
         $yearlyRevenueMutations = Mutation::where('payment_status', 'paid')
-            ->where('submitted_at', '>=', $startOfYear)
+            ->where('created_at', '>=', $startOfYear)
             ->sum('fee_amount');
 
         // Total revenue
