@@ -51,6 +51,9 @@ const MutationForm = ({ lang, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState("");
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentDone, setPaymentDone] = useState(false);
 
   // Dropdown data states
   const [divisions, setDivisions] = useState([]);
@@ -162,8 +165,7 @@ const MutationForm = ({ lang, onSuccess }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async () => {
     setLoading(true);
     setErrors({});
 
@@ -196,6 +198,7 @@ const MutationForm = ({ lang, onSuccess }) => {
         land_type: formData.land_type,
         contact_number: formData.contact_number,
         documents: [],
+        payment_method: paymentMethod,
       };
 
       const { data: mutationResponse } = await createMutation(mutationData);
@@ -238,6 +241,8 @@ const MutationForm = ({ lang, onSuccess }) => {
         land_type: "",
         contact_number: "",
       });
+      setPaymentDone(false);
+      setPaymentMethod("");
       if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error submitting mutation:", error);
@@ -253,6 +258,25 @@ const MutationForm = ({ lang, onSuccess }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setShowPaymentModal(true);
+  };
+
+  const handlePayment = () => {
+    if (!paymentMethod) {
+      alert(
+        lang === LANGS.BN
+          ? "পেমেন্ট মেথড নির্বাচন করুন"
+          : "Please select a payment method"
+      );
+      return;
+    }
+    setPaymentDone(true);
+    setShowPaymentModal(false);
+    handleFormSubmit();
   };
 
   return (
@@ -841,6 +865,85 @@ const MutationForm = ({ lang, onSuccess }) => {
             : "Submit"}
         </button>
       </form>
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div
+          className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+          id="payment-modal"
+        >
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3 text-center">
+              <h3 className="text-lg text-blue-600 leading-6 font-medium text-gray-900">
+                {lang === LANGS.BN ? "পেমেন্ট করুন" : "Make Payment"}
+              </h3>
+              <div className="mt-2 px-7 py-3">
+                <p className="text-sm text-gray-500 mb-4">
+                  {lang === LANGS.BN
+                    ? "আপনার আবেদন জমা দেওয়ার জন্য পেমেন্ট করুন।"
+                    : "Please make payment to submit your application."}
+                </p>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {lang === LANGS.BN ? "পেমেন্ট মেথড" : "Payment Method"}
+                  </label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="mt-1 block w-full border p-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    <option value="">
+                      {lang === LANGS.BN
+                        ? "মেথড নির্বাচন করুন"
+                        : "Select Method"}
+                    </option>
+                    <option value="credit_card">
+                      {lang === LANGS.BN ? "ক্রেডিট কার্ড" : "Credit Card"}
+                    </option>
+                    <option value="bank_transfer">
+                      {lang === LANGS.BN
+                        ? "ব্যাংক ট্রান্সফার"
+                        : "Bank Transfer"}
+                    </option>
+                    <option value="mobile_banking">
+                      {lang === LANGS.BN ? "মোবাইল ব্যাংকিং" : "Mobile Banking"}
+                    </option>
+                  </select>
+                </div>
+                {paymentDone && (
+                  <p className="text-green-500 text-sm mt-2">
+                    {lang === LANGS.BN
+                      ? "পেমেন্ট সফল হয়েছে"
+                      : "Payment Successful"}
+                  </p>
+                )}
+              </div>
+              <div className="items-center px-4 py-3 space-x-2">
+                <button
+                  className="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  onClick={() => setShowPaymentModal(false)}
+                >
+                  {lang === LANGS.BN ? "বাতিল" : "Cancel"}
+                </button>
+                <button
+                  className="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  onClick={handlePayment}
+                  disabled={paymentDone}
+                >
+                  {paymentDone
+                    ? lang === LANGS.BN
+                      ? "পেমেন্ট হয়েছে"
+                      : "Paid"
+                    : lang === LANGS.BN
+                    ? "পেমেন্ট করুন"
+                    : "Pay"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Modal */}
       {showModal && (
