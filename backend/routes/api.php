@@ -468,13 +468,13 @@ Route::middleware('auth:api')->group(function () {
 
         Route::get('/admin/revenue/mutations/{date}/csv', function ($date) {
             $mutations = Mutation::where('payment_status', 'paid')
-                ->whereDate('submitted_at', $date)
+                ->whereDate('created_at', $date)
                 ->with('user:id,name,email')
-                ->get(['user_id', 'fee_amount', 'payment_method', 'submitted_at']);
+                ->get(['user_id', 'fee_amount', 'payment_method', 'created_at']);
 
             $csv = "Username,Date Time,Fee,Payment Method\n";
             foreach ($mutations as $mutation) {
-                $csv .= $mutation->user->name . "," . $mutation->submitted_at->format('Y-m-d H:i:s') . "," . $mutation->fee_amount . "," . $mutation->payment_method . "\n";
+                $csv .= $mutation->user->name . "," . $mutation->created_at->format('Y-m-d H:i:s') . "," . $mutation->fee_amount . "," . $mutation->payment_method . "\n";
             }
 
             return response($csv)->header('Content-Type', 'text/csv')->header('Content-Disposition', 'attachment; filename="mutations_revenue_' . $date . '.csv"');

@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>Land Tax Payment Invoice</title>
+  <title>Mutation Payment Invoice</title>
   <style>
     /* Dompdf-friendly, simple CSS */
     :root {
@@ -26,7 +26,6 @@
       line-height: 1.5;
       background: #fff;
     }
-
     .invoice {
       border: 1px solid var(--line);
       border-radius: 10px;
@@ -144,8 +143,9 @@
     }
     .split td { vertical-align: top; }
     .w-50 { width: 50%; }
+
     .stamp-fixed {
-      position: fixed;  
+      position: fixed;   
       top: 920px;
       right: 20px;
       height: 110px;
@@ -161,8 +161,8 @@
     $brandPhone   = $brandPhone   ?? '+880-1XXX-XXXXXX';
     $brandEmail   = $brandEmail   ?? 'support@example.com';
 
-    $isPaid    = strtolower($payment->status ?? '') === 'paid';
-    $statusLbl = $payment->status ? ucfirst($payment->status) : 'N/A';
+    $isPaid    = strtolower($mutation->payment_status ?? '') === 'paid';
+    $statusLbl = $mutation->payment_status ? ucfirst($mutation->payment_status) : 'N/A';
   @endphp
 
   <div class="invoice">
@@ -178,11 +178,11 @@
             </div>
           </td>
           <td class="w-50" style="text-align:right;">
-            <div style="font-size:18px; font-weight:800;">Land Tax Payment Invoice</div>
+            <div style="font-size:18px; font-weight:800;">Mutation Payment Invoice</div>
             <table class="meta" align="right">
               <tr>
                 <td class="label">Invoice ID</td>
-                <td>#{{ $payment->id }}</td>
+                <td>#{{ $mutation->id }}</td>
               </tr>
               <tr>
                 <td class="label">Date (তারিখ)</td>
@@ -204,11 +204,11 @@
       </table>
     </div>
 
-    <!-- Payer & Land Details split -->
+    <!-- Applicant & Mutation Details split -->
     <table class="split">
       <tr>
         <td class="w-50" style="padding-right:8px;">
-          <h2 class="sec-title">Payer</h2>
+          <h2 class="sec-title">Applicant</h2>
           <table class="table">
             <tr>
               <th style="width:35%;">Name (নাম)</th>
@@ -225,36 +225,28 @@
           </table>
         </td>
         <td class="w-50" style="padding-left:8px;">
-          <h2 class="sec-title">Land Details</h2>
+          <h2 class="sec-title">Mutation Details</h2>
           <table class="table">
             <tr>
-              <th style="width:35%;">Khatiyan Number</th>
-              <td>{{ $payment->landTaxRegistration->khatiyan_number }}</td>
+              <th style="width:35%;">Mutation Type</th>
+              <td>{{ ucfirst($mutation->mutation_type) }}</td>
             </tr>
             <tr>
-              <th>Dag Number</th>
-              <td>{{ $payment->landTaxRegistration->dag_number }}</td>
-            </tr>
-            <tr>
-              <th>Land Area</th>
-              <td>{{ $payment->landTaxRegistration->land_area }} sq ft</td>
-            </tr>
-            <tr>
-              <th>Land Type</th>
-              <td>{{ $payment->landTaxRegistration->land_type }}</td>
+              <th>Payment Status</th>
+              <td>{{ ucfirst($mutation->payment_status ?? 'N/A') }}</td>
             </tr>
             <tr>
               <th>Payment Method</th>
-              <td>{{ $payment->payment_method }}</td>
+              <td>{{ ucfirst($mutation->payment_method ?? 'N/A') }}</td>
             </tr>
             <tr>
-              <th>Year</th>
-              <td>{{ $payment->year }}</td>
+              <th>Transaction ID</th>
+              <td>{{ $mutation->transaction_id ?? 'N/A' }}</td>
             </tr>
             <tr>
-              <th>Paid At</th>
+              <th>Submitted At</th>
               <td>
-                {{ $payment->paid_at ? $payment->paid_at->format('Y-m-d H:i:s') : 'N/A' }}
+                {{ $mutation->created_at ? $mutation->created_at->format('Y-m-d H:i:s') : 'N/A' }}
               </td>
             </tr>
           </table>
@@ -262,26 +254,26 @@
       </tr>
     </table>
 
-    <!-- Tax Details -->
-    <h2 class="sec-title">Tax Details</h2>
+    <!-- Fee line-item table -->
+    <h2 class="sec-title">Fee Details</h2>
     <table class="table">
       <thead>
         <tr>
-          <th>Description</th>
+          <th>Item</th>
           <th style="width:120px; text-align:right;">Amount (BDT)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Land Tax for {{ $payment->year }} ({{ $payment->landTaxRegistration->land_type }})</td>
-          <td style="text-align:right;">{{ number_format($payment->amount, 2) }}</td>
+          <td>Mutation Fee ({{ ucfirst($mutation->land_type ?? 'N/A') }})</td>
+          <td style="text-align:right;">{{ number_format($mutation->fee_amount, 2) }}</td>
         </tr>
       </tbody>
     </table>
 
     <!-- Totals -->
     @php
-      $subtotal = (float)($payment->amount ?? 0);
+      $subtotal = (float)($mutation->fee_amount ?? 0);
       $discount = 0.00;     // if any
       $tax      = 0.00;     // if any VAT/SD
       $grand    = $subtotal - $discount + $tax;
@@ -322,6 +314,6 @@
       This is a computer-generated invoice. For support, contact {{ $brandEmail }}.
     </div>
   </div>
-  <img class="stamp-fixed" src="{{ public_path('images/SealInvoice.png')}}" alt="Seal" style="height:110px; margin-top:10px;" align="right">
+  <img class="stamp-fixed" src="{{ public_path('images/SealInvoice.png')}}" alt="Seal" style="height:110px; margin-top:6px;" align="right">
 </body>
 </html>
