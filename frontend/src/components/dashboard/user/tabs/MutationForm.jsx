@@ -256,14 +256,14 @@ const MutationForm = ({ lang, onSuccess }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <div className="mx-auto bg-white p-6 rounded-lg shadow-xl">
       <h2 className="text-xl font-semibold mb-4">
         {lang === LANGS.BN ? "নতুন মিউটেশন আবেদন" : "New Mutation Application"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Location Information */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "অবস্থান তথ্য" : "Location Information"}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -275,7 +275,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="division_id"
                 value={formData.division_id}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               >
                 <option value="">
@@ -301,7 +301,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="district_id"
                 value={formData.district_id}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
                 disabled={!formData.division_id}
               >
@@ -326,7 +326,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="upazila_id"
                 value={formData.upazila_id}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
                 disabled={!formData.district_id}
               >
@@ -353,7 +353,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="mouza_id"
                 value={formData.mouza_id}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
                 disabled={!formData.upazila_id}
               >
@@ -371,11 +371,9 @@ const MutationForm = ({ lang, onSuccess }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Land Information */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+          {/* Land Information */}
+          <h3 className="mt-4 text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "জমির তথ্য" : "Land Information"}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -388,7 +386,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="khatian_number"
                 value={formData.khatian_number}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.khatian_number && (
@@ -406,7 +404,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="dag_number"
                 value={formData.dag_number}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.dag_number && (
@@ -414,11 +412,8 @@ const MutationForm = ({ lang, onSuccess }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Land Information Documents */}
-        <div className="border-b pb-4">
-          <h4 className="text-md font-medium mb-2">
+          <h4 className="mt-4 text-md font-medium mb-2">
             {lang === LANGS.BN
               ? "জমির তথ্য ডকুমেন্টস"
               : "Land Information Documents"}
@@ -440,7 +435,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                     },
                   }))
                 }
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 accept=".pdf,.jpg,.jpeg,.png"
               />
             </div>
@@ -460,7 +455,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                     },
                   }))
                 }
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 accept=".pdf,.jpg,.jpeg,.png"
               />
             </div>
@@ -468,8 +463,8 @@ const MutationForm = ({ lang, onSuccess }) => {
         </div>
 
         {/* Buyer/New Owner Information */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN
               ? "ক্রেতা/নতুন মালিকের তথ্য"
               : "Buyer/New Owner Information"}
@@ -484,7 +479,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="buyer_name"
                 value={formData.buyer_name}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.buyer_name && (
@@ -500,7 +495,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="buyer_nid"
                 value={formData.buyer_nid}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.buyer_nid && (
@@ -515,7 +510,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="buyer_address"
                 value={formData.buyer_address}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 rows="2"
                 required
               />
@@ -526,10 +521,9 @@ const MutationForm = ({ lang, onSuccess }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Buyer/New Owner Information Documents */}
-        <div className="border-b pb-4">
+          {/* Buyer/New Owner Information Documents */}
+
           <h4 className="text-md font-medium mb-2">
             {lang === LANGS.BN
               ? "ক্রেতা/নতুন মালিকের তথ্য ডকুমেন্টস"
@@ -551,15 +545,15 @@ const MutationForm = ({ lang, onSuccess }) => {
                   },
                 }))
               }
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               accept=".pdf,.jpg,.jpeg,.png"
             />
           </div>
         </div>
 
         {/* Previous Owner Information */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN
               ? "পূর্ববর্তী মালিকের তথ্য"
               : "Previous Owner Information"}
@@ -574,7 +568,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="previous_owner_name"
                 value={formData.previous_owner_name}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.previous_owner_name && (
@@ -592,7 +586,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="previous_owner_nid"
                 value={formData.previous_owner_nid}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.previous_owner_nid && (
@@ -609,7 +603,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="previous_owner_address"
                 value={formData.previous_owner_address}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 rows="2"
                 required
               />
@@ -620,10 +614,8 @@ const MutationForm = ({ lang, onSuccess }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Previous Owner Information Documents */}
-        <div className="border-b pb-4">
+          {/* Previous Owner Information Documents */}
           <h4 className="text-md font-medium mb-2">
             {lang === LANGS.BN
               ? "পূর্ববর্তী মালিকের তথ্য ডকুমেন্টস"
@@ -645,15 +637,15 @@ const MutationForm = ({ lang, onSuccess }) => {
                   },
                 }))
               }
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               accept=".pdf,.jpg,.jpeg,.png"
             />
           </div>
         </div>
 
         {/* Land Deed Information */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "জমির দলিল তথ্য" : "Land Deed Information"}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -666,7 +658,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="deed_number"
                 value={formData.deed_number}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.deed_number && (
@@ -682,7 +674,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="deed_date"
                 value={formData.deed_date}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.deed_date && (
@@ -698,7 +690,7 @@ const MutationForm = ({ lang, onSuccess }) => {
                 name="registry_office"
                 value={formData.registry_office}
                 onChange={handleInputChange}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 required
               />
               {errors.registry_office && (
@@ -708,11 +700,10 @@ const MutationForm = ({ lang, onSuccess }) => {
               )}
             </div>
           </div>
-        </div>
 
-        {/* Type of Land */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+          {/* Type of Land */}
+
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "জমির ধরন" : "Type of Land"}
           </h3>
           <div>
@@ -720,7 +711,7 @@ const MutationForm = ({ lang, onSuccess }) => {
               name="land_type"
               value={formData.land_type}
               onChange={handleInputChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             >
               <option value="">
@@ -740,8 +731,8 @@ const MutationForm = ({ lang, onSuccess }) => {
         </div>
 
         {/* Contact Number */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "যোগাযোগ নম্বর" : "Contact Number"}
           </h3>
           <div>
@@ -753,17 +744,15 @@ const MutationForm = ({ lang, onSuccess }) => {
               name="contact_number"
               value={formData.contact_number}
               onChange={handleInputChange}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               required
             />
             {errors.contact_number && (
               <p className="text-red-500 text-sm">{errors.contact_number[0]}</p>
             )}
           </div>
-        </div>
 
-        {/* Mutation Type */}
-        <div>
+          {/* Mutation Type */}
           <label className="block text-sm font-medium text-gray-700">
             {lang === LANGS.BN ? "মিউটেশনের ধরন" : "Mutation Type"}
           </label>
@@ -771,7 +760,7 @@ const MutationForm = ({ lang, onSuccess }) => {
             name="mutation_type"
             value={formData.mutation_type}
             onChange={handleInputChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             required
           >
             <option value="">
@@ -794,10 +783,9 @@ const MutationForm = ({ lang, onSuccess }) => {
           {errors.mutation_type && (
             <p className="text-red-500 text-sm">{errors.mutation_type[0]}</p>
           )}
-        </div>
 
-        {/* Reason */}
-        <div>
+          {/* Reason */}
+
           <label className="block text-sm font-medium text-gray-700">
             {lang === LANGS.BN ? "কারণ" : "Reason"}
           </label>
@@ -805,7 +793,7 @@ const MutationForm = ({ lang, onSuccess }) => {
             name="reason"
             value={formData.reason}
             onChange={handleInputChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full border p-1 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             rows="3"
           />
           {errors.reason && (
@@ -814,8 +802,8 @@ const MutationForm = ({ lang, onSuccess }) => {
         </div>
 
         {/* Fees Summary */}
-        <div className="border-b pb-4">
-          <h3 className="text-lg font-medium mb-2">
+        <div className="bg-white p-5 rounded-xl shadow-xl/30 space-y-4">
+          <h3 className="text-lg text-blue-600 font-medium mb-2">
             {lang === LANGS.BN ? "ফি সারাংশ" : "Fees Summary"}
           </h3>
           <div className="space-y-2">
@@ -862,7 +850,7 @@ const MutationForm = ({ lang, onSuccess }) => {
         >
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3 text-center">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+              <h3 className="text-lg text-blue-600 leading-6 font-medium text-gray-900">
                 {lang === LANGS.BN
                   ? "আবেদন জমা হয়েছে"
                   : "Application Submitted"}
