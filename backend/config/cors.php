@@ -10,6 +10,7 @@ return [
         'http://localhost:5173',
         'https://e-land.netlify.app',
         'https://eland-chi.vercel.app',
+        'https://elands.onrender.com',
     ],
     
     'allowed_origins_patterns' => [],
