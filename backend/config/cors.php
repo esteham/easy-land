@@ -11,6 +11,7 @@ return [
         'https://e-land.netlify.app',
         'https://eland-chi.vercel.app',
         'https://elands.onrender.com',
+        'https://eland.pages.dev',
     ],
     
     'allowed_origins_patterns' => [],
