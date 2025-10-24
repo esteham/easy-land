@@ -98,6 +98,7 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        //MSSQL
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DB_URL'),
