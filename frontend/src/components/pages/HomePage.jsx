@@ -21,7 +21,8 @@ import {
 import { useLanguage } from "../../contexts/LanguageContext";
 import { translations } from "../../fonts/HomePageFonts";
 
-import LogoPng from "../../../public/images/background.gif";
+import Background from "../../../public/images/background.gif";
+import LogoPng from "../../../public/images/Logo.png";
 
 export default function HomePage() {
   const { language } = useLanguage();
@@ -66,9 +67,20 @@ export default function HomePage() {
         aria-hidden
         className="fixed  h-[100vh] w-[150vw]  hidden xl:block opacity-[0.65]"
         style={{
-          backgroundImage: `url(${LogoPng})`,
+          backgroundImage: `url(${Background})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      />
+      {/* Floating logo watermark - more subtle */}
+      <div
+        aria-hidden
+        className="fixed  h-[35vh] w-[35vw] max-w-[480px] hidden xl:block opacity-[1]"
+        style={{
+          backgroundImage: `url(${LogoPng})`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
           backgroundPosition: "center",
         }}
       />
